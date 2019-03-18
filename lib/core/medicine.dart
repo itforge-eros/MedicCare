@@ -4,7 +4,7 @@
 ///
 
 import 'package:flutter/material.dart';
-import 'exceptions/medicine_exceptions.dart';
+import 'exceptions.dart';
 
 class Medicine {
   String _id;
