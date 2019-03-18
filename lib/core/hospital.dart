@@ -3,11 +3,14 @@
 /// Class contains data of hospital
 ///
 
+import 'package:flutter/material.dart';
+
 class Hospital {
   String _id;
   String _name;
   String _address;
   String _notes;
+  Image _image;
 
   Hospital({
     String id,
@@ -32,4 +35,7 @@ class Hospital {
 
   String get notes => this._notes;
   set notes(notes) => this._notes = notes;
+
+  Image get image => this._image;
+  set image(image) => this._image = image;
 }

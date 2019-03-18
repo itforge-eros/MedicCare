@@ -1,7 +1,9 @@
 ///
 /// doctor.dart
 /// Class contains data of doctor
-/// 
+///
+
+import 'package:flutter/material.dart';
 
 class Doctor {
   String _id;
@@ -11,6 +13,7 @@ class Doctor {
   String _ward;
   String _hospital;
   String _phone;
+  Image _image;
 
   Doctor({
     String id,
@@ -20,6 +23,7 @@ class Doctor {
     String ward,
     String hospital,
     String phone,
+    Image image,
   }) {
     this._id = id;
     this._prefix = prefix;
@@ -28,6 +32,7 @@ class Doctor {
     this._ward = ward;
     this._hospital = hospital;
     this._phone = phone;
+    this._image = image;
   }
 
   String get id => this._id;
@@ -50,4 +55,7 @@ class Doctor {
 
   String get phone => this._phone;
   set phone(phone) => this._phone = phone;
+
+  Image get image => this._image;
+  set image(image) => this._image = image;
 }

@@ -3,6 +3,7 @@
 /// Class contains data of user
 ///
 
+import 'package:flutter/material.dart';
 import 'medicine.dart';
 import 'doctor.dart';
 import 'appointment.dart';
@@ -16,6 +17,7 @@ class User {
   DateTime _birthDate;
   double _height;
   double _weight;
+  Image _image;
   List<Medicine> _medicineList;
   List<Doctor> _doctorList;
   List<Appointment> _appointmentList;
@@ -29,6 +31,7 @@ class User {
     String gender,
     double height,
     double weight,
+    Image image,
     List<Medicine> medicineList,
     List<Doctor> doctorList,
     List<Appointment> appointmentList,
@@ -41,6 +44,7 @@ class User {
     this._gender = gender;
     this._height = height;
     this._weight = weight;
+    this._image = image;
     this._medicineList = medicineList;
     this._doctorList = doctorList;
     this._appointmentList = appointmentList;
@@ -69,6 +73,9 @@ class User {
 
   double get weight => this._weight;
   set weight(weight) => this._weight = weight;
+
+  Image get image => this._image;
+  set image(image) => this._image = image;
 
   List<Medicine> get medicineList => this._medicineList;
   set medicineList(medicineList) => this._medicineList = medicineList;
