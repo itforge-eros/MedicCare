@@ -4,9 +4,11 @@
 ///
 
 import 'package:flutter/material.dart';
-import 'medicine.dart';
-import 'doctor.dart';
 import 'appointment.dart';
+import 'doctor.dart';
+import 'hospital.dart';
+import 'medicine.dart';
+import 'user_settings.dart';
 
 class User {
   String _id;
@@ -19,8 +21,9 @@ class User {
   double _weight;
   Image _image;
   List<Medicine> _medicineList;
-  List<Doctor> _doctorList;
   List<Appointment> _appointmentList;
+  List<Doctor> _doctorList;
+  List<Hospital> _hospitalList;
   UserSettings _userSettings;
 
   User({
@@ -34,8 +37,9 @@ class User {
     double weight,
     Image image,
     List<Medicine> medicineList,
-    List<Doctor> doctorList,
     List<Appointment> appointmentList,
+    List<Doctor> doctorList,
+    List<Hospital> hospitalList,
     UserSettings userSettings,
   }) {
     this._id = id;
@@ -48,8 +52,9 @@ class User {
     this._weight = weight;
     this._image = image;
     this._medicineList = medicineList;
-    this._doctorList = doctorList;
     this._appointmentList = appointmentList;
+    this._doctorList = doctorList;
+    this._hospitalList = hospitalList;
     this._userSettings = userSettings;
   }
 
@@ -83,128 +88,114 @@ class User {
   List<Medicine> get medicineList => this._medicineList;
   set medicineList(medicineList) => this._medicineList = medicineList;
 
-  List<Doctor> get doctorList => this._doctorList;
-  set doctorList(doctorList) => this._doctorList = doctorList;
-
   List<Appointment> get appointmentList => this._appointmentList;
   set appointmentList(appointmentList) => this._appointmentList = appointmentList;
 
+  List<Doctor> get doctorList => this._doctorList;
+  set doctorList(doctorList) => this._doctorList = doctorList;
+
+  List<Hospital> get hospitalList => this._hospitalList;
+  set hospitalList(hospitalList) => this._hospitalList = hospitalList;
+
   List<DateTime> getMedicineTime(Medicine medicine) {
-    List<DateTime> medicineTime = List<DateTime>();
-    DateTime firstTime;
-    int times = medicine.totalAmount ~/ medicine.doseAmount;
+    final List<DateTime> firstDayMedicineTime = List<DateTime>();
+    final List<Duration> durations = List<Duration>();
+    final List<DateTime> medicineTime = List<DateTime>();
 
-    DateTime breakfastDateTime = DateTime(
-      medicine.dateAdded.year,
-      medicine.dateAdded.month,
-      medicine.dateAdded.day,
-      this._userSettings.breakfastTime.inHours,
-      this._userSettings.breakfastTime.inMinutes % 60,
-    );
+    DateTime firstMedicineTime;
+    final int times = medicine.totalAmount ~/ medicine.doseAmount;
+    int offset;
 
-    DateTime lunchDateTime = DateTime(
-      medicine.dateAdded.year,
-      medicine.dateAdded.month,
-      medicine.dateAdded.day,
-      this._userSettings.lunchTime.inHours,
-      this._userSettings.lunchTime.inMinutes % 60,
-    );
-
-    DateTime dinnerDateTime = DateTime(
-      medicine.dateAdded.year,
-      medicine.dateAdded.month,
-      medicine.dateAdded.day,
-      this._userSettings.dinnerTime.inHours,
-      this._userSettings.dinnerTime.inMinutes % 60,
-    );
-
-    DateTime nightDateTime = DateTime(
-      medicine.dateAdded.year,
-      medicine.dateAdded.month,
-      medicine.dateAdded.day,
-      this._userSettings.nightTime.inHours,
-      this._userSettings.nightTime.inMinutes % 60,
-    );
-
-    if (medicine.dateAdded.compareTo(breakfastDateTime) < 0) {
-      firstTime = breakfastDateTime;
-    } else if (medicine.dateAdded.compareTo(lunchDateTime) < 0) {
-      firstTime = lunchDateTime;
-    } else if (medicine.dateAdded.compareTo(dinnerDateTime) < 0) {
-      firstTime = dinnerDateTime;
-    } else if (medicine.dateAdded.compareTo(nightDateTime) < 0) {
-      firstTime = nightDateTime;
-    } else {
-      firstTime = breakfastDateTime.add(Duration(days: 1));
+    // Logic: Calculate `firstDayMedicineTime`
+    if (medicine.medicineTime.breakfast) {
+      firstDayMedicineTime.add(
+        DateTime(
+          medicine.dateAdded.year,
+          medicine.dateAdded.month,
+          medicine.dateAdded.day,
+          this._userSettings.breakfastTime.inHours,
+          this._userSettings.breakfastTime.inMinutes % 60,
+        ),
+      );
+    }
+    if (medicine.medicineTime.lunch) {
+      firstDayMedicineTime.add(
+        DateTime(
+          medicine.dateAdded.year,
+          medicine.dateAdded.month,
+          medicine.dateAdded.day,
+          this._userSettings.lunchTime.inHours,
+          this._userSettings.lunchTime.inMinutes % 60,
+        ),
+      );
+    }
+    if (medicine.medicineTime.dinner) {
+      firstDayMedicineTime.add(
+        DateTime(
+          medicine.dateAdded.year,
+          medicine.dateAdded.month,
+          medicine.dateAdded.day,
+          this._userSettings.dinnerTime.inHours,
+          this._userSettings.dinnerTime.inMinutes % 60,
+        ),
+      );
+    }
+    if (medicine.medicineTime.night) {
+      firstDayMedicineTime.add(
+        DateTime(
+          medicine.dateAdded.year,
+          medicine.dateAdded.month,
+          medicine.dateAdded.day,
+          this._userSettings.nightTime.inHours,
+          this._userSettings.nightTime.inMinutes % 60,
+        ),
+      );
     }
 
-    List<Duration> durations = <Duration>[
-      this._userSettings.lunchTime - this._userSettings.breakfastTime,
-      this._userSettings.dinnerTime - this._userSettings.lunchTime,
-      this._userSettings.nightTime - this._userSettings.dinnerTime,
-      Duration(days: 1) - this._userSettings.nightTime + this._userSettings.breakfastTime,
-    ];
+    // Logic: Calculate `durations`
+    for (int i = 0; i < firstDayMedicineTime.length - 1; i++) {
+      durations.add(
+        Duration(
+              hours: firstDayMedicineTime[i + 1].hour,
+              minutes: firstDayMedicineTime[i + 1].minute,
+            ) -
+            Duration(
+              hours: firstDayMedicineTime[i].hour,
+              minutes: firstDayMedicineTime[i].minute,
+            ),
+      );
+    }
+    durations.add(
+      Duration(days: 1) -
+          Duration(
+            hours: firstDayMedicineTime[firstDayMedicineTime.length - 1].hour,
+            minutes: firstDayMedicineTime[firstDayMedicineTime.length - 1].minute,
+          ) +
+          Duration(
+            hours: firstDayMedicineTime[0].hour,
+            minutes: firstDayMedicineTime[0].minute,
+          ),
+    );
 
+    // Logic: Calculate `firstMedicineTime`
+    for (int i = 0; i < firstDayMedicineTime.length; i++) {
+      if (medicine.dateAdded.compareTo(firstDayMedicineTime[i]) < 0) {
+        firstMedicineTime = firstDayMedicineTime[i];
+        offset = i;
+        break;
+      }
+    }
+    if (medicine.dateAdded.compareTo(firstDayMedicineTime[firstDayMedicineTime.length - 1]) >= 0) {
+      firstMedicineTime = firstDayMedicineTime[0].add(Duration(days: 1));
+      offset = 0;
+    }
+
+    // Logic: Calculate `medicineTime` (Using `durations` and `firstMedicineTime`)
     for (int i = 0; i < times; i++) {
-      medicineTime.add(firstTime);
-      firstTime.add(durations[i % 4]);
+      medicineTime.add(firstMedicineTime);
+      firstMedicineTime = firstMedicineTime.add(durations[(i + offset) % durations.length]);
     }
 
     return medicineTime;
-  }
-}
-
-class UserSettings {
-  static const Duration _defaultBreakfastTime = Duration(
-    hours: 7,
-    minutes: 0,
-  );
-  static const Duration _defaultLunchTime = Duration(
-    hours: 12,
-    minutes: 0,
-  );
-  static const Duration _defaultDinnerTime = Duration(
-    hours: 18,
-    minutes: 0,
-  );
-  static const Duration _defaultNightTime = Duration(
-    hours: 22,
-    minutes: 0,
-  );
-
-  Duration _breakfastTime;
-  Duration _lunchTime;
-  Duration _dinnerTime;
-  Duration _nightTime;
-
-  UserSettings({
-    Duration breakfastTime,
-    Duration lunchTime,
-    Duration dinnerTime,
-    Duration nightTime,
-  }) {
-    this._breakfastTime = breakfastTime;
-    this._lunchTime = lunchTime;
-    this._dinnerTime = dinnerTime;
-    this._nightTime = nightTime;
-  }
-
-  Duration get breakfastTime => this._breakfastTime;
-  set breakfastTime(breakfastTime) => this._breakfastTime = breakfastTime;
-
-  Duration get lunchTime => this._lunchTime;
-  set lunchTime(lunchTime) => this._lunchTime = lunchTime;
-
-  Duration get dinnerTime => this._dinnerTime;
-  set dinnerTime(dinnerTime) => this._dinnerTime = dinnerTime;
-
-  Duration get nightTime => this._nightTime;
-  set nightTime(nightTime) => this._nightTime = nightTime;
-
-  void resetDefault() {
-    this._breakfastTime = UserSettings._defaultBreakfastTime;
-    this._lunchTime = UserSettings._defaultLunchTime;
-    this._dinnerTime = UserSettings._defaultDinnerTime;
-    this._nightTime = UserSettings._defaultNightTime;
   }
 }
