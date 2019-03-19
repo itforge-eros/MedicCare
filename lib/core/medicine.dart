@@ -14,8 +14,8 @@ class Medicine {
   int _doseAmount;
   int _totalAmount;
   int _remainingAmount;
-  DateTime _dateAdded;
-  List<DateTime> _medicineTime;
+  MedicineTime _medicineTime;
+  final DateTime _dateAdded = DateTime.now();
 
   Medicine({
     String id,
@@ -25,8 +25,7 @@ class Medicine {
     int doseAmount,
     int totalAmount,
     int remainingAmount,
-    DateTime dateAdded,
-    List<DateTime> medicineTime,
+    MedicineTime medicineTime,
   }) {
     this._id = id;
     this._name = name;
@@ -35,7 +34,6 @@ class Medicine {
     this._doseAmount = doseAmount;
     this._totalAmount = totalAmount;
     this._remainingAmount = remainingAmount;
-    this._dateAdded = dateAdded;
     this._medicineTime = medicineTime;
   }
 
@@ -60,17 +58,53 @@ class Medicine {
   int get remainingAmount => this._remainingAmount;
   set remainingAmount(remainingAmount) => this._remainingAmount = remainingAmount;
 
-  DateTime get dateAdded => this._dateAdded;
-  set dateAdded(dateAdded) => this._dateAdded = dateAdded;
-
-  List<DateTime> get medicineTime => this._medicineTime;
+  MedicineTime get medicineTime => this._medicineTime;
   set medicineTime(medicineTime) => this._medicineTime = medicineTime;
 
-  void takeMedicine(int amount) {
-    if (this._remainingAmount - amount < 0) {
+  DateTime get dateAdded => this._dateAdded;
+
+  void takeMedicine() {
+    if (this._remainingAmount - this._doseAmount < 0) {
       throw OutOfMedicineException();
     } else {
-      this._remainingAmount -= amount;
+      this._remainingAmount -= this._doseAmount;
     }
   }
+}
+
+class MedicineTime {
+  bool _breakfast;
+  bool _lunch;
+  bool _dinner;
+  bool _night;
+  bool _beforeMeal;
+
+  MedicineTime({
+    bool breakfast = false,
+    bool lunch = false,
+    bool dinner = false,
+    bool night = false,
+    bool beforeMeal = false,
+  }) {
+    this._breakfast = breakfast;
+    this._lunch = lunch;
+    this._dinner = dinner;
+    this._night = night;
+    this._beforeMeal = beforeMeal;
+  }
+
+  bool get breakfast => this._breakfast;
+  set breakfast(breakfast) => this._breakfast = breakfast;
+
+  bool get lunch => this._lunch;
+  set lunch(lunch) => this._lunch = lunch;
+
+  bool get dinner => this._dinner;
+  set dinner(dinner) => this._dinner = dinner;
+
+  bool get night => this._night;
+  set night(night) => this._night = night;
+
+  bool get beforeMeal => this._beforeMeal;
+  set beforeMeal(beforeMeal) => this._beforeMeal = beforeMeal;
 }
