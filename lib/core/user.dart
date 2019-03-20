@@ -98,102 +98,64 @@ class User {
   set hospitalList(hospitalList) => this._hospitalList = hospitalList;
 
   List<DateTime> getMedicineTime(Medicine medicine) {
-    final List<DateTime> firstDayMedicineTime = List<DateTime>();
+    DateTime firstMedicineDay;
+    Duration firstMedicineTime;
     final List<Duration> durations = List<Duration>();
     final List<DateTime> medicineTime = List<DateTime>();
+    int offset = 0;
 
-    DateTime firstMedicineTime;
-    final int times = medicine.totalAmount ~/ medicine.doseAmount;
-    int offset;
-
-    // Logic: Calculate `firstDayMedicineTime`
-    if (medicine.medicineTime.breakfast) {
-      firstDayMedicineTime.add(
-        DateTime(
-          medicine.dateAdded.year,
-          medicine.dateAdded.month,
-          medicine.dateAdded.day,
-          this._userSettings.breakfastTime.inHours,
-          this._userSettings.breakfastTime.inMinutes % 60,
-        ),
-      );
+    // Logic: Calculate `firstMedicineDay`
+    firstMedicineDay = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    for (int i = 0; i < 7; i++) {
+      if (medicine.medicineTime.day[firstMedicineDay.weekday - 1]) {
+        break;
+      }
+      firstMedicineDay = firstMedicineDay.add(Duration(days: 1));
     }
-    if (medicine.medicineTime.lunch) {
-      firstDayMedicineTime.add(
-        DateTime(
-          medicine.dateAdded.year,
-          medicine.dateAdded.month,
-          medicine.dateAdded.day,
-          this._userSettings.lunchTime.inHours,
-          this._userSettings.lunchTime.inMinutes % 60,
-        ),
-      );
-    }
-    if (medicine.medicineTime.dinner) {
-      firstDayMedicineTime.add(
-        DateTime(
-          medicine.dateAdded.year,
-          medicine.dateAdded.month,
-          medicine.dateAdded.day,
-          this._userSettings.dinnerTime.inHours,
-          this._userSettings.dinnerTime.inMinutes % 60,
-        ),
-      );
-    }
-    if (medicine.medicineTime.night) {
-      firstDayMedicineTime.add(
-        DateTime(
-          medicine.dateAdded.year,
-          medicine.dateAdded.month,
-          medicine.dateAdded.day,
-          this._userSettings.nightTime.inHours,
-          this._userSettings.nightTime.inMinutes % 60,
-        ),
-      );
-    }
-
-    // Logic: Calculate `durations`
-    for (int i = 0; i < firstDayMedicineTime.length - 1; i++) {
-      durations.add(
-        Duration(
-              hours: firstDayMedicineTime[i + 1].hour,
-              minutes: firstDayMedicineTime[i + 1].minute,
-            ) -
-            Duration(
-              hours: firstDayMedicineTime[i].hour,
-              minutes: firstDayMedicineTime[i].minute,
-            ),
-      );
-    }
-    durations.add(
-      Duration(days: 1) -
-          Duration(
-            hours: firstDayMedicineTime[firstDayMedicineTime.length - 1].hour,
-            minutes: firstDayMedicineTime[firstDayMedicineTime.length - 1].minute,
-          ) +
-          Duration(
-            hours: firstDayMedicineTime[0].hour,
-            minutes: firstDayMedicineTime[0].minute,
-          ),
-    );
 
     // Logic: Calculate `firstMedicineTime`
-    for (int i = 0; i < firstDayMedicineTime.length; i++) {
-      if (medicine.dateAdded.compareTo(firstDayMedicineTime[i]) < 0) {
-        firstMedicineTime = firstDayMedicineTime[i];
-        offset = i;
+    for (int i = 0; i < 4; i++) {
+      if (DateTime.now().day != firstMedicineDay.day) {
+        firstMedicineTime = this._userSettings.userTime[medicine.medicineTime.time.indexOf(true)];
+        offset = 0;
+        break;
+      }
+      if (!medicine.medicineTime.time[i]) {
+        offset--;
+      } else if (Duration(
+            hours: DateTime.now().hour,
+            minutes: DateTime.now().minute,
+          ) <
+          this._userSettings.userTime[i]) {
+        firstMedicineTime = this._userSettings.userTime[i];
+        offset += i;
         break;
       }
     }
-    if (medicine.dateAdded.compareTo(firstDayMedicineTime[firstDayMedicineTime.length - 1]) >= 0) {
-      firstMedicineTime = firstDayMedicineTime[0].add(Duration(days: 1));
-      offset = 0;
-    }
 
-    // Logic: Calculate `medicineTime` (Using `durations` and `firstMedicineTime`)
-    for (int i = 0; i < times; i++) {
-      medicineTime.add(firstMedicineTime);
-      firstMedicineTime = firstMedicineTime.add(durations[(i + offset) % durations.length]);
+    // Logic: Calculate `durations`
+    final List<Duration> oneDayMedicineTime = List<Duration>();
+    for (int i = 0; i < 4; i++) {
+      if (medicine.medicineTime.time[i]) {
+        oneDayMedicineTime.add(this._userSettings.userTime[i]);
+      }
+    }
+    for (int i = 0; i < oneDayMedicineTime.length - 1; i++) {
+      durations.add(oneDayMedicineTime[i + 1] - oneDayMedicineTime[i]);
+    }
+    durations.add(Duration(days: 1) -
+        oneDayMedicineTime[oneDayMedicineTime.length - 1] +
+        oneDayMedicineTime[0]);
+
+    // Logic: Calculate `medicineTime`
+    DateTime temp = firstMedicineDay.add(firstMedicineTime);
+    for (int i = 0; i < (medicine.totalAmount / medicine.doseAmount).ceil(); i++) {
+      medicineTime.add(temp);
+      temp = temp.add(durations[(i + offset) % durations.length]);
+
+      while (!medicine.medicineTime.day[temp.weekday - 1]) {
+        temp = temp.add(Duration(days: 1));
+      }
     }
 
     return medicineTime;

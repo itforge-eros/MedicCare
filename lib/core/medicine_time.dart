@@ -6,57 +6,68 @@
 import 'exceptions.dart';
 
 class MedicineTime {
-  bool _breakfast;
-  bool _lunch;
-  bool _dinner;
-  bool _night;
-  bool _beforeMeal;
+  List<bool> _time = [
+    null, // breakfast
+    null, // lunch
+    null, // dinner
+    null, // sleep
+  ];
+  List<bool> _day = [
+    null, // monday
+    null, // tuesday
+    null, // wednesday
+    null, // thursday
+    null, // friday
+    null, // saturday
+    null, // sunday
+  ];
+  bool _isBeforeMeal;
 
   MedicineTime({
-    bool breakfast = false,
-    bool lunch = false,
-    bool dinner = false,
-    bool night = false,
-    bool beforeMeal = false,
+    List<bool> time,
+    List<bool> day,
+    bool isBeforeMeal = false,
   }) {
-    this._breakfast = breakfast;
-    this._lunch = lunch;
-    this._dinner = dinner;
-    this._night = night;
-    this._beforeMeal = beforeMeal;
-    _checkException();
+    if (time != null) {
+      _checkTimeException(time);
+    }
+    if (day != null) {
+      _checkDayException(day);
+    }
+
+    this._time = time ?? [true, true, true];
+    this._day = day ?? [true, true, true, true, true, true, true];
+    this._isBeforeMeal = isBeforeMeal;
   }
 
-  bool get breakfast => this._breakfast;
-  set breakfast(breakfast) {
-    this._breakfast = breakfast;
-    _checkException();
+  List<bool> get time => this._time;
+  set time(List<bool> time) {
+    _checkTimeException(time);
+    this._time = time;
   }
 
-  bool get lunch => this._lunch;
-  set lunch(lunch) {
-    this._lunch = lunch;
-    _checkException();
+  List<bool> get day => this._day;
+  set day(List<bool> day) {
+    _checkDayException(day);
+    this._day = day;
   }
 
-  bool get dinner => this._dinner;
-  set dinner(dinner) {
-    this._dinner = dinner;
-    _checkException();
-  }
+  bool get isBeforeMeal => this._isBeforeMeal;
+  set isBeforeMeal(bool isBeforeMeal) => this._isBeforeMeal = isBeforeMeal;
 
-  bool get night => this._night;
-  set night(night) {
-    this._night = night;
-    _checkException();
-  }
-
-  bool get beforeMeal => this._beforeMeal;
-  set beforeMeal(beforeMeal) => this._beforeMeal = beforeMeal;
-
-  void _checkException() {
-    if (!(this._breakfast || this._lunch || this._dinner || this._night)) {
+  void _checkTimeException(List<bool> time) {
+    if (time.length != 4) {
+      throw InvalidMedicineTimeException();
+    } else if (!time.contains(true)) {
       throw NoMedicineTimeException();
+    }
+  }
+
+  void _checkDayException(List<bool> day) {
+    if (day.length != 7) {
+      throw InvalidMedicineDayException();
+    } else if (!day.contains(true)) {
+      throw NoMedicineDayException();
     }
   }
 }

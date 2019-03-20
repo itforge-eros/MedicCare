@@ -1,59 +1,65 @@
 ///
 /// user_settings.dart
 /// Class contains data of settings of user
-/// 
+///
 
 class UserSettings {
-  static const Duration _defaultBreakfastTime = Duration(
-    hours: 7,
-    minutes: 0,
-  );
-  static const Duration _defaultLunchTime = Duration(
-    hours: 12,
-    minutes: 0,
-  );
-  static const Duration _defaultDinnerTime = Duration(
-    hours: 18,
-    minutes: 0,
-  );
-  static const Duration _defaultNightTime = Duration(
-    hours: 22,
-    minutes: 0,
-  );
+  static final List<Duration> defaultTime = [
+    Duration(
+      hours: 7,
+      minutes: 0,
+    ),
+    Duration(
+      hours: 12,
+      minutes: 0,
+    ),
+    Duration(
+      hours: 18,
+      minutes: 0,
+    ),
+    Duration(
+      hours: 22,
+      minutes: 0,
+    ),
+  ];
 
-  Duration _breakfastTime;
-  Duration _lunchTime;
-  Duration _dinnerTime;
-  Duration _nightTime;
+  final List<Duration> _userTime = [
+    null, // breakfast
+    null, // lunch
+    null, // dinner
+    null, // sleep
+  ];
 
   UserSettings({
-    Duration breakfastTime = UserSettings._defaultBreakfastTime,
-    Duration lunchTime = UserSettings._defaultLunchTime,
-    Duration dinnerTime = UserSettings._defaultDinnerTime,
-    Duration nightTime = UserSettings._defaultNightTime,
+    Duration breakfastTime,
+    Duration lunchTime,
+    Duration dinnerTime,
+    Duration sleepTime,
   }) {
-    this._breakfastTime = breakfastTime;
-    this._lunchTime = lunchTime;
-    this._dinnerTime = dinnerTime;
-    this._nightTime = nightTime;
+    this._userTime[0] = breakfastTime ?? UserSettings.defaultTime[0];
+    this._userTime[1] = lunchTime ?? UserSettings.defaultTime[1];
+    this._userTime[2] = dinnerTime ?? UserSettings.defaultTime[2];
+    this._userTime[3] = sleepTime ?? UserSettings.defaultTime[3];
   }
 
-  Duration get breakfastTime => this._breakfastTime;
-  set breakfastTime(breakfastTime) => this._breakfastTime = breakfastTime;
+  List<Duration> get userTime => this._userTime;
 
-  Duration get lunchTime => this._lunchTime;
-  set lunchTime(lunchTime) => this._lunchTime = lunchTime;
+  Duration get breakfastTime => this._userTime[0];
+  set breakfastTime(Duration breakfastTime) => this._userTime[0] = breakfastTime;
 
-  Duration get dinnerTime => this._dinnerTime;
-  set dinnerTime(dinnerTime) => this._dinnerTime = dinnerTime;
+  Duration get lunchTime => this._userTime[1];
+  set lunchTime(Duration lunchTime) => this._userTime[1] = lunchTime;
 
-  Duration get nightTime => this._nightTime;
-  set nightTime(nightTime) => this._nightTime = nightTime;
+  Duration get dinnerTime => this._userTime[2];
+  set dinnerTime(Duration dinnerTime) => this._userTime[2] = dinnerTime;
+
+  Duration get sleepTime => this._userTime[3];
+  set sleepTime(Duration sleepTime) => this._userTime[3] = sleepTime;
 
   void resetDefault() {
-    this._breakfastTime = UserSettings._defaultBreakfastTime;
-    this._lunchTime = UserSettings._defaultLunchTime;
-    this._dinnerTime = UserSettings._defaultDinnerTime;
-    this._nightTime = UserSettings._defaultNightTime;
+    this._userTime[0] = UserSettings.defaultTime[0];
+    this._userTime[1] = UserSettings.defaultTime[1];
+    this._userTime[2] = UserSettings.defaultTime[2];
+    this._userTime[3] = UserSettings.defaultTime[3];
   }
 }
