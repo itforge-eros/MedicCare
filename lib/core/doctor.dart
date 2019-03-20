@@ -1,7 +1,9 @@
 ///
 /// doctor.dart
 /// Class contains data of doctor
-/// 
+///
+
+import 'package:flutter/material.dart';
 
 class Doctor {
   String _id;
@@ -11,6 +13,8 @@ class Doctor {
   String _ward;
   String _hospital;
   String _phone;
+  String _notes;
+  Image _image;
 
   Doctor({
     String id,
@@ -20,6 +24,8 @@ class Doctor {
     String ward,
     String hospital,
     String phone,
+    String notes,
+    Image image,
   }) {
     this._id = id;
     this._prefix = prefix;
@@ -28,26 +34,34 @@ class Doctor {
     this._ward = ward;
     this._hospital = hospital;
     this._phone = phone;
+    this._notes = notes;
+    this._image = image;
   }
 
   String get id => this._id;
-  set id(id) => this._id = id;
+  set id(String id) => this._id = id;
 
   String get prefix => this._prefix;
-  set prefix(prefix) => this._prefix = prefix;
+  set prefix(String prefix) => this._prefix = prefix;
 
   String get firstName => this._firstName;
-  set firstName(firstName) => this._firstName = firstName;
+  set firstName(String firstName) => this._firstName = firstName;
 
   String get lastName => this._lastName;
-  set lastName(lastName) => this._lastName = lastName;
+  set lastName(String lastName) => this._lastName = lastName;
 
   String get ward => this._ward;
-  set ward(ward) => this._ward = ward;
+  set ward(String ward) => this._ward = ward;
 
   String get hospital => this._hospital;
-  set hospital(hospital) => this._hospital = hospital;
+  set hospital(String hospital) => this._hospital = hospital;
 
   String get phone => this._phone;
-  set phone(phone) => this._phone = phone;
+  set phone(String phone) => this._phone = phone;
+
+  String get notes => this._notes;
+  set notes(String notes) => this._notes = notes;
+
+  Image get image => this._image;
+  set image(Image image) => this._image = image;
 }
