@@ -59,43 +59,43 @@ class User {
   }
 
   String get id => this._id;
-  set id(id) => this._id = id;
+  set id(String id) => this._id = id;
 
   String get email => this._email;
-  set email(email) => this._email = email;
+  set email(String email) => this._email = email;
 
   String get firstName => this._firstName;
-  set firstName(firstName) => this._firstName = firstName;
+  set firstName(String firstName) => this._firstName = firstName;
 
   String get lastName => this._lastName;
-  set lastName(lastName) => this._lastName = lastName;
+  set lastName(String lastName) => this._lastName = lastName;
 
   String get gender => this._gender;
-  set gender(gender) => this._gender = gender;
+  set gender(String gender) => this._gender = gender;
 
   DateTime get birthDate => this._birthDate;
-  set birthDate(birthDate) => this._birthDate = birthDate;
+  set birthDate(DateTime birthDate) => this._birthDate = birthDate;
 
   double get height => this._height;
-  set height(height) => this._height = height;
+  set height(double height) => this._height = height;
 
   double get weight => this._weight;
-  set weight(weight) => this._weight = weight;
+  set weight(double weight) => this._weight = weight;
 
   Image get image => this._image;
-  set image(image) => this._image = image;
+  set image(Image image) => this._image = image;
 
   List<Medicine> get medicineList => this._medicineList;
-  set medicineList(medicineList) => this._medicineList = medicineList;
+  set medicineList(List<Medicine> medicineList) => this._medicineList = medicineList;
 
   List<Appointment> get appointmentList => this._appointmentList;
-  set appointmentList(appointmentList) => this._appointmentList = appointmentList;
+  set appointmentList(List<Appointment> appointmentList) => this._appointmentList = appointmentList;
 
   List<Doctor> get doctorList => this._doctorList;
-  set doctorList(doctorList) => this._doctorList = doctorList;
+  set doctorList(List<Doctor> doctorList) => this._doctorList = doctorList;
 
   List<Hospital> get hospitalList => this._hospitalList;
-  set hospitalList(hospitalList) => this._hospitalList = hospitalList;
+  set hospitalList(List<Hospital> hospitalList) => this._hospitalList = hospitalList;
 
   List<DateTime> getMedicineTime(Medicine medicine) {
     DateTime firstDay;
@@ -143,9 +143,7 @@ class User {
     for (int i = 0; i < oneDayTime.length - 1; i++) {
       durations.add(oneDayTime[i + 1] - oneDayTime[i]);
     }
-    durations.add(Duration(days: 1) -
-        oneDayTime[oneDayTime.length - 1] +
-        oneDayTime[0]);
+    durations.add(Duration(days: 1) - oneDayTime[oneDayTime.length - 1] + oneDayTime[0]);
 
     // Logic: Calculate `medicineTime`
     firstDay = firstDay.add(firstTime);

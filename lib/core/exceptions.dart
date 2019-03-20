@@ -9,7 +9,6 @@ class InvalidMedicineDayException extends Exception {
   }
 }
 
-
 class InvalidMedicineTimeException extends Exception {
   factory InvalidMedicineTimeException() {
     return InvalidMedicineTimeException();
