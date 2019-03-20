@@ -25,17 +25,17 @@ class Hospital {
   }
 
   String get id => this._id;
-  set id(id) => this._id = id;
+  set id(String id) => this._id = id;
 
   String get name => this._name;
-  set name(name) => this._name = name;
+  set name(String name) => this._name = name;
 
   String get address => this._address;
-  set address(address) => this._address = address;
+  set address(String address) => this._address = address;
 
   String get notes => this._notes;
-  set notes(notes) => this._notes = notes;
+  set notes(String notes) => this._notes = notes;
 
   Image get image => this._image;
-  set image(image) => this._image = image;
+  set image(Image image) => this._image = image;
 }

@@ -28,17 +28,17 @@ class Appointment {
   }
 
   String get title => this._title;
-  set title(title) => this._title = title;
+  set title(String title) => this._title = title;
 
   String get description => this._description;
-  set description(description) => this._description = description;
+  set description(String description) => this._description = description;
 
   Doctor get doctor => this._doctor;
-  set doctor(doctor) => this._doctor = doctor;
+  set doctor(Doctor doctor) => this._doctor = doctor;
 
   Hospital get hospital => this._hospital;
-  set hospital(hospital) => this._hospital = hospital;
+  set hospital(Hospital hospital) => this._hospital = hospital;
 
   DateTime get dateTime => this._dateTime;
-  set dateTime(dateTime) => this._dateTime = dateTime;
+  set dateTime(DateTime dateTime) => this._dateTime = dateTime;
 }
