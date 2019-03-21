@@ -3,6 +3,20 @@
 /// Contains Exception classes of MedicCare application
 ///
 
+///
+/// Exceptions for `util` package
+///
+
+class InvalidEmailAddressException extends Exception {
+  factory InvalidEmailAddressException() {
+    return InvalidEmailAddressException();
+  }
+}
+
+///
+/// Exceptions for `core` package
+///
+
 class InvalidMedicineDayException extends Exception {
   factory InvalidMedicineDayException() {
     return InvalidMedicineDayException();

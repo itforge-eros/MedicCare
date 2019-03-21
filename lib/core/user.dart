@@ -4,11 +4,11 @@
 ///
 
 import 'package:flutter/material.dart';
-import 'appointment.dart';
-import 'doctor.dart';
-import 'hospital.dart';
-import 'medicine.dart';
-import 'user_settings.dart';
+import 'package:mediccare/core/appointment.dart';
+import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/core/hospital.dart';
+import 'package:mediccare/core/medicine.dart';
+import 'package:mediccare/core/user_settings.dart';
 
 class User {
   String _id;
@@ -51,11 +51,11 @@ class User {
     this._height = height;
     this._weight = weight;
     this._image = image;
-    this._medicineList = medicineList;
-    this._appointmentList = appointmentList;
-    this._doctorList = doctorList;
-    this._hospitalList = hospitalList;
-    this._userSettings = userSettings;
+    this._medicineList = medicineList ?? List<Medicine>();
+    this._appointmentList = appointmentList ?? List<Appointment>();
+    this._doctorList = doctorList ?? List<Doctor>();
+    this._hospitalList = hospitalList ?? List<Hospital>();
+    this._userSettings = userSettings ?? UserSettings();
   }
 
   String get id => this._id;
@@ -97,29 +97,29 @@ class User {
   List<Hospital> get hospitalList => this._hospitalList;
   set hospitalList(List<Hospital> hospitalList) => this._hospitalList = hospitalList;
 
-  List<DateTime> getMedicineTime(Medicine medicine) {
+  List<DateTime> getMedicineSchedule(Medicine medicine) {
     DateTime firstDay;
     Duration firstTime;
     final List<Duration> oneDayTime = List<Duration>();
     final List<Duration> durations = List<Duration>();
-    final List<DateTime> medicineTime = List<DateTime>();
+    final List<DateTime> medicineSchedule = List<DateTime>();
     int offset = 0;
 
     // Logic: Calculate `firstDay`
     firstDay = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    while (!medicine.medicineTime.day[firstDay.weekday - 1]) {
+    while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
       firstDay = firstDay.add(Duration(days: 1));
     }
 
     // Logic: Calculate `firstTime`
     for (int i = 0; i < 4; i++) {
       if (DateTime.now().day != firstDay.day) {
-        firstTime = this._userSettings.userTime[medicine.medicineTime.time.indexOf(true)];
+        firstTime = this._userSettings.userTime[medicine.medicineSchedule.time.indexOf(true)];
         offset = 0;
         break;
       }
 
-      if (!medicine.medicineTime.time[i]) {
+      if (!medicine.medicineSchedule.time[i]) {
         offset--;
       } else if (Duration(
             hours: DateTime.now().hour,
@@ -134,7 +134,7 @@ class User {
 
     // Logic: Calculate `oneDayTime`
     for (int i = 0; i < 4; i++) {
-      if (medicine.medicineTime.time[i]) {
+      if (medicine.medicineSchedule.time[i]) {
         oneDayTime.add(this._userSettings.userTime[i]);
       }
     }
@@ -145,17 +145,19 @@ class User {
     }
     durations.add(Duration(days: 1) - oneDayTime[oneDayTime.length - 1] + oneDayTime[0]);
 
-    // Logic: Calculate `medicineTime`
+    // Logic: Calculate `medicineSchedule`
     firstDay = firstDay.add(firstTime);
-    for (int i = 0; i < (medicine.totalAmount / medicine.doseAmount).ceil(); i++) {
-      medicineTime.add(firstDay);
+    for (int i = 0;
+        i < (medicine.totalAmount / medicine.doseAmount).ceil() + medicine.skippedTimes;
+        i++) {
+      medicineSchedule.add(firstDay);
       firstDay = firstDay.add(durations[(i + offset) % durations.length]);
 
-      while (!medicine.medicineTime.day[firstDay.weekday - 1]) {
+      while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
         firstDay = firstDay.add(Duration(days: 1));
       }
     }
 
-    return medicineTime;
+    return medicineSchedule;
   }
 }
