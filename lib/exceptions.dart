@@ -7,9 +7,27 @@
 /// Exceptions for `util` package
 ///
 
+class EmptyFieldException extends Exception {
+  factory EmptyFieldException() {
+    return EmptyFieldException();
+  }
+}
+
 class InvalidEmailAddressException extends Exception {
   factory InvalidEmailAddressException() {
     return InvalidEmailAddressException();
+  }
+}
+
+class MismatchPasswordFieldsException extends Exception {
+  factory MismatchPasswordFieldsException() {
+    return MismatchPasswordFieldsException();
+  }
+}
+
+class PasswordLengthException extends Exception {
+  factory PasswordLengthException() {
+    return PasswordLengthException();
   }
 }
 
