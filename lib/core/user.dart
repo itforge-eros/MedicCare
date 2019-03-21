@@ -97,7 +97,67 @@ class User {
   List<Hospital> get hospitalList => this._hospitalList;
   set hospitalList(List<Hospital> hospitalList) => this._hospitalList = hospitalList;
 
-  List<DateTime> getMedicineSchedule(Medicine medicine) {
+  void addMedicine(Medicine medicine) {
+    this._medicineList.add(medicine);
+  }
+
+  bool removeMedicine(String id){
+    for (int i = 0; i < this._medicineList.length; i++) {
+      if (id == this._medicineList[i].id) {
+        this._medicineList.removeAt(i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void addAppointment(Appointment appointment) {
+    this._appointmentList.add(appointment);
+  }
+
+  bool removeAppointment(String id){
+    for (int i = 0; i < this._appointmentList.length; i++) {
+      if (id == this._appointmentList[i].id) {
+        this._appointmentList.removeAt(i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void addDoctor(Doctor doctor) {
+    this._doctorList.add(doctor);
+  }
+
+  bool removeDoctor(String id){
+    for (int i = 0; i < this._doctorList.length; i++) {
+      if (id == this._doctorList[i].id) {
+        this._doctorList.removeAt(i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void addHospital(Hospital hospital) {
+    this._hospitalList.add(hospital);
+  }
+
+  bool removeHospital(String id){
+    for (int i = 0; i < this._hospitalList.length; i++) {
+      if (id == this._hospitalList[i].id) {
+        this._hospitalList.removeAt(i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getMedicineOverview() {
+    // TODO: Implements method to return medicine in overview page
+  }
+
+  List<DateTime> _getMedicineSchedule(Medicine medicine) {
     DateTime firstDay;
     Duration firstTime;
     final List<Duration> oneDayTime = List<Duration>();
