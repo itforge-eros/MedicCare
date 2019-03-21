@@ -157,7 +157,7 @@ class User {
     // TODO: Implements method to return medicine in overview page
   }
 
-  List<DateTime> _getMedicineSchedule(Medicine medicine) {
+  List<DateTime> getMedicineSchedule(Medicine medicine) {
     DateTime firstDay;
     Duration firstTime;
     final List<Duration> oneDayTime = List<Duration>();
