@@ -3,8 +3,8 @@
 /// Class contains data of appointment
 ///
 
-import 'doctor.dart';
-import 'hospital.dart';
+import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/core/hospital.dart';
 
 class Appointment {
   String _title;
