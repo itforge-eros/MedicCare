@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/hospital.dart';
+import 'package:mediccare/core/medicine_overview_item.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/user_settings.dart';
 
@@ -101,7 +102,7 @@ class User {
     this._medicineList.add(medicine);
   }
 
-  bool removeMedicine(String id){
+  bool removeMedicine(String id) {
     for (int i = 0; i < this._medicineList.length; i++) {
       if (id == this._medicineList[i].id) {
         this._medicineList.removeAt(i);
@@ -115,7 +116,7 @@ class User {
     this._appointmentList.add(appointment);
   }
 
-  bool removeAppointment(String id){
+  bool removeAppointment(String id) {
     for (int i = 0; i < this._appointmentList.length; i++) {
       if (id == this._appointmentList[i].id) {
         this._appointmentList.removeAt(i);
@@ -129,7 +130,7 @@ class User {
     this._doctorList.add(doctor);
   }
 
-  bool removeDoctor(String id){
+  bool removeDoctor(String id) {
     for (int i = 0; i < this._doctorList.length; i++) {
       if (id == this._doctorList[i].id) {
         this._doctorList.removeAt(i);
@@ -143,7 +144,7 @@ class User {
     this._hospitalList.add(hospital);
   }
 
-  bool removeHospital(String id){
+  bool removeHospital(String id) {
     for (int i = 0; i < this._hospitalList.length; i++) {
       if (id == this._hospitalList[i].id) {
         this._hospitalList.removeAt(i);
@@ -153,11 +154,28 @@ class User {
     return false;
   }
 
-  getMedicineOverview() {
-    // TODO: Implements method to return medicine in overview page
+  // Method: Get all medicine overview item list
+  List<MedicineOverviewItem> getMedicineOverview() {
+    final List<MedicineOverviewItem> medicineOverviewItemList = List<MedicineOverviewItem>();
+    List<DateTime> temp = List<DateTime>();
+
+    for (int i = 0; i < this._medicineList.length; i++) {
+      temp = this._getMedicineSchedule(this._medicineList[i]);
+      for (int j = 0; j < temp.length; j++) {
+        medicineOverviewItemList.add(MedicineOverviewItem(
+          medicine: this._medicineList[i],
+          dateTime: temp[j],
+        ));
+      }
+    }
+
+    medicineOverviewItemList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
+    return medicineOverviewItemList;
   }
 
-  List<DateTime> getMedicineSchedule(Medicine medicine) {
+  // Private method: Get medicine schedule of a single medicine
+  List<DateTime> _getMedicineSchedule(Medicine medicine) {
     DateTime firstDay;
     Duration firstTime;
     final List<Duration> oneDayTime = List<Duration>();

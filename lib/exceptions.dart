@@ -35,6 +35,12 @@ class PasswordLengthException extends Exception {
 /// Exceptions for `core` package
 ///
 
+class IncompleteDataException extends Exception {
+  factory IncompleteDataException() {
+    return IncompleteDataException();
+  }
+}
+
 class InvalidMedicineDayException extends Exception {
   factory InvalidMedicineDayException() {
     return InvalidMedicineDayException();

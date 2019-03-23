@@ -27,7 +27,7 @@ class Medicine {
     String type,
     Image image,
     int doseAmount = 1,
-    int totalAmount,
+    int totalAmount = 10,
     MedicineSchedule medicineSchedule,
   }) {
     this._id = id;
