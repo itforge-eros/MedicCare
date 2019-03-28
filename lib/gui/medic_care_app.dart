@@ -1,5 +1,5 @@
 ///
-/// `mediccare_app.dart`
+/// `medic_scare_app.dart`
 /// Main MedicCare application class
 ///
 
