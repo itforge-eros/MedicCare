@@ -1,5 +1,5 @@
 ///
-/// user_settings.dart
+/// `user_settings.dart`
 /// Class contains data of settings of user
 ///
 

@@ -1,31 +1,39 @@
 ///
-/// exceptions.dart
+/// `exceptions.dart`
 /// Contains Exception classes of MedicCare application
 ///
 
 ///
-/// Exceptions for `util` package
+/// Package: `util`
 ///
 
 class EmptyFieldException extends Exception {
+  /// Class: `Validator` 
+  /// Event: At least one of text form fields is empty.
   factory EmptyFieldException() {
     return EmptyFieldException();
   }
 }
 
 class InvalidEmailAddressException extends Exception {
+  /// Class: `Validator`
+  /// Event: Invalid email address.
   factory InvalidEmailAddressException() {
     return InvalidEmailAddressException();
   }
 }
 
 class MismatchPasswordFieldsException extends Exception {
+  /// Class: `Validator`
+  /// Event: Registration password fields mismatch.
   factory MismatchPasswordFieldsException() {
     return MismatchPasswordFieldsException();
   }
 }
 
 class PasswordLengthException extends Exception {
+  /// Class: `Validator`
+  /// Event: Registration password length is too short.
   factory PasswordLengthException() {
     return PasswordLengthException();
   }
@@ -36,36 +44,48 @@ class PasswordLengthException extends Exception {
 ///
 
 class IncompleteDataException extends Exception {
+  /// Class: `MedicineOverviewItem`
+  /// Event: At least one argument to create an object is determined null in which should not be.
   factory IncompleteDataException() {
     return IncompleteDataException();
   }
 }
 
 class InvalidMedicineDayException extends Exception {
+  /// Class: `MedicineSchedule`
+  /// Event: Medicine day data is determined not to be a list of 7 booleans.
   factory InvalidMedicineDayException() {
     return InvalidMedicineDayException();
   }
 }
 
 class InvalidMedicineTimeException extends Exception {
+  /// Class: `MedicineSchedule`
+  /// Event: Medicine time data is determined not to be a list of 4 booleans.
   factory InvalidMedicineTimeException() {
     return InvalidMedicineTimeException();
   }
 }
 
 class NoMedicineDayException extends Exception {
+  /// Class: `MedicineSchedule`
+  /// Event: Medicine day data is determined to be all false, which there must be at least one true.
   factory NoMedicineDayException() {
     return NoMedicineDayException();
   }
 }
 
 class NoMedicineTimeException extends Exception {
+  /// Class: `MedicineSchedule`
+  /// Event: Medicine time data is determined to be all false, which there must be at least one true.
   factory NoMedicineTimeException() {
     return NoMedicineTimeException();
   }
 }
 
 class OutOfMedicineException extends Exception {
+  /// Class: `Medicine`
+  /// Event: Attempt to take the medicine which has already ran out.
   factory OutOfMedicineException() {
     return OutOfMedicineException();
   }

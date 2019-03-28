@@ -1,5 +1,6 @@
 ///
-///
+/// `medicine_overview_item.dart`
+/// Class contains data in order to create GUI of medicine in the overview page
 ///
 
 import 'package:mediccare/core/medicine.dart';
@@ -29,7 +30,5 @@ class MedicineOverviewItem {
   bool get isDone => this._isDone;
   set isDone(bool isDone) => this._isDone = isDone;
 
-  String toString() {
-    return this._medicine.name + ' ' + this._dateTime.toString();
-  }
+  String toString() => this._medicine.name + ' ' + this._dateTime.toString();
 }

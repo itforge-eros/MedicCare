@@ -1,5 +1,5 @@
 ///
-/// medicine.dart
+/// `medicine.dart`
 /// Class contains data of medicine
 ///
 

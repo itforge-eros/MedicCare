@@ -1,5 +1,5 @@
 ///
-/// hospital.dart
+/// `hospital.dart`
 /// Class contains data of hospital
 ///
 

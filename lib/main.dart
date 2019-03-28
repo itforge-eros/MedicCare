@@ -1,5 +1,5 @@
 ///
-/// main.dart
+/// `main.dart`
 /// Main file for running MedicCare application
 ///
 

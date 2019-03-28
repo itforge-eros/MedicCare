@@ -1,5 +1,5 @@
 ///
-/// medicine_schedule.dart
+/// `medicine_schedule.dart`
 /// Class contains data of time of medicine
 ///
 

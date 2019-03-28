@@ -1,5 +1,5 @@
 ///
-/// appointment.dart
+/// `appointment.dart`
 /// Class contains data of appointment
 ///
 
