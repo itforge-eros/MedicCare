@@ -1,11 +1,11 @@
 ///
-/// medicine_time.dart
+/// `medicine_schedule.dart`
 /// Class contains data of time of medicine
 ///
 
-import 'exceptions.dart';
+import 'package:mediccare/exceptions.dart';
 
-class MedicineTime {
+class MedicineSchedule {
   List<bool> _time = [
     null, // breakfast
     null, // lunch
@@ -23,7 +23,7 @@ class MedicineTime {
   ];
   bool _isBeforeMeal;
 
-  MedicineTime({
+  MedicineSchedule({
     List<bool> time,
     List<bool> day,
     bool isBeforeMeal = false,
@@ -35,7 +35,7 @@ class MedicineTime {
       _checkDayException(day);
     }
 
-    this._time = time ?? [true, true, true];
+    this._time = time ?? [true, true, true, false];
     this._day = day ?? [true, true, true, true, true, true, true];
     this._isBeforeMeal = isBeforeMeal;
   }

@@ -1,12 +1,13 @@
 ///
-/// appointment.dart
+/// `appointment.dart`
 /// Class contains data of appointment
 ///
 
-import 'doctor.dart';
-import 'hospital.dart';
+import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/core/hospital.dart';
 
 class Appointment {
+  String _id;
   String _title;
   String _description;
   Doctor _doctor;
@@ -14,18 +15,23 @@ class Appointment {
   DateTime _dateTime;
 
   Appointment({
+    String id,
     String title,
     String description,
     Doctor doctor,
     Hospital hospital,
     DateTime dateTime,
   }) {
+    this._id = id;
     this._title = title;
     this._description = description;
     this._doctor = doctor;
     this._hospital = hospital;
     this._dateTime = dateTime;
   }
+
+  String get id => this._id;
+  set id(String id) => this._id = id;
 
   String get title => this._title;
   set title(String title) => this._title = title;

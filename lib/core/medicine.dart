@@ -1,41 +1,45 @@
 ///
-/// medicine.dart
+/// `medicine.dart`
 /// Class contains data of medicine
 ///
 
 import 'package:flutter/material.dart';
-import 'exceptions.dart';
-import 'medicine_time.dart';
+import 'package:mediccare/exceptions.dart';
+import 'package:mediccare/core/medicine_schedule.dart';
 
 class Medicine {
   String _id;
   String _name;
   String _description;
+  String _type;
   Image _image;
   int _doseAmount;
   int _totalAmount;
   int _remainingAmount;
-  MedicineTime _medicineTime;
+  int _skippedTimes;
+  MedicineSchedule _medicineSchedule;
   final DateTime _dateAdded = DateTime.now();
 
   Medicine({
     String id,
     String name,
     String description,
+    String type,
     Image image,
-    int doseAmount,
-    int totalAmount,
-    int remainingAmount,
-    MedicineTime medicineTime,
+    int doseAmount = 1,
+    int totalAmount = 10,
+    MedicineSchedule medicineSchedule,
   }) {
     this._id = id;
     this._name = name;
     this._description = description;
+    this._type = type;
     this._image = image;
     this._doseAmount = doseAmount;
     this._totalAmount = totalAmount;
-    this._remainingAmount = remainingAmount;
-    this._medicineTime = medicineTime;
+    this._remainingAmount = totalAmount;
+    this._skippedTimes = 0;
+    this._medicineSchedule = medicineSchedule;
   }
 
   String get id => this._id;
@@ -47,6 +51,9 @@ class Medicine {
   String get description => this._description;
   set description(String description) => this._description = description;
 
+  String get type => this._type;
+  set type(String type) => this._type = type;
+
   Image get image => this._image;
   set image(Image image) => this._image = image;
 
@@ -57,18 +64,26 @@ class Medicine {
   set totalAmount(int totalAmount) => this._totalAmount = totalAmount;
 
   int get remainingAmount => this._remainingAmount;
-  set remainingAmount(int remainingAmount) => this._remainingAmount = remainingAmount;
 
-  MedicineTime get medicineTime => this._medicineTime;
-  set medicineTime(MedicineTime medicineTime) => this._medicineTime = medicineTime;
+  int get skippedTimes => this._skippedTimes;
+
+  MedicineSchedule get medicineSchedule => this._medicineSchedule;
+  set medicineSchedule(MedicineSchedule medicineSchedule) =>
+      this._medicineSchedule = medicineSchedule;
 
   DateTime get dateAdded => this._dateAdded;
 
   void takeMedicine() {
-    if (this._remainingAmount - this._doseAmount < 0) {
+    if (this._remainingAmount == 0) {
       throw OutOfMedicineException();
+    } else if (this._remainingAmount - this._doseAmount < 0) {
+      this._remainingAmount = 0;
     } else {
       this._remainingAmount -= this._doseAmount;
     }
+  }
+
+  void skipMedicine() {
+    this._skippedTimes++;
   }
 }

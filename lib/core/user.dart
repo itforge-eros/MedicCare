@@ -1,14 +1,15 @@
 ///
-/// user.dart
+/// `user.dart`
 /// Class contains data of user
 ///
 
 import 'package:flutter/material.dart';
-import 'appointment.dart';
-import 'doctor.dart';
-import 'hospital.dart';
-import 'medicine.dart';
-import 'user_settings.dart';
+import 'package:mediccare/core/appointment.dart';
+import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/core/hospital.dart';
+import 'package:mediccare/core/medicine_overview_item.dart';
+import 'package:mediccare/core/medicine.dart';
+import 'package:mediccare/core/user_settings.dart';
 
 class User {
   String _id;
@@ -51,11 +52,11 @@ class User {
     this._height = height;
     this._weight = weight;
     this._image = image;
-    this._medicineList = medicineList;
-    this._appointmentList = appointmentList;
-    this._doctorList = doctorList;
-    this._hospitalList = hospitalList;
-    this._userSettings = userSettings;
+    this._medicineList = medicineList ?? List<Medicine>();
+    this._appointmentList = appointmentList ?? List<Appointment>();
+    this._doctorList = doctorList ?? List<Doctor>();
+    this._hospitalList = hospitalList ?? List<Hospital>();
+    this._userSettings = userSettings ?? UserSettings();
   }
 
   String get id => this._id;
@@ -97,29 +98,106 @@ class User {
   List<Hospital> get hospitalList => this._hospitalList;
   set hospitalList(List<Hospital> hospitalList) => this._hospitalList = hospitalList;
 
-  List<DateTime> getMedicineTime(Medicine medicine) {
+  void addMedicine(Medicine medicine) {
+    this._medicineList.add(medicine);
+  }
+
+  bool removeMedicine(String id) {
+    for (int i = 0; i < this._medicineList.length; i++) {
+      if (id == this._medicineList[i].id) {
+        this._medicineList.removeAt(i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void addAppointment(Appointment appointment) {
+    this._appointmentList.add(appointment);
+  }
+
+  bool removeAppointment(String id) {
+    for (int i = 0; i < this._appointmentList.length; i++) {
+      if (id == this._appointmentList[i].id) {
+        this._appointmentList.removeAt(i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void addDoctor(Doctor doctor) {
+    this._doctorList.add(doctor);
+  }
+
+  bool removeDoctor(String id) {
+    for (int i = 0; i < this._doctorList.length; i++) {
+      if (id == this._doctorList[i].id) {
+        this._doctorList.removeAt(i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void addHospital(Hospital hospital) {
+    this._hospitalList.add(hospital);
+  }
+
+  bool removeHospital(String id) {
+    for (int i = 0; i < this._hospitalList.length; i++) {
+      if (id == this._hospitalList[i].id) {
+        this._hospitalList.removeAt(i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Method: Get all medicine overview item list
+  List<MedicineOverviewItem> getMedicineOverview() {
+    final List<MedicineOverviewItem> medicineOverviewItemList = List<MedicineOverviewItem>();
+    List<DateTime> temp = List<DateTime>();
+
+    for (int i = 0; i < this._medicineList.length; i++) {
+      temp = this._getMedicineSchedule(this._medicineList[i]);
+      for (int j = 0; j < temp.length; j++) {
+        medicineOverviewItemList.add(MedicineOverviewItem(
+          medicine: this._medicineList[i],
+          dateTime: temp[j],
+        ));
+      }
+    }
+
+    medicineOverviewItemList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
+    return medicineOverviewItemList;
+  }
+
+  // Private method: Get medicine schedule of a single medicine
+  List<DateTime> _getMedicineSchedule(Medicine medicine) {
     DateTime firstDay;
     Duration firstTime;
     final List<Duration> oneDayTime = List<Duration>();
     final List<Duration> durations = List<Duration>();
-    final List<DateTime> medicineTime = List<DateTime>();
+    final List<DateTime> medicineSchedule = List<DateTime>();
     int offset = 0;
 
     // Logic: Calculate `firstDay`
     firstDay = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    while (!medicine.medicineTime.day[firstDay.weekday - 1]) {
+    while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
       firstDay = firstDay.add(Duration(days: 1));
     }
 
     // Logic: Calculate `firstTime`
     for (int i = 0; i < 4; i++) {
       if (DateTime.now().day != firstDay.day) {
-        firstTime = this._userSettings.userTime[medicine.medicineTime.time.indexOf(true)];
+        firstTime = this._userSettings.userTime[medicine.medicineSchedule.time.indexOf(true)];
         offset = 0;
         break;
       }
 
-      if (!medicine.medicineTime.time[i]) {
+      if (!medicine.medicineSchedule.time[i]) {
         offset--;
       } else if (Duration(
             hours: DateTime.now().hour,
@@ -134,7 +212,7 @@ class User {
 
     // Logic: Calculate `oneDayTime`
     for (int i = 0; i < 4; i++) {
-      if (medicine.medicineTime.time[i]) {
+      if (medicine.medicineSchedule.time[i]) {
         oneDayTime.add(this._userSettings.userTime[i]);
       }
     }
@@ -145,17 +223,19 @@ class User {
     }
     durations.add(Duration(days: 1) - oneDayTime[oneDayTime.length - 1] + oneDayTime[0]);
 
-    // Logic: Calculate `medicineTime`
+    // Logic: Calculate `medicineSchedule`
     firstDay = firstDay.add(firstTime);
-    for (int i = 0; i < (medicine.totalAmount / medicine.doseAmount).ceil(); i++) {
-      medicineTime.add(firstDay);
+    for (int i = 0;
+        i < (medicine.totalAmount / medicine.doseAmount).ceil() + medicine.skippedTimes;
+        i++) {
+      medicineSchedule.add(firstDay);
       firstDay = firstDay.add(durations[(i + offset) % durations.length]);
 
-      while (!medicine.medicineTime.day[firstDay.weekday - 1]) {
+      while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
         firstDay = firstDay.add(Duration(days: 1));
       }
     }
 
-    return medicineTime;
+    return medicineSchedule;
   }
 }
