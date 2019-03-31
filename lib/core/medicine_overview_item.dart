@@ -30,5 +30,11 @@ class MedicineOverviewItem {
   bool get isDone => this._isDone;
   set isDone(bool isDone) => this._isDone = isDone;
 
-  String toString() => this._medicine.name + ' ' + this._dateTime.toString();
+  bool isDisplayable() {
+    return !this._isDone || this._dateTime.compareTo(DateTime.now().add(Duration(days: 1))) < 0;
+  }
+
+  String toString() {
+    return this._medicine.name + ' ' + this._dateTime.toString();
+  }
 }
