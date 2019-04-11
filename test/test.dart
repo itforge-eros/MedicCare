@@ -9,6 +9,7 @@ import 'package:mediccare/core/hospital.dart';
 import 'package:mediccare/core/medicine_overview_item.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
 import 'package:mediccare/core/medicine.dart';
+import 'package:mediccare/core/session.dart';
 import 'package:mediccare/core/user_settings.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/util/validator.dart';
