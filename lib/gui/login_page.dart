@@ -36,7 +36,7 @@ class LoginPage extends StatelessWidget {
       color: Theme.of(context).primaryColor,
       textColor: Colors.white,
       onPressed: () {
-        Navigator.pushNamed(context, 'Homepage');
+        Navigator.pushReplacementNamed(context, 'Homepage');
         // TODO: Implements login
       },
     );

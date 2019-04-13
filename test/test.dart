@@ -3,15 +3,7 @@
 /// File for testing application logics and algorithms
 ///
 
-import 'package:mediccare/core/appointment.dart';
-import 'package:mediccare/core/doctor.dart';
-import 'package:mediccare/core/hospital.dart';
-import 'package:mediccare/core/medicine_overview_item.dart';
-import 'package:mediccare/core/medicine_schedule.dart';
-import 'package:mediccare/core/medicine.dart';
-import 'package:mediccare/core/session.dart';
-import 'package:mediccare/core/user_settings.dart';
-import 'package:mediccare/core/user.dart';
+import 'package:mediccare/core/components.dart';
 import 'package:mediccare/util/validator.dart';
 import 'package:mediccare/exceptions.dart';
 
@@ -67,7 +59,7 @@ void medicineScheduleTest() {
     userSettings: UserSettings(),
   );
 
-  List<MedicineOverviewItem> medicineOverview = user.getMedicineOverview();
+  List<MedicineOverviewData> medicineOverview = user.getMedicineOverview();
 
   for (int i = 0; i < medicineOverview.length; i++) {
     print(medicineOverview[i].toString());
