@@ -37,19 +37,40 @@ class ProfileState extends State {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: Theme.of(context).primaryColor
+        ),
         title: Text(
           "Profile",
           style: TextStyle(color: Colors.blueGrey),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
-        elevation: 0,
+        elevation: 0.1,
         backgroundColor: Colors.white.withOpacity(0.9),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.settings, color: Colors.blue),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => null),
+                // TODO: Implements route
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 30),
         child: ListView(
           children: <Widget>[
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 30),
+              child: FlutterLogo(
+                size: 130,
+              ),
+            ),
             Text(
               "Rawit",
               textAlign: TextAlign.center,
@@ -80,6 +101,7 @@ class ProfileState extends State {
             Container(
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   titleText(title: "Gender"),
                   contextText(context: "Male")
@@ -89,6 +111,7 @@ class ProfileState extends State {
             Container(
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   titleText(title: "Date of Birth"),
                   contextText(context: "4 April 1999")
@@ -98,6 +121,7 @@ class ProfileState extends State {
             Container(
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   titleText(title: "Height"),
                   contextText(context: "170 cm")
@@ -107,24 +131,42 @@ class ProfileState extends State {
             Container(
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   titleText(title: "Weight"),
                   contextText(context: "60 kg")
                 ],
               ),
             ),
-            RaisedButton(
-              child: Text(
-                'Logout',
-                style: TextStyle(
-                    color: Color.fromRGBO(216, 32, 32, 1), fontSize: 15),
-              ),
-              color: Colors.white,
-              elevation: 4.0,
-              splashColor: Colors.redAccent,
-              onPressed: () {
-                // Perform some action
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text(
+                    'Edit Profile',
+                    style: TextStyle(color: Colors.blue, fontSize: 15),
+                  ),
+                  color: Colors.white,
+                  elevation: 4.0,
+                  splashColor: Colors.blueAccent,
+                  onPressed: () {
+                    // Perform some action
+                  },
+                ),
+                RaisedButton(
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                        color: Color.fromRGBO(216, 32, 32, 1), fontSize: 15),
+                  ),
+                  color: Colors.white,
+                  elevation: 4.0,
+                  splashColor: Colors.redAccent,
+                  onPressed: () {
+                    // Perform some action
+                  },
+                ),
+              ],
             ),
           ],
         ),

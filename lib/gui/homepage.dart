@@ -85,9 +85,8 @@ class _HomepageState extends State<Homepage> {
   List<Widget> commingAppoint() {
     List<Widget> list = [
       Padding(
-        padding: const EdgeInsets.all(10),
-        child: texttitle(title: "Your Comming\nAppointment")
-      )
+          padding: const EdgeInsets.all(10),
+          child: texttitle(title: "Your Comming\nAppointment"))
     ];
     for (int i = 0; i < 3; i++) {
       list.add(cusCard(
@@ -104,15 +103,6 @@ class _HomepageState extends State<Homepage> {
       );
 
   // |----------------------end Overview
-
-  // List<Widget> _pages = <Widget>[
-  //   // TODO: Implements pages
-  //   Text('#0'),
-  //   Text('#1'),
-  //   overView(),
-  //   Text('#3'),
-  //   Text('#4'),
-  // ];
 
   void _refreshState() {
     // TODO: Implements method
@@ -192,7 +182,13 @@ class _HomepageState extends State<Homepage> {
       ],
     ];
 
-    TabController _control;
+    List<Widget> _pages = <Widget>[
+      Text('#0'),
+      Text('#1'),
+      overView(),
+      Text('#3'),
+      Text('#4'),
+    ];
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -214,7 +210,7 @@ class _HomepageState extends State<Homepage> {
         child: Icon(Icons.face),
         elevation: 3.0,
       ),
-      body: overView(),
+      body: _pages[this._currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: this._currentIndex,
