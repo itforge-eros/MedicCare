@@ -5,7 +5,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
-import './overviewpage.dart';
 import 'package:mediccare/gui/profile.dart';
 
 class Homepage extends StatefulWidget {
@@ -18,7 +17,6 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   int _currentIndex = 2;
 
-// |-------------------------- Overview
   Widget listTileCus({String name, String subtitle, Object icon}) => ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       leading: Container(
@@ -67,6 +65,7 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
+// |-------------------------- Overview
   List<Widget> remainIndose() {
     List<Widget> list = [
       Padding(
@@ -104,6 +103,49 @@ class _HomepageState extends State<Homepage> {
 
   // |----------------------end Overview
 
+  // |----------------------Medicine
+  List<Widget> totalMedic() {
+    List<Widget> list = [
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 30),
+        child: FlutterLogo(
+          size: 100,
+        ),
+      ),
+      Padding(
+          padding: const EdgeInsets.all(10),
+          child: texttitle(title: "Your Medicine")),
+      Padding(
+        padding: const EdgeInsets.all(20),
+        child: TextField(
+          onChanged: (value) {},
+          // controller: editingController,
+          decoration: InputDecoration(
+            labelText: "Search",
+            hintText: "Search",
+            prefixIcon: Icon(Icons.search),
+            // border: OutlineInputBorder(
+            //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
+          ),
+        ),
+      ),
+    ];
+
+    for (int i = 0; i < 6; i++) {
+      list.add(cusCard(
+          name: "Pracetimal", subtitle: "5 left", icon: Icons.battery_full));
+    }
+    return list;
+  }
+
+  ListView leftMedicine() {
+    return ListView(
+      shrinkWrap: true,
+      children: totalMedic(),
+    );
+  }
+
+  // |----------------------end Medicine
   void _refreshState() {
     // TODO: Implements method
     setState(() {});
@@ -114,7 +156,21 @@ class _HomepageState extends State<Homepage> {
     final Color color = Theme.of(context).primaryColor;
     final List<List<IconButton>> actions = <List<IconButton>>[
       // Index 0 : Medicine
-      <IconButton>[],
+      <IconButton>[
+        IconButton(
+          icon: Icon(
+            Icons.add,
+            color: color,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddMedicinePage(_refreshState)),
+            );
+          },
+        ),
+      ],
 
       // Index 1 : Appointment
       <IconButton>[
@@ -183,7 +239,7 @@ class _HomepageState extends State<Homepage> {
     ];
 
     List<Widget> _pages = <Widget>[
-      Text('#0'),
+      leftMedicine(),
       Text('#1'),
       overView(),
       Text('#3'),
@@ -206,7 +262,6 @@ class _HomepageState extends State<Homepage> {
           _currentIndex = 2;
           setState(() {});
         },
-        tooltip: 'Increment',
         child: Icon(Icons.face),
         elevation: 3.0,
       ),
@@ -226,7 +281,7 @@ class _HomepageState extends State<Homepage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_pin_circle),
-            title: Text('Appointment'),
+            title: Text('Appoint'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.local_pharmacy, color: Colors.white),
