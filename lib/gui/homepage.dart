@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
 import './overviewpage.dart';
+import 'package:mediccare/gui/profile.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -17,14 +18,101 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   int _currentIndex = 2;
 
-  final List<Widget> _pages = <Widget>[
-    // TODO: Implements pages
-    Text('#0'),
-    Text('#1'),
-    body,
-    Text('#3'),
-    Text('#4'),
-  ];
+// |-------------------------- Overview
+  Widget listTileCus({String name, String subtitle, Object icon}) => ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      leading: Container(
+        padding: EdgeInsets.only(right: 12.0),
+        decoration: BoxDecoration(
+            border:
+                Border(right: BorderSide(width: 1.0, color: Colors.black38))),
+        child: Icon(icon, color: Colors.blue[300]),
+      ),
+      title: Text(
+        name,
+        style: TextStyle(color: Colors.blue[300], fontWeight: FontWeight.bold),
+      ),
+      subtitle: Row(
+        children: <Widget>[
+          Icon(Icons.linear_scale, color: Colors.blueAccent),
+          Text(subtitle, style: TextStyle(color: Colors.black54))
+        ],
+      ),
+      trailing: Icon(Icons.keyboard_arrow_right,
+          color: Colors.blue[300], size: 30.0));
+
+  Card cusCard({String name, String subtitle, Object icon}) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      ),
+      elevation: 5,
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      child: Container(
+        decoration: BoxDecoration(color: Colors.white),
+        child: listTileCus(name: name, subtitle: subtitle, icon: icon),
+      ),
+    );
+  }
+
+  Text texttitle({String title}) {
+    return Text(
+      title,
+      style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 25,
+          fontFamily: 'Raleway',
+          color: Colors.blueGrey),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  List<Widget> remainIndose() {
+    List<Widget> list = [
+      Padding(
+          padding: const EdgeInsets.all(10),
+          child: texttitle(title: "Remaining Indose"))
+    ];
+    for (int i = 0; i < 10; i++) {
+      list.add(cusCard(
+          name: "Paracetimal",
+          subtitle: "2 shot after lunch",
+          icon: Icons.battery_alert));
+    }
+    return list;
+  }
+
+  List<Widget> commingAppoint() {
+    List<Widget> list = [
+      Padding(
+        padding: const EdgeInsets.all(10),
+        child: texttitle(title: "Your Comming\nAppointment")
+      )
+    ];
+    for (int i = 0; i < 3; i++) {
+      list.add(cusCard(
+          name: "Appointment with Dr.Rawit",
+          subtitle: "This Saturday afternoon",
+          icon: Icons.local_hospital));
+    }
+    return list;
+  }
+
+  ListView overView() => ListView(
+        shrinkWrap: true,
+        children: commingAppoint() + remainIndose(),
+      );
+
+  // |----------------------end Overview
+
+  // List<Widget> _pages = <Widget>[
+  //   // TODO: Implements pages
+  //   Text('#0'),
+  //   Text('#1'),
+  //   overView(),
+  //   Text('#3'),
+  //   Text('#4'),
+  // ];
 
   void _refreshState() {
     // TODO: Implements method
@@ -35,13 +123,16 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).primaryColor;
     final List<List<IconButton>> actions = <List<IconButton>>[
-      // Index 0 : Overview
+      // Index 0 : Medicine
       <IconButton>[],
 
-      // Index 1 : Medicine
+      // Index 1 : Appointment
       <IconButton>[
         IconButton(
-          icon: Icon(Icons.add, color: color,),
+          icon: Icon(
+            Icons.add,
+            color: color,
+          ),
           onPressed: () {
             Navigator.push(
               context,
@@ -52,14 +143,17 @@ class _HomepageState extends State<Homepage> {
         ),
       ],
 
-      // Index 2 : Appointment
+      // Index 2 : Overview
       <IconButton>[
         IconButton(
-          icon: Icon(Icons.add, color: color,),
+          icon: Icon(
+            Icons.person,
+            color: color,
+          ),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => null),
+              MaterialPageRoute(builder: (context) => Profile()),
               // TODO: Implements route
             );
           },
@@ -69,7 +163,10 @@ class _HomepageState extends State<Homepage> {
       // Index 3 : Doctor
       <IconButton>[
         IconButton(
-          icon: Icon(Icons.add, color: color,),
+          icon: Icon(
+            Icons.add,
+            color: color,
+          ),
           onPressed: () {
             Navigator.push(
               context,
@@ -93,9 +190,6 @@ class _HomepageState extends State<Homepage> {
           },
         ),
       ],
-
-      // Index 5 : Settings
-      <IconButton>[],
     ];
 
     TabController _control;
@@ -110,7 +204,17 @@ class _HomepageState extends State<Homepage> {
         backgroundColor: Colors.white.withOpacity(0.9),
         actions: actions[this._currentIndex],
       ),
-      body: _pages[_currentIndex],
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _currentIndex = 2;
+          setState(() {});
+        },
+        tooltip: 'Increment',
+        child: Icon(Icons.face),
+        elevation: 3.0,
+      ),
+      body: overView(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: this._currentIndex,
@@ -129,7 +233,7 @@ class _HomepageState extends State<Homepage> {
             title: Text('Appointment'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
+            icon: Icon(Icons.local_pharmacy, color: Colors.white),
             title: Text('Overview'),
           ),
           BottomNavigationBarItem(
