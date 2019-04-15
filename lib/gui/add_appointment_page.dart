@@ -1,22 +1,22 @@
 ///
-/// `add_medicine_page.dart`
-/// Class for medicine addition page GUI
+/// `add_appointment_page.dart`
+/// Class for appointment addition page GUI
 ///
 
 import 'package:flutter/material.dart';
 
-class AddMedicinePage extends StatefulWidget {
+class AddAppointmentPage extends StatefulWidget {
   final Function _refreshState;
 
-  AddMedicinePage(this._refreshState);
+  AddAppointmentPage(this._refreshState);
 
   @override
   State<StatefulWidget> createState() {
-    return _AddMedicinePageState();
+    return _AddAppointmentPageState();
   }
 }
 
-class _AddMedicinePageState extends State<AddMedicinePage> {
+class _AddAppointmentPageState extends State<AddAppointmentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,17 +36,20 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
           children: <Widget>[
             // TODO: Completes form
             TextFormField(
-              decoration: InputDecoration(hintText: 'Medicine Name'),
+              decoration: InputDecoration(hintText: 'Appointment Topic'),
             ),
             TextFormField(
               maxLines: 4,
               decoration: InputDecoration(hintText: 'Description'),
             ),
             TextFormField(
-              decoration: InputDecoration(hintText: 'Dose Amount'),
+              decoration: InputDecoration(hintText: 'Doctor'),
             ),
             TextFormField(
-              decoration: InputDecoration(hintText: 'Total Amount'),
+              decoration: InputDecoration(hintText: 'Time'),
+            ),
+            TextFormField(
+              decoration: InputDecoration(hintText: 'Date'),
             ),
             SizedBox(height: 20.0),
             RaisedButton(

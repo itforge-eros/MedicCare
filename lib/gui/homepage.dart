@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
 import 'package:mediccare/gui/profile.dart';
+import 'package:mediccare/gui/add_appointment_page.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -102,7 +103,6 @@ class _HomepageState extends State<Homepage> {
       );
 
   // |----------------------end Overview
-
   // |----------------------Medicine
   List<Widget> totalMedic() {
     List<Widget> list = [
@@ -119,7 +119,7 @@ class _HomepageState extends State<Homepage> {
         padding: const EdgeInsets.all(20),
         child: TextField(
           onChanged: (value) {},
-          // controller: editingController,
+          // controller: ,
           decoration: InputDecoration(
             labelText: "Search",
             hintText: "Search",
@@ -144,8 +144,51 @@ class _HomepageState extends State<Homepage> {
       children: totalMedic(),
     );
   }
-
   // |----------------------end Medicine
+  // |----------------------Appointment
+
+  List<Widget> totalAppoint() {
+    List<Widget> list = [
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 30),
+        child: FlutterLogo(
+          size: 100,
+        ),
+      ),
+      Padding(
+          padding: const EdgeInsets.all(10),
+          child: texttitle(title: "Your Appointment")),
+      Padding(
+        padding: const EdgeInsets.all(20),
+        child: TextField(
+          onChanged: (value) {},
+          // controller: ,
+          decoration: InputDecoration(
+            labelText: "Search",
+            hintText: "Search",
+            prefixIcon: Icon(Icons.search),
+            // border: OutlineInputBorder(
+            //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
+          ),
+        ),
+      ),
+    ];
+
+    for (int i = 0; i < 6; i++) {
+      list.add(cusCard(
+          name: "Appointment with Dr.Rawit",
+          subtitle: "At Payathai Ht. afternoon",
+          icon: Icons.local_hospital));
+    }
+    return list;
+  }
+    ListView leftAppointment() {
+    return ListView(
+      shrinkWrap: true,
+      children: totalAppoint(),
+    );
+  }
+  // |----------------------end Appointment
   void _refreshState() {
     // TODO: Implements method
     setState(() {});
@@ -183,7 +226,7 @@ class _HomepageState extends State<Homepage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => AddMedicinePage(_refreshState)),
+                  builder: (context) => AddAppointmentPage(_refreshState)),
             );
           },
         ),
@@ -240,7 +283,7 @@ class _HomepageState extends State<Homepage> {
 
     List<Widget> _pages = <Widget>[
       leftMedicine(),
-      Text('#1'),
+      leftAppointment(),
       overView(),
       Text('#3'),
       Text('#4'),
