@@ -1,3 +1,8 @@
+///
+/// `medicine.dart`
+/// Class contains data of medicine
+/// 
+
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
 import 'package:mediccare/exceptions.dart';

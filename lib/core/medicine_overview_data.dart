@@ -1,3 +1,8 @@
+///
+/// `medicine_overview_data.dart`
+/// Class contains data of medicine overview data
+/// 
+
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/exceptions.dart';
 

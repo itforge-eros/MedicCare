@@ -1,3 +1,8 @@
+///
+/// `hospital.dart`
+/// Class contains data of hospital
+/// 
+
 import 'package:flutter/material.dart';
 
 class Hospital {
