@@ -23,7 +23,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         title: Text(
-          'Add Medicine',
+          'Add Appointment',
           style: TextStyle(color: Colors.blueGrey),
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
@@ -51,6 +51,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
             TextFormField(
               decoration: InputDecoration(hintText: 'Date'),
             ),
+            
             SizedBox(height: 20.0),
             RaisedButton(
               child: Text('Save'),

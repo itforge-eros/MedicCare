@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
 import 'package:mediccare/gui/profile.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
+import 'package:mediccare/gui/medicine_profile.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -18,27 +19,36 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   int _currentIndex = 2;
 
-  Widget listTileCus({String name, String subtitle, Object icon}) => ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      leading: Container(
-        padding: EdgeInsets.only(right: 12.0),
-        decoration: BoxDecoration(
-            border:
-                Border(right: BorderSide(width: 1.0, color: Colors.black38))),
-        child: Icon(icon, color: Colors.blue[300]),
-      ),
-      title: Text(
-        name,
-        style: TextStyle(color: Colors.blue[300], fontWeight: FontWeight.bold),
-      ),
-      subtitle: Row(
-        children: <Widget>[
-          Icon(Icons.linear_scale, color: Colors.blueAccent),
-          Text(subtitle, style: TextStyle(color: Colors.black54))
-        ],
-      ),
-      trailing: Icon(Icons.keyboard_arrow_right,
-          color: Colors.blue[300], size: 30.0));
+  Widget listTileCus({String name, String subtitle, Object icon, Object page}) => ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        leading: Container(
+          padding: EdgeInsets.only(right: 12.0),
+          decoration: BoxDecoration(
+              border:
+                  Border(right: BorderSide(width: 1.0, color: Colors.black38))),
+          child: Icon(icon, color: Colors.blue[300]),
+        ),
+        title: Text(
+          name,
+          style:
+              TextStyle(color: Colors.blue[300], fontWeight: FontWeight.bold),
+        ),
+        subtitle: Row(
+          children: <Widget>[
+            Icon(Icons.linear_scale, color: Colors.blueAccent),
+            Text(subtitle, style: TextStyle(color: Colors.black54))
+          ],
+        ),
+        trailing: Icon(Icons.keyboard_arrow_right,
+            color: Colors.blue[300], size: 30.0),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MedicineProfile()),
+            );
+          
+        },
+      );
 
   Card cusCard({String name, String subtitle, Object icon}) {
     return Card(
@@ -104,6 +114,7 @@ class _HomepageState extends State<Homepage> {
 
   // |----------------------end Overview
   // |----------------------Medicine
+
   List<Widget> totalMedic() {
     List<Widget> list = [
       Container(
@@ -124,8 +135,6 @@ class _HomepageState extends State<Homepage> {
             labelText: "Search",
             hintText: "Search",
             prefixIcon: Icon(Icons.search),
-            // border: OutlineInputBorder(
-            //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
           ),
         ),
       ),
@@ -182,12 +191,14 @@ class _HomepageState extends State<Homepage> {
     }
     return list;
   }
-    ListView leftAppointment() {
+
+  ListView leftAppointment() {
     return ListView(
       shrinkWrap: true,
       children: totalAppoint(),
     );
   }
+
   // |----------------------end Appointment
   void _refreshState() {
     // TODO: Implements method
