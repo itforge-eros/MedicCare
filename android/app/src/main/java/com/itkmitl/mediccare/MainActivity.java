@@ -1,4 +1,4 @@
-package com.example.mediccare;
+package com.itkmitl.mediccare;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

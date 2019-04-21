@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1022262060095",
+    "firebase_url": "https://mmediccare.firebaseio.com",
+    "project_id": "mmediccare",
+    "storage_bucket": "mmediccare.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022262060095:android:b344ecb18b500bc8",
+        "android_client_info": {
+          "package_name": "com.itkmitl.mediccare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1022262060095-rlg167cr3qkk4im2u4fgtrvi5damm49n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs6e27tsCtmiWLUEY1PyICXAdXYyC8CIw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022262060095-rlg167cr3qkk4im2u4fgtrvi5damm49n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1022262060095-op79r74mrbhursr98n131v4tqgm6melr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.itkmitl.mediccare"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
