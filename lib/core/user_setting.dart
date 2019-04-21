@@ -1,3 +1,8 @@
+///
+/// `user_settings.dart`
+/// Class contains data of user settings
+/// 
+
 class UserSettings {
   static final List<Duration> defaultTime = [
     Duration(

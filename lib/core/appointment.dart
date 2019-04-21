@@ -1,3 +1,8 @@
+///
+/// `appointment.dart`
+/// Class contains data of appointment
+/// 
+
 import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/hospital.dart';
 

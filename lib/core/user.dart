@@ -1,9 +1,14 @@
+///
+/// `user.dart`
+/// Class contains data of user
+/// 
+
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/hospital.dart';
-import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/medicine_overview_data.dart';
+import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/user_setting.dart';
 
 class User {
