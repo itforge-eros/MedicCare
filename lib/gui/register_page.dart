@@ -1,14 +1,53 @@
-///
-/// `register_page.dart`
-/// Class for register page GUI
-///
-
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
+  @override
+  _RegisterState createState() => _RegisterState();
+}
+
+class _RegisterState extends State<RegisterPage> {
   static final TextEditingController _controllerEmail = TextEditingController();
   static final TextEditingController _controllerPassword = TextEditingController();
   static final TextEditingController _controllerPasswordConfirm = TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    getUser().then((user) {
+      if (user != null) {
+        print(user);
+      }
+    });
+  }
+
+  void signUpWithEmail() async {
+    // marked async
+    FirebaseUser user;
+    try {
+      user = await _auth.createUserWithEmailAndPassword(
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      if (user != null) {
+        // sign in successful!
+        // ex: bring the user to the home page
+      } else {
+        // sign in unsuccessful
+        // ex: prompt the user to try again
+      }
+    }
+  }
+
+  Future<FirebaseUser> getUser() async {
+    return await _auth.currentUser();
+  }
 
   @override
   Widget build(BuildContext context) {

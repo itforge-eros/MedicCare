@@ -15,7 +15,7 @@ class MedicCareApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Homepage(),
+      home: LoginPage(),
       routes: {
         'LoginPage': (context) => LoginPage(),
         'RegisterPage': (context) => RegisterPage(),

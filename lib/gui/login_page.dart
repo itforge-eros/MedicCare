@@ -1,13 +1,78 @@
+import 'dart:async';
+
 ///
 /// `login_page.dart`
 /// Class for login page GUI
 ///
 
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginPage extends StatelessWidget {
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<LoginPage> {
   static final TextEditingController _controllerEmail = TextEditingController();
-  static final TextEditingController _controllerPassword = TextEditingController();
+  static final TextEditingController _controllerPassword =
+      TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    getUser().then((user) {
+      if (user != null) {
+        print(user);
+      }
+    });
+  }
+
+  void signUpWithEmail() async {
+    // marked async
+    FirebaseUser user;
+    try {
+      user = await _auth.createUserWithEmailAndPassword(
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      if (user != null) {
+        // sign in successful!
+        // ex: bring the user to the home page
+      } else {
+        // sign in unsuccessful
+        // ex: prompt the user to try again
+      }
+    }
+  }
+
+  void signInWithEmail() async {
+    // marked async
+    FirebaseUser user;
+    try {
+      user = await _auth.signInWithEmailAndPassword(
+          email: _controllerEmail.text, password: _controllerPassword.text);
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      if (user != null) {
+        print(user);
+      } else {
+        // sign in unsuccessful
+        // ex: prompt the user to try again
+      }
+    }
+  }
+
+  Future<FirebaseUser> getUser() async {
+    return await _auth.currentUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +101,9 @@ class LoginPage extends StatelessWidget {
       color: Theme.of(context).primaryColor,
       textColor: Colors.white,
       onPressed: () {
-        Navigator.pushReplacementNamed(context, 'Homepage');
+        // Navigator.pushReplacementNamed(context, 'Homepage');
         // TODO: Implements login
+        signInWithEmail();
       },
     );
 
