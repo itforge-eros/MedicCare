@@ -86,4 +86,33 @@ class Medicine {
   void skipMedicine() {
     this._skippedTimes++;
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': this._id,
+      'name': this._name,
+      'description': this._description,
+      'type': this._type,
+      'image': this._image, //TODO: Check Image properties
+      'doseAmount': this._doseAmount,
+      'totalAmount': this._totalAmount,
+      'remainingAmount': this._remainingAmount,
+      'skippedTimes': this._skippedTimes,
+      'medicineSchedule': this._medicineSchedule.toMap(), 
+      'dateAdded': this._dateAdded.toString(),
+    };
+  }
+
+  Medicine.fromMap(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._name = map['name'];
+    this._description = map['description'];
+    this._type = map['type'];
+    this._image = map['image']; //TODO: Check Image properties
+    this._doseAmount = map['doseAmount'];
+    this._totalAmount = map['totalAmount'];
+    this._remainingAmount = map['totalAmount'];
+    this._skippedTimes = map['skippedTimes'];
+    this._medicineSchedule = MedicineSchedule.fromMap(map['medicineSchedule']);
+  }
 }
