@@ -17,11 +17,13 @@ class Hospital {
     String name,
     String address,
     String notes,
+    Image image,
   }) {
     this._id = id;
     this._name = name;
     this._address = address;
     this._notes = notes;
+    this._image = image;
   }
 
   String get id => this._id;
@@ -45,7 +47,15 @@ class Hospital {
       'name': this._name,
       'address': this._address,
       'notes': this._notes,
-      'image': this._image, //TODO: Check Image property
+      'image': this._image, //TODO: Check Image properties
     };
+  }
+
+  Hospital.fromMap(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._name = map['name'];
+    this._address = map['address'];
+    this._notes = map['notes'];
+    this._image = map['image']; //TODO: Check Image properties
   }
 }

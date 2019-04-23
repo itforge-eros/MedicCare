@@ -76,7 +76,19 @@ class Doctor {
       'hospital': this._hospital.toMap(),
       'phone': this._phone,
       'notes': this._notes,
-      'image': this._image, //TODO: Check Image property
+      'image': this._image, //TODO: Check Image properties
     };
+  }
+
+  Doctor.fromMap(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._prefix = map['prefix'];
+    this._firstName = map['firstName'];
+    this._lastName = map['lastName'];
+    this._ward = map['ward'];
+    this._hospital = Hospital.fromMap(map['hospital']);
+    this._phone = map['phone'];
+    this._notes = map['notes'];
+    this._image = map['image']; //TODO: Check Image properties
   }
 }

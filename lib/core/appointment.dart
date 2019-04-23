@@ -58,4 +58,13 @@ class Appointment {
       'dateTime': this._dateTime.toString(),
     };
   }
+
+  Appointment.fromMap(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._title = map['title'];
+    this._description = map['description'];
+    this._doctor = Doctor.fromMap(map['doctor']);
+    this._hospital = Hospital.fromMap(map['hospital']);
+    this._dateTime = DateTime.parse(map['dateTime']);
+  }
 }
