@@ -70,4 +70,12 @@ class MedicineSchedule {
       throw NoMedicineDayException();
     }
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'time': this._time,
+      'day': this._day,
+      'isBeforeMeal': this._isBeforeMeal,
+    };
+  }
 }

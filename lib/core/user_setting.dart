@@ -1,7 +1,7 @@
 ///
 /// `user_settings.dart`
 /// Class contains data of user settings
-/// 
+///
 
 class UserSettings {
   static final List<Duration> defaultTime = [
@@ -45,8 +45,7 @@ class UserSettings {
   List<Duration> get userTime => this._userTime;
 
   Duration get breakfastTime => this._userTime[0];
-  set breakfastTime(Duration breakfastTime) =>
-      this._userTime[0] = breakfastTime;
+  set breakfastTime(Duration breakfastTime) => this._userTime[0] = breakfastTime;
 
   Duration get lunchTime => this._userTime[1];
   set lunchTime(Duration lunchTime) => this._userTime[1] = lunchTime;
@@ -62,5 +61,15 @@ class UserSettings {
     this._userTime[1] = UserSettings.defaultTime[1];
     this._userTime[2] = UserSettings.defaultTime[2];
     this._userTime[3] = UserSettings.defaultTime[3];
+  }
+
+  String _toTime(Duration duration) {
+    return duration.inHours.toString() + ':' + (duration.inMinutes % 60).toString();
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'userTime': this._userTime.map((e) => _toTime(e)).toList(),
+    };
   }
 }

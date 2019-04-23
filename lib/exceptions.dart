@@ -51,6 +51,22 @@ class IncompleteDataException extends Exception {
   }
 }
 
+class InvalidBloodGroupException extends Exception {
+  /// Class: `User`
+  /// Event: User's blood group is set to other than 'O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+' or 'AB-'
+  factory InvalidBloodGroupException() {
+    return InvalidBloodGroupException();
+  }
+}
+
+class InvalidGenderException extends Exception {
+  /// Class: `User`
+  /// Event: User's gender is set to other than 'Male', 'Female' or 'Others'
+  factory InvalidGenderException() {
+    return InvalidGenderException();
+  }
+}
+
 class InvalidMedicineDayException extends Exception {
   /// Class: `MedicineSchedule`
   /// Event: Medicine day data is determined not to be a list of 7 booleans.

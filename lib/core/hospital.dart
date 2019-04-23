@@ -38,4 +38,14 @@ class Hospital {
 
   Image get image => this._image;
   set image(Image image) => this._image = image;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': this._id,
+      'name': this._name,
+      'address': this._address,
+      'notes': this._notes,
+      'image': this._image, //TODO: Check Image property
+    };
+  }
 }

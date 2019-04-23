@@ -14,8 +14,11 @@ import 'package:mediccare/core/user.dart';
 import 'package:mediccare/util/validator.dart';
 
 void main() {
-  medicineScheduleTest();
+  // medicineScheduleTest();
   // emailTest();
+  Duration a = Duration(hours: 14, minutes: 34);
+
+  print(a.toString());
 }
 
 void medicineScheduleTest() {
