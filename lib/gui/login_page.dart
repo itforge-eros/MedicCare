@@ -1,13 +1,6 @@
 import 'dart:async';
-
-///
-/// `login_page.dart`
-/// Class for login page GUI
-///
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 
 class LoginPage extends StatefulWidget {
   @override
@@ -26,30 +19,9 @@ class _LoginState extends State<LoginPage> {
     super.initState();
     getUser().then((user) {
       if (user != null) {
-        print(user);
+        Navigator.pushNamed(context, 'Homepage');
       }
     });
-  }
-
-  void signUpWithEmail() async {
-    // marked async
-    FirebaseUser user;
-    try {
-      user = await _auth.createUserWithEmailAndPassword(
-        email: _controllerEmail.text,
-        password: _controllerPassword.text,
-      );
-    } catch (e) {
-      print(e.toString());
-    } finally {
-      if (user != null) {
-        // sign in successful!
-        // ex: bring the user to the home page
-      } else {
-        // sign in unsuccessful
-        // ex: prompt the user to try again
-      }
-    }
   }
 
   void signInWithEmail() async {
@@ -62,10 +34,9 @@ class _LoginState extends State<LoginPage> {
       print(e.toString());
     } finally {
       if (user != null) {
-        print(user);
+        Navigator.pushNamed(context, 'Homepage');
       } else {
         // sign in unsuccessful
-        // ex: prompt the user to try again
       }
     }
   }

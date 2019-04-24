@@ -19,7 +19,9 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   int _currentIndex = 2;
 
-  Widget listTileCus({String name, String subtitle, Object icon, Object page}) => ListTile(
+  Widget listTileCus(
+          {String name, String subtitle, Object icon, Object page}) =>
+      ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         leading: Container(
           padding: EdgeInsets.only(right: 12.0),
@@ -43,10 +45,9 @@ class _HomepageState extends State<Homepage> {
             color: Colors.blue[300], size: 30.0),
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MedicineProfile()),
-            );
-          
+            context,
+            MaterialPageRoute(builder: (context) => MedicineProfile()),
+          );
         },
       );
 

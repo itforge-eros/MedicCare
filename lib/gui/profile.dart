@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -8,7 +9,9 @@ class Profile extends StatefulWidget {
   }
 }
 
-class ProfileState extends State {
+class ProfileState extends State<Profile> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   Text titleText({String title}) {
     return Text(
       title,
@@ -37,9 +40,7 @@ class ProfileState extends State {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor
-        ),
+        iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         title: Text(
           "Profile",
           style: TextStyle(color: Colors.blueGrey),
@@ -163,7 +164,8 @@ class ProfileState extends State {
                   elevation: 4.0,
                   splashColor: Colors.redAccent,
                   onPressed: () {
-                    // Perform some action
+                    _auth.signOut();
+                    Navigator.of(context).pushNamedAndRemoveUntil('LoginPage', (Route<dynamic> route) => false);
                   },
                 ),
               ],
