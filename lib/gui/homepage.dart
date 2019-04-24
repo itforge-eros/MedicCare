@@ -8,6 +8,7 @@ import 'package:mediccare/gui/add_medicine_page.dart';
 import 'package:mediccare/gui/profile.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
 import 'package:mediccare/gui/medicine_profile.dart';
+import 'package:mediccare/gui/add_doctor_page.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -205,6 +206,50 @@ class _HomepageState extends State<Homepage> {
     setState(() {});
   }
 
+  //---------------------doctor
+  List<Widget> allDoctor() {
+    List<Widget> list = [
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 30),
+        child: FlutterLogo(
+          size: 100,
+        ),
+      ),
+      Padding(
+          padding: const EdgeInsets.all(10),
+          child: texttitle(title: "Your Doctor")),
+      Padding(
+        padding: const EdgeInsets.all(20),
+        child: TextField(
+          onChanged: (value) {},
+          // controller: ,
+          decoration: InputDecoration(
+            labelText: "Search",
+            hintText: "Search",
+            prefixIcon: Icon(Icons.search),
+            // border: OutlineInputBorder(
+            //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
+          ),
+        ),
+      ),
+    ];
+
+    for (int i = 0; i < 6; i++) {
+      list.add(cusCard(
+          name: "Dr.Rawit",
+          subtitle: "At Payathai Ht. afternoon",
+          icon: Icons.local_hospital));
+    }
+    return list;
+  }
+
+  ListView rightDoctor() {
+    return ListView(
+      shrinkWrap: true,
+      children: allDoctor(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).primaryColor;
@@ -270,7 +315,8 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => null),
+              MaterialPageRoute(
+                builder: (context) => AddDoctorPage(_refreshState)),
               // TODO: Implements route
             );
           },
@@ -296,7 +342,7 @@ class _HomepageState extends State<Homepage> {
       leftMedicine(),
       leftAppointment(),
       overView(),
-      Text('#3'),
+      rightDoctor(),
       Text('#4'),
     ];
     return Scaffold(
