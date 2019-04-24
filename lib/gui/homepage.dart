@@ -118,15 +118,6 @@ class _HomepageState extends State<Homepage> {
 
   List<Widget> totalMedic() {
     List<Widget> list = [
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 30),
-        child: FlutterLogo(
-          size: 100,
-        ),
-      ),
-      Padding(
-          padding: const EdgeInsets.all(10),
-          child: texttitle(title: "Your Medicine")),
       Padding(
         padding: const EdgeInsets.all(20),
         child: TextField(
@@ -159,15 +150,6 @@ class _HomepageState extends State<Homepage> {
 
   List<Widget> totalAppoint() {
     List<Widget> list = [
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 30),
-        child: FlutterLogo(
-          size: 100,
-        ),
-      ),
-      Padding(
-          padding: const EdgeInsets.all(10),
-          child: texttitle(title: "Your Appointment")),
       Padding(
         padding: const EdgeInsets.all(20),
         child: TextField(
@@ -209,15 +191,6 @@ class _HomepageState extends State<Homepage> {
   //---------------------doctor
   List<Widget> allDoctor() {
     List<Widget> list = [
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 30),
-        child: FlutterLogo(
-          size: 100,
-        ),
-      ),
-      Padding(
-          padding: const EdgeInsets.all(10),
-          child: texttitle(title: "Your Doctor")),
       Padding(
         padding: const EdgeInsets.all(20),
         child: TextField(
@@ -345,12 +318,18 @@ class _HomepageState extends State<Homepage> {
       rightDoctor(),
       Text('#4'),
     ];
+
+    List headerTitle = [
+      Text('Your Medicine',style: TextStyle(color: Colors.blueGrey)),
+      Text('Your Appointment',style: TextStyle(color: Colors.blueGrey)),
+      Text('MedicCare',style: TextStyle(color: Colors.blueGrey)),
+      Text('Your Doctor',style: TextStyle(color: Colors.blueGrey)),
+      Text('Your Hospital',style: TextStyle(color: Colors.blueGrey))
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'MedicCare',
-          style: TextStyle(color: Colors.blueGrey),
-        ),
+        title: headerTitle[this._currentIndex],
         centerTitle: true,
         elevation: 0.1,
         backgroundColor: Colors.white.withOpacity(0.9),
