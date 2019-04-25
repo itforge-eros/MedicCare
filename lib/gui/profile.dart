@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mediccare/gui/profile_edit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Profile extends StatefulWidget {
@@ -11,7 +12,10 @@ class Profile extends StatefulWidget {
 
 class ProfileState extends State<Profile> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  void _refreshState() {
+    // TODO: Implements method
+    setState(() {});
+  }
   Text titleText({String title}) {
     return Text(
       title,
@@ -151,7 +155,9 @@ class ProfileState extends State<Profile> {
                   elevation: 4.0,
                   splashColor: Colors.blueAccent,
                   onPressed: () {
-                    // Perform some action
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EditProfile(_refreshState)));
                   },
                 ),
                 RaisedButton(

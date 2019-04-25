@@ -8,6 +8,7 @@ import 'package:mediccare/gui/add_medicine_page.dart';
 import 'package:mediccare/gui/profile.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
 import 'package:mediccare/gui/medicine_profile.dart';
+import 'package:mediccare/gui/add_doctor_page.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -118,15 +119,6 @@ class _HomepageState extends State<Homepage> {
 
   List<Widget> totalMedic() {
     List<Widget> list = [
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 30),
-        child: FlutterLogo(
-          size: 100,
-        ),
-      ),
-      Padding(
-          padding: const EdgeInsets.all(10),
-          child: texttitle(title: "Your Medicine")),
       Padding(
         padding: const EdgeInsets.all(20),
         child: TextField(
@@ -159,15 +151,6 @@ class _HomepageState extends State<Homepage> {
 
   List<Widget> totalAppoint() {
     List<Widget> list = [
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 30),
-        child: FlutterLogo(
-          size: 100,
-        ),
-      ),
-      Padding(
-          padding: const EdgeInsets.all(10),
-          child: texttitle(title: "Your Appointment")),
       Padding(
         padding: const EdgeInsets.all(20),
         child: TextField(
@@ -204,6 +187,41 @@ class _HomepageState extends State<Homepage> {
   void _refreshState() {
     // TODO: Implements method
     setState(() {});
+  }
+
+  //---------------------doctor
+  List<Widget> allDoctor() {
+    List<Widget> list = [
+      Padding(
+        padding: const EdgeInsets.all(20),
+        child: TextField(
+          onChanged: (value) {},
+          // controller: ,
+          decoration: InputDecoration(
+            labelText: "Search",
+            hintText: "Search",
+            prefixIcon: Icon(Icons.search),
+            // border: OutlineInputBorder(
+            //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
+          ),
+        ),
+      ),
+    ];
+
+    for (int i = 0; i < 6; i++) {
+      list.add(cusCard(
+          name: "Dr.Rawit",
+          subtitle: "At Payathai Ht. afternoon",
+          icon: Icons.local_hospital));
+    }
+    return list;
+  }
+
+  ListView rightDoctor() {
+    return ListView(
+      shrinkWrap: true,
+      children: allDoctor(),
+    );
   }
 
   @override
@@ -271,7 +289,8 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => null),
+              MaterialPageRoute(
+                builder: (context) => AddDoctorPage(_refreshState)),
               // TODO: Implements route
             );
           },
@@ -297,15 +316,21 @@ class _HomepageState extends State<Homepage> {
       leftMedicine(),
       leftAppointment(),
       overView(),
-      Text('#3'),
+      rightDoctor(),
       Text('#4'),
     ];
+
+    List headerTitle = [
+      Text('Your Medicine',style: TextStyle(color: Colors.blueGrey)),
+      Text('Your Appointment',style: TextStyle(color: Colors.blueGrey)),
+      Text('MedicCare',style: TextStyle(color: Colors.blueGrey)),
+      Text('Your Doctor',style: TextStyle(color: Colors.blueGrey)),
+      Text('Your Hospital',style: TextStyle(color: Colors.blueGrey))
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'MedicCare',
-          style: TextStyle(color: Colors.blueGrey),
-        ),
+        title: headerTitle[this._currentIndex],
         centerTitle: true,
         elevation: 0.1,
         backgroundColor: Colors.white.withOpacity(0.9),
