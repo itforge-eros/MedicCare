@@ -1,7 +1,7 @@
 ///
 /// `appointment.dart`
 /// Class contains data of appointment
-/// 
+///
 
 import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/hospital.dart';
@@ -47,4 +47,24 @@ class Appointment {
 
   DateTime get dateTime => this._dateTime;
   set dateTime(DateTime dateTime) => this._dateTime = dateTime;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': this._id,
+      'title': this._title,
+      'description': this._description,
+      'doctor': this._doctor.toMap(),
+      'hospital': this._hospital.toMap(),
+      'dateTime': this._dateTime.toString(),
+    };
+  }
+
+  Appointment.fromMap(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._title = map['title'];
+    this._description = map['description'];
+    this._doctor = Doctor.fromMap(map['doctor']);
+    this._hospital = Hospital.fromMap(map['hospital']);
+    this._dateTime = DateTime.parse(map['dateTime']);
+  }
 }
