@@ -7,8 +7,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mediccare/util/alert.dart';
+import 'package:mediccare/util/firestore_utils.dart';
 import 'package:mediccare/util/validator.dart';
-import 'package:mediccare/exceptions.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -29,7 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
     this._trimEmailField();
     try {
       user = await _auth.createUserWithEmailAndPassword(
-        email: _controllerEmail.text.trim(),
+        email: _controllerEmail.text,
         password: _controllerPassword.text,
       );
     } catch (e) {
@@ -38,6 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
       if (user != null) {
         // Event: sign up successful
         Navigator.pop(context);
+        FirestoreUtils.createUser(user.uid, _controllerEmail.text);
       } else {
         // Event: Sign up failed
         Alert.displayPrompt(
@@ -87,7 +88,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       validator: (String email) {
         if (!Validator.isEmail(email)) {
-          return 'Please enter valid email address';
+          return 'Please enter a valid email address';
         }
       },
     );
