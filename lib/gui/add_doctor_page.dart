@@ -20,7 +20,6 @@ class AddDoctorPage extends StatefulWidget {
 }
 
 class _AddDoctorPageState extends State<AddDoctorPage> {
-
   File _image;
 
   Future getImage() async {
@@ -45,8 +44,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
       ),
       body: Center(
         child: ListView(
-          padding:
-              EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
+          padding: EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
           children: <Widget>[
             FloatingActionButton(
               onPressed: getImage,
@@ -66,7 +64,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
             TextFormField(
               decoration: InputDecoration(hintText: 'Ward'),
             ),
-                        TextFormField(
+            TextFormField(
               decoration: InputDecoration(hintText: 'Hospital'),
             ),
             TextFormField(

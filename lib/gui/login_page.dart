@@ -1,18 +1,28 @@
+///
+/// `login_page.dart`
+/// Class for login page GUI
+///
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mediccare/util/alert.dart';
+import 'package:mediccare/util/firestore_utils.dart';
+import 'package:mediccare/util/validator.dart';
 
 class LoginPage extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  State<StatefulWidget> createState() {
+    return _LoginPageState();
+  }
 }
 
-class _LoginState extends State<LoginPage> {
-  static final TextEditingController _controllerEmail = TextEditingController();
-  static final TextEditingController _controllerPassword =
-      TextEditingController();
-
+class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  static final TextEditingController _controllerEmail = TextEditingController();
+  static final TextEditingController _controllerPassword = TextEditingController();
 
   @override
   void initState() {
@@ -25,8 +35,9 @@ class _LoginState extends State<LoginPage> {
   }
 
   void signInWithEmail() async {
-    // marked async
     FirebaseUser user;
+    this._trimEmailField();
+
     try {
       user = await _auth.signInWithEmailAndPassword(
           email: _controllerEmail.text, password: _controllerPassword.text);
@@ -35,14 +46,33 @@ class _LoginState extends State<LoginPage> {
     } finally {
       if (user != null) {
         Navigator.pushNamed(context, 'Homepage');
+        this._clearFields();
       } else {
-        // sign in unsuccessful
+        Alert.displayPrompt(
+          context: context,
+          title: 'Login failed',
+          content: 'Invalid email address or password.',
+        );
+        this._clearPasswordField();
       }
     }
   }
 
   Future<FirebaseUser> getUser() async {
     return await _auth.currentUser();
+  }
+
+  void _clearFields() {
+    _LoginPageState._controllerEmail.text = '';
+    _LoginPageState._controllerPassword.text = '';
+  }
+
+  void _clearPasswordField() {
+    _LoginPageState._controllerPassword.text = '';
+  }
+
+  void _trimEmailField() {
+    _LoginPageState._controllerEmail.text = _LoginPageState._controllerEmail.text.trim();
   }
 
   @override
@@ -54,6 +84,11 @@ class _LoginState extends State<LoginPage> {
         icon: Icon(Icons.mail),
         hintText: 'Email Address',
       ),
+      validator: (String email) {
+        if (!Validator.isEmail(email)) {
+          return 'Please enter a valid email address';
+        }
+      },
     );
 
     final TextFormField textFormFieldPassword = TextFormField(
@@ -64,6 +99,11 @@ class _LoginState extends State<LoginPage> {
         icon: Icon(Icons.lock),
         hintText: 'Password',
       ),
+      validator: (String password) {
+        if (password.isEmpty) {
+          return 'Please enter password';
+        }
+      },
     );
 
     final RaisedButton buttonLogin = RaisedButton(
@@ -72,9 +112,9 @@ class _LoginState extends State<LoginPage> {
       color: Theme.of(context).primaryColor,
       textColor: Colors.white,
       onPressed: () {
-        // Navigator.pushReplacementNamed(context, 'Homepage');
-        // TODO: Implements login
-        signInWithEmail();
+        if (_formKey.currentState.validate()) {
+          signInWithEmail();
+        }
       },
     );
 
@@ -87,27 +127,30 @@ class _LoginState extends State<LoginPage> {
       },
     );
 
-    return Scaffold(
-      body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(left: 30.0, right: 30.0),
-          children: <Widget>[
-            Container(
-              child: Image.asset('assets/logo_temporary.jpg'),
-              padding: EdgeInsets.only(left: 30.0, right: 30.0),
-            ),
-            SizedBox(height: 20.0),
-            textFormFieldEmail,
-            SizedBox(height: 10.0),
-            textFormFieldPassword,
-            SizedBox(height: 20.0),
-            buttonLogin,
-            Container(
-              child: buttonRegister,
-              alignment: Alignment.centerRight,
-            )
-          ],
+    return Form(
+      key: this._formKey,
+      child: Scaffold(
+        body: Center(
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.only(left: 30.0, right: 30.0),
+            children: <Widget>[
+              Container(
+                child: Image.asset('assets/logo_temporary.jpg'),
+                padding: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              SizedBox(height: 20.0),
+              textFormFieldEmail,
+              SizedBox(height: 10.0),
+              textFormFieldPassword,
+              SizedBox(height: 20.0),
+              buttonLogin,
+              Container(
+                child: buttonRegister,
+                alignment: Alignment.centerRight,
+              )
+            ],
+          ),
         ),
       ),
     );

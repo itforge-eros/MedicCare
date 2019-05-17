@@ -20,21 +20,17 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   int _currentIndex = 2;
 
-  Widget listTileCus(
-          {String name, String subtitle, Object icon, Object page}) =>
-      ListTile(
+  Widget listTileCus({String name, String subtitle, Object icon, Object page}) => ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         leading: Container(
           padding: EdgeInsets.only(right: 12.0),
-          decoration: BoxDecoration(
-              border:
-                  Border(right: BorderSide(width: 1.0, color: Colors.black38))),
+          decoration:
+              BoxDecoration(border: Border(right: BorderSide(width: 1.0, color: Colors.black38))),
           child: Icon(icon, color: Colors.blue[300]),
         ),
         title: Text(
           name,
-          style:
-              TextStyle(color: Colors.blue[300], fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.blue[300], fontWeight: FontWeight.bold),
         ),
         subtitle: Row(
           children: <Widget>[
@@ -42,8 +38,7 @@ class _HomepageState extends State<Homepage> {
             Text(subtitle, style: TextStyle(color: Colors.black54))
           ],
         ),
-        trailing: Icon(Icons.keyboard_arrow_right,
-            color: Colors.blue[300], size: 30.0),
+        trailing: Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
         onTap: () {
           Navigator.push(
             context,
@@ -70,10 +65,7 @@ class _HomepageState extends State<Homepage> {
     return Text(
       title,
       style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 25,
-          fontFamily: 'Raleway',
-          color: Colors.blueGrey),
+          fontWeight: FontWeight.bold, fontSize: 25, fontFamily: 'Raleway', color: Colors.blueGrey),
       textAlign: TextAlign.center,
     );
   }
@@ -81,15 +73,11 @@ class _HomepageState extends State<Homepage> {
 // |-------------------------- Overview
   List<Widget> remainIndose() {
     List<Widget> list = [
-      Padding(
-          padding: const EdgeInsets.all(10),
-          child: texttitle(title: "Remaining Indose"))
+      Padding(padding: const EdgeInsets.all(10), child: texttitle(title: "Remaining Indose"))
     ];
     for (int i = 0; i < 10; i++) {
-      list.add(cusCard(
-          name: "Paracetimal",
-          subtitle: "2 shot after lunch",
-          icon: Icons.battery_alert));
+      list.add(
+          cusCard(name: "Paracetimal", subtitle: "2 shot after lunch", icon: Icons.battery_alert));
     }
     return list;
   }
@@ -97,8 +85,7 @@ class _HomepageState extends State<Homepage> {
   List<Widget> commingAppoint() {
     List<Widget> list = [
       Padding(
-          padding: const EdgeInsets.all(10),
-          child: texttitle(title: "Your Comming\nAppointment"))
+          padding: const EdgeInsets.all(10), child: texttitle(title: "Your Comming\nAppointment"))
     ];
     for (int i = 0; i < 3; i++) {
       list.add(cusCard(
@@ -134,8 +121,7 @@ class _HomepageState extends State<Homepage> {
     ];
 
     for (int i = 0; i < 6; i++) {
-      list.add(cusCard(
-          name: "Pracetimal", subtitle: "5 left", icon: Icons.battery_full));
+      list.add(cusCard(name: "Pracetimal", subtitle: "5 left", icon: Icons.battery_full));
     }
     return list;
   }
@@ -210,9 +196,7 @@ class _HomepageState extends State<Homepage> {
 
     for (int i = 0; i < 6; i++) {
       list.add(cusCard(
-          name: "Dr.Rawit",
-          subtitle: "At Payathai Ht. afternoon",
-          icon: Icons.local_hospital));
+          name: "Dr.Rawit", subtitle: "At Payathai Ht. afternoon", icon: Icons.local_hospital));
     }
     return list;
   }
@@ -238,8 +222,7 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => AddMedicinePage(_refreshState)),
+              MaterialPageRoute(builder: (context) => AddMedicinePage(_refreshState)),
             );
           },
         ),
@@ -255,8 +238,7 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => AddAppointmentPage(_refreshState)),
+              MaterialPageRoute(builder: (context) => AddAppointmentPage(_refreshState)),
             );
           },
         ),
@@ -289,8 +271,7 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => AddDoctorPage(_refreshState)),
+              MaterialPageRoute(builder: (context) => AddDoctorPage(_refreshState)),
               // TODO: Implements route
             );
           },
@@ -321,11 +302,11 @@ class _HomepageState extends State<Homepage> {
     ];
 
     List headerTitle = [
-      Text('Your Medicine',style: TextStyle(color: Colors.blueGrey)),
-      Text('Your Appointment',style: TextStyle(color: Colors.blueGrey)),
-      Text('MedicCare',style: TextStyle(color: Colors.blueGrey)),
-      Text('Your Doctor',style: TextStyle(color: Colors.blueGrey)),
-      Text('Your Hospital',style: TextStyle(color: Colors.blueGrey))
+      Text('Your Medicine', style: TextStyle(color: Colors.blueGrey)),
+      Text('Your Appointment', style: TextStyle(color: Colors.blueGrey)),
+      Text('MedicCare', style: TextStyle(color: Colors.blueGrey)),
+      Text('Your Doctor', style: TextStyle(color: Colors.blueGrey)),
+      Text('Your Hospital', style: TextStyle(color: Colors.blueGrey))
     ];
 
     return Scaffold(

@@ -1,18 +1,71 @@
+///
+/// `register_page.dart`
+///  Class contain GUI for register page
+///
+
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mediccare/util/alert.dart';
+import 'package:mediccare/util/firestore_utils.dart';
+import 'package:mediccare/util/validator.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
-  _RegisterState createState() => _RegisterState();
+  State<StatefulWidget> createState() {
+    return _RegisterPageState();
+  }
 }
 
-class _RegisterState extends State<RegisterPage> {
+class _RegisterPageState extends State<RegisterPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   static final TextEditingController _controllerEmail = TextEditingController();
   static final TextEditingController _controllerPassword = TextEditingController();
   static final TextEditingController _controllerPasswordConfirm = TextEditingController();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  void signUpWithEmail() async {
+    FirebaseUser user;
+    this._trimEmailField();
+    try {
+      user = await _auth.createUserWithEmailAndPassword(
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      if (user != null) {
+        // Event: sign up successful
+        Navigator.pop(context);
+        FirestoreUtils.createUser(user.uid, _controllerEmail.text);
+      } else {
+        // Event: Sign up failed
+        Alert.displayPrompt(
+          context: context,
+          title: 'Registration failed',
+          content:
+              'This email address has already been registered. Please try again with a different email address.',
+          prompt: 'OK',
+        );
+      }
+      this._clearFields();
+    }
+  }
+
+  Future<FirebaseUser> getUser() async {
+    return await _auth.currentUser();
+  }
+
+  void _clearFields() {
+    _RegisterPageState._controllerEmail.text = '';
+    _RegisterPageState._controllerPassword.text = '';
+    _RegisterPageState._controllerPasswordConfirm.text = '';
+  }
+
+  void _trimEmailField() {
+    _RegisterPageState._controllerEmail.text = _RegisterPageState._controllerEmail.text.trim();
+  }
 
   @override
   void initState() {
@@ -24,31 +77,6 @@ class _RegisterState extends State<RegisterPage> {
     });
   }
 
-  void signUpWithEmail() async {
-    // marked async
-    FirebaseUser user;
-    try {
-      user = await _auth.createUserWithEmailAndPassword(
-        email: _controllerEmail.text,
-        password: _controllerPassword.text,
-      );
-    } catch (e) {
-      print(e.toString());
-    } finally {
-      if (user != null) {
-        // sign in successful!
-        // ex: bring the user to the home page
-      } else {
-        // sign in unsuccessful
-        // ex: prompt the user to try again
-      }
-    }
-  }
-
-  Future<FirebaseUser> getUser() async {
-    return await _auth.currentUser();
-  }
-
   @override
   Widget build(BuildContext context) {
     final TextFormField textFormFieldEmail = TextFormField(
@@ -58,6 +86,11 @@ class _RegisterState extends State<RegisterPage> {
         icon: Icon(Icons.mail),
         hintText: 'Email Address',
       ),
+      validator: (String email) {
+        if (!Validator.isEmail(email)) {
+          return 'Please enter a valid email address';
+        }
+      },
     );
 
     final TextFormField textFormFieldPassword = TextFormField(
@@ -68,6 +101,9 @@ class _RegisterState extends State<RegisterPage> {
         icon: Icon(Icons.lock),
         hintText: 'Password',
       ),
+      validator: (String password) {
+        return Validator.validatePassword(password, 3);
+      },
     );
 
     final TextFormField textFormFieldPasswordConfirm = TextFormField(
@@ -78,6 +114,11 @@ class _RegisterState extends State<RegisterPage> {
         icon: Icon(Icons.lock),
         hintText: 'Confirm Password',
       ),
+      validator: (String passwordConfirm) {
+        if (passwordConfirm != _controllerPassword.text) {
+          return 'Passwords mismatch';
+        }
+      },
     );
 
     final RaisedButton buttonRegister = RaisedButton(
@@ -86,27 +127,32 @@ class _RegisterState extends State<RegisterPage> {
       color: Theme.of(context).primaryColor,
       textColor: Colors.white,
       onPressed: () {
-        // TODO: Implements register
+        if (_formKey.currentState.validate()) {
+          this.signUpWithEmail();
+        }
       },
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Register'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: ListView(
-          padding: EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
-          children: <Widget>[
-            textFormFieldEmail,
-            SizedBox(height: 10.0),
-            textFormFieldPassword,
-            SizedBox(height: 10.0),
-            textFormFieldPasswordConfirm,
-            SizedBox(height: 20.0),
-            buttonRegister,
-          ],
+    return Form(
+      key: this._formKey,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Register'),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: ListView(
+            padding: EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
+            children: <Widget>[
+              textFormFieldEmail,
+              SizedBox(height: 10.0),
+              textFormFieldPassword,
+              SizedBox(height: 10.0),
+              textFormFieldPasswordConfirm,
+              SizedBox(height: 20.0),
+              buttonRegister,
+            ],
+          ),
         ),
       ),
     );

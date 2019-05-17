@@ -256,22 +256,6 @@ class User {
     return medicineSchedule;
   }
 
-  // String _id;
-  // String _email;
-  // String _firstName;
-  // String _lastName;
-  // String _gender;
-  // String _bloodGroup;
-  // DateTime _birthDate;
-  // double _height;
-  // double _weight;
-  // Image _image;
-  // List<Medicine> _medicineList;
-  // List<Appointment> _appointmentList;
-  // List<Doctor> _doctorList;
-  // List<Hospital> _hospitalList;
-  // UserSettings _userSettings;
-
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': this._id,
