@@ -19,6 +19,7 @@ class EditProfileState extends State<EditProfile> {
       _image = image;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,13 +34,12 @@ class EditProfileState extends State<EditProfile> {
       ),
       body: Center(
         child: ListView(
-          padding:
-              EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
+          padding: EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
           children: <Widget>[
             FloatingActionButton(
-            onPressed: getImage,
-            tooltip: 'Change Image',
-            child: Icon(Icons.add_a_photo),
+              onPressed: getImage,
+              tooltip: 'Change Image',
+              child: Icon(Icons.add_a_photo),
             ),
             TextFormField(
               decoration: InputDecoration(hintText: 'Gender'),

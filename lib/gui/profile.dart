@@ -16,6 +16,7 @@ class ProfileState extends State<Profile> {
     // TODO: Implements method
     setState(() {});
   }
+
   Text titleText({String title}) {
     return Text(
       title,
@@ -79,18 +80,12 @@ class ProfileState extends State<Profile> {
             Text(
               "Rawit",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.blueGrey,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.blueGrey, fontSize: 30, fontWeight: FontWeight.bold),
             ),
             Text(
               "Lohakhachornphan",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.blueGrey,
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.blueGrey, fontSize: 25, fontWeight: FontWeight.bold),
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 10),
@@ -107,10 +102,7 @@ class ProfileState extends State<Profile> {
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  titleText(title: "Gender"),
-                  contextText(context: "Male")
-                ],
+                children: <Widget>[titleText(title: "Gender"), contextText(context: "Male")],
               ),
             ),
             Container(
@@ -127,20 +119,14 @@ class ProfileState extends State<Profile> {
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  titleText(title: "Height"),
-                  contextText(context: "170 cm")
-                ],
+                children: <Widget>[titleText(title: "Height"), contextText(context: "170 cm")],
               ),
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  titleText(title: "Weight"),
-                  contextText(context: "60 kg")
-                ],
+                children: <Widget>[titleText(title: "Weight"), contextText(context: "60 kg")],
               ),
             ),
             Row(
@@ -155,23 +141,22 @@ class ProfileState extends State<Profile> {
                   elevation: 4.0,
                   splashColor: Colors.blueAccent,
                   onPressed: () {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditProfile(_refreshState)));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => EditProfile(_refreshState)));
                   },
                 ),
                 RaisedButton(
                   child: Text(
                     'Logout',
-                    style: TextStyle(
-                        color: Color.fromRGBO(216, 32, 32, 1), fontSize: 15),
+                    style: TextStyle(color: Color.fromRGBO(216, 32, 32, 1), fontSize: 15),
                   ),
                   color: Colors.white,
                   elevation: 4.0,
                   splashColor: Colors.redAccent,
                   onPressed: () {
                     _auth.signOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil('LoginPage', (Route<dynamic> route) => false);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('LoginPage', (Route<dynamic> route) => false);
                   },
                 ),
               ],

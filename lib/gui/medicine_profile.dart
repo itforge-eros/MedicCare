@@ -63,10 +63,8 @@ class MedicineProfileState extends State {
                   padding: const EdgeInsets.all(0),
                   child: Text(
                     "in dose",
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black45),
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black45),
                   ),
                 ),
               ],
@@ -193,8 +191,7 @@ class MedicineProfileState extends State {
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Colors.black45),
+                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
                   ),
                 ),
               ],
