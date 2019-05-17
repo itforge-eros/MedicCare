@@ -23,11 +23,27 @@ class InvalidEmailAddressException extends Exception {
   }
 }
 
+class InvalidPasswordValidationLevelException extends Exception {
+  /// Class: `Validator`
+  /// Event: Invalid password validation level.
+  factory InvalidPasswordValidationLevelException() {
+    return InvalidPasswordValidationLevelException();
+  }
+}
+
 class MismatchPasswordFieldsException extends Exception {
   /// Class: `Validator`
   /// Event: Registration password fields mismatch.
   factory MismatchPasswordFieldsException() {
     return MismatchPasswordFieldsException();
+  }
+}
+
+class PasswordFormatException extends Exception {
+  /// Class: `Validator`
+  /// Event: Registration password format is invalid.
+  factory PasswordFormatException() {
+    return PasswordFormatException();
   }
 }
 
