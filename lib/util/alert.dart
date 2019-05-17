@@ -24,9 +24,9 @@ class Alert {
 
   static Future displayPrompt({
     BuildContext context,
-    String title,
-    String content,
-    String prompt,
+    String title = '',
+    String content = '',
+    String prompt = 'OK',
   }) {
     return showDialog(
       context: context,

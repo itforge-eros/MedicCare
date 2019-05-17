@@ -1,13 +1,21 @@
+///
+/// `login_page.dart`
+/// Class for login page GUI
+///
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mediccare/util/alert.dart';
 
 class LoginPage extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  State<StatefulWidget> createState() {
+    return _LoginPageState();
+  }
 }
 
-class _LoginState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> {
   static final TextEditingController _controllerEmail = TextEditingController();
   static final TextEditingController _controllerPassword = TextEditingController();
 
@@ -24,8 +32,8 @@ class _LoginState extends State<LoginPage> {
   }
 
   void signInWithEmail() async {
-    // marked async
     FirebaseUser user;
+    this._trimEmailField();
     try {
       user = await _auth.signInWithEmailAndPassword(
           email: _controllerEmail.text, password: _controllerPassword.text);
@@ -34,14 +42,33 @@ class _LoginState extends State<LoginPage> {
     } finally {
       if (user != null) {
         Navigator.pushNamed(context, 'Homepage');
+        this._clearFields();
       } else {
-        // sign in unsuccessful
+        Alert.displayPrompt(
+          context: context,
+          title: 'Login failed',
+          content: 'Invalid email address or password.',
+        );
+        this._clearPasswordField();
       }
     }
   }
 
   Future<FirebaseUser> getUser() async {
     return await _auth.currentUser();
+  }
+
+  void _clearFields() {
+    _LoginPageState._controllerEmail.text = '';
+    _LoginPageState._controllerPassword.text = '';
+  }
+
+  void _clearPasswordField() {
+    _LoginPageState._controllerPassword.text = '';
+  }
+
+  void _trimEmailField() {
+    _LoginPageState._controllerEmail.text = _LoginPageState._controllerEmail.text.trim();
   }
 
   @override
@@ -71,8 +98,6 @@ class _LoginState extends State<LoginPage> {
       color: Theme.of(context).primaryColor,
       textColor: Colors.white,
       onPressed: () {
-        // Navigator.pushReplacementNamed(context, 'Homepage');
-        // TODO: Implements login
         signInWithEmail();
       },
     );

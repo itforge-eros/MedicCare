@@ -12,30 +12,21 @@ import 'package:mediccare/exceptions.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
-  _RegisterState createState() => _RegisterState();
+  State<StatefulWidget> createState() {
+    return _RegisterPageState();
+  }
 }
 
-class _RegisterState extends State<RegisterPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   static final TextEditingController _controllerEmail = TextEditingController();
   static final TextEditingController _controllerPassword = TextEditingController();
   static final TextEditingController _controllerPasswordConfirm = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    getUser().then((user) {
-      if (user != null) {
-        print(user);
-      }
-    });
-  }
-
   void signUpWithEmail() async {
-    // marked async
     FirebaseUser user;
+    this._trimEmailField();
     try {
       user = await _auth.createUserWithEmailAndPassword(
         email: _controllerEmail.text.trim(),
@@ -48,19 +39,41 @@ class _RegisterState extends State<RegisterPage> {
         // Event: sign up successful
         Navigator.pop(context);
       } else {
-        // Event: Sign up faileds
+        // Event: Sign up failed
         Alert.displayPrompt(
           context: context,
           title: 'Registration failed',
-          content: 'This email address has already been registered. Please try with a different email address.',
+          content:
+              'This email address has already been registered. Please try again with a different email address.',
           prompt: 'OK',
         );
       }
+      this._clearFields();
     }
   }
 
   Future<FirebaseUser> getUser() async {
     return await _auth.currentUser();
+  }
+
+  void _clearFields() {
+    _RegisterPageState._controllerEmail.text = '';
+    _RegisterPageState._controllerPassword.text = '';
+    _RegisterPageState._controllerPasswordConfirm.text = '';
+  }
+
+  void _trimEmailField() {
+    _RegisterPageState._controllerEmail.text = _RegisterPageState._controllerEmail.text.trim();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUser().then((user) {
+      if (user != null) {
+        print(user);
+      }
+    });
   }
 
   @override
