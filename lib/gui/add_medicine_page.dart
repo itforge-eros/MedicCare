@@ -31,8 +31,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
       ),
       body: Center(
         child: ListView(
-          padding:
-              EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
+          padding: EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
           children: <Widget>[
             // TODO: Completes form
             TextFormField(
