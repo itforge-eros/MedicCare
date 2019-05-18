@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushNamed(context, 'Homepage');
         this._clearFields();
       } else {
-        Alert.displayPrompt(
+        Alert.displayConfirm(
           context: context,
           title: 'Login failed',
           content: 'Invalid email address or password.',

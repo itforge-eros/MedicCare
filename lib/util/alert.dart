@@ -22,11 +22,11 @@ class Alert {
     );
   }
 
-  static Future displayPrompt({
+  static Future displayConfirm({
     BuildContext context,
     String title = '',
     String content = '',
-    String prompt = 'OK',
+    String confirm = 'OK',
     Function onPressed,
   }) {
     return showDialog(
@@ -37,7 +37,7 @@ class Alert {
           content: Text(content),
           actions: <Widget>[
             FlatButton(
-              child: Text(prompt),
+              child: Text(confirm),
               onPressed: onPressed ?? () {
                 Navigator.of(context).pop();
               },
