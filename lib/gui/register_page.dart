@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mediccare/util/alert.dart';
-import 'package:mediccare/util/firestore_utils.dart';
+import 'package:mediccare/util/firebase_utils.dart';
 import 'package:mediccare/util/validator.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -47,7 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Navigator.pop(context);
           },
         );
-        FirestoreUtils.createUser(user.uid, _controllerEmail.text);
+        FirebaseUtils.createUserData(user.uid, _controllerEmail.text);
       } else {
         // Event: Sign up failed
         Alert.displayPrompt(
@@ -60,10 +60,6 @@ class _RegisterPageState extends State<RegisterPage> {
       }
       this._clearFields();
     }
-  }
-
-  Future<FirebaseUser> getUser() async {
-    return await _auth.currentUser();
   }
 
   void _clearFields() {
@@ -79,7 +75,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    getUser().then((user) {
+    FirebaseUtils.getUser().then((user) {
       if (user != null) {
         print(user);
       }
