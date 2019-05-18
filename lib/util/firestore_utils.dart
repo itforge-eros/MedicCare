@@ -20,8 +20,4 @@ class FirestoreUtils {
 
     Firestore.instance.collection('users').document(id).setData(map);
   }
-
-  static Future<DocumentSnapshot> getUser(String id) async {
-    return await Firestore.instance.collection('users').document(id).get();
-  }
 }
