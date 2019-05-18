@@ -37,7 +37,16 @@ class _RegisterPageState extends State<RegisterPage> {
     } finally {
       if (user != null) {
         // Event: sign up successful
-        Navigator.pop(context);
+        Alert.displayPrompt(
+          context: context,
+          title: 'Registration Success',
+          content: 'New account created, you are now able to use this new account to login.',
+          prompt: 'OK',
+          onPressed: () {
+            Navigator.of(context).pop();
+            Navigator.pop(context);
+          },
+        );
         FirestoreUtils.createUser(user.uid, _controllerEmail.text);
       } else {
         // Event: Sign up failed
