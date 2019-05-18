@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mediccare/util/alert.dart';
-import 'package:mediccare/util/firestore_utils.dart';
+import 'package:mediccare/util/firebase_utils.dart';
 import 'package:mediccare/util/validator.dart';
 
 class LoginPage extends StatefulWidget {
@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    getUser().then((user) {
+    FirebaseUtils.getUser().then((user) {
       if (user != null) {
         Navigator.pushNamed(context, 'Homepage');
       }
@@ -40,7 +40,9 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       user = await _auth.signInWithEmailAndPassword(
-          email: _controllerEmail.text, password: _controllerPassword.text);
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
     } catch (e) {
       print(e.toString());
     } finally {
@@ -56,10 +58,6 @@ class _LoginPageState extends State<LoginPage> {
         this._clearPasswordField();
       }
     }
-  }
-
-  Future<FirebaseUser> getUser() async {
-    return await _auth.currentUser();
   }
 
   void _clearFields() {

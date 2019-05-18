@@ -27,6 +27,7 @@ class Alert {
     String title = '',
     String content = '',
     String prompt = 'OK',
+    Function onPressed,
   }) {
     return showDialog(
       context: context,
@@ -37,7 +38,7 @@ class Alert {
           actions: <Widget>[
             FlatButton(
               child: Text(prompt),
-              onPressed: () {
+              onPressed: onPressed ?? () {
                 Navigator.of(context).pop();
               },
             )
