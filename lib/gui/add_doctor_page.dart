@@ -65,7 +65,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
       _controllerFirstName.text = widget._doctor.firstName;
       _controllerLastName.text = widget._doctor.lastName;
       _controllerWard.text = widget._doctor.ward;
-      _controllerHospital.text = widget._doctor.hospital.name;
+      _controllerHospital.text = widget._doctor.hospital;
       _controllerPhone.text = widget._doctor.phone;
       _controllerNotes.text = widget._doctor.notes;
     }
