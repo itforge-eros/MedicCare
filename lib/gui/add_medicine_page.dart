@@ -4,13 +4,22 @@
 ///
 
 import 'package:flutter/material.dart';
+import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
 import 'package:mediccare/util/alert.dart';
 
 class AddMedicinePage extends StatefulWidget {
-  final Function _refreshState;
+  Function _refreshState;
+  Medicine _medicine;
 
-  AddMedicinePage(this._refreshState);
+  AddMedicinePage(Function refreshState) {
+    this._refreshState = refreshState;
+  }
+
+  AddMedicinePage.editMode(Function refreshState, Medicine medicine) {
+    this._refreshState = refreshState;
+    this._medicine = medicine;
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -25,7 +34,29 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   static final TextEditingController _controllerDoseAmount = TextEditingController();
   static final TextEditingController _controllerTotalAmount = TextEditingController();
   String _currentMedicineType = 'tablet';
-  final MedicineSchedule _schedule = MedicineSchedule();
+  MedicineSchedule _schedule = MedicineSchedule();
+
+  void clearFields() {
+    _controllerMedicineName.text = '';
+    _controllerDescription.text = '';
+    _controllerDoseAmount.text = '';
+    _controllerTotalAmount.text = '';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.clearFields();
+
+    if (widget._medicine != null) {
+      _controllerMedicineName.text = widget._medicine.name;
+      _controllerDescription.text = widget._medicine.description;
+      _controllerDoseAmount.text = widget._medicine.doseAmount.toString();
+      _controllerTotalAmount.text = widget._medicine.totalAmount.toString();
+      this._currentMedicineType = widget._medicine.type;
+      this._schedule = widget._medicine.medicineSchedule;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +64,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         title: Text(
-          'Add Medicine',
+          (widget._medicine == null) ? 'Add Medicine' : 'Edit Medicine',
           style: TextStyle(color: Colors.blueGrey),
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
@@ -332,6 +363,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         content: 'Dose amount must be less than or equal to total amount.',
                       );
                     } else {
+                      // TODO: Implements functional data saving
                       widget._refreshState();
                       Navigator.pop(context);
                     }
