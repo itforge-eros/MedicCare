@@ -5,9 +5,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
-import 'package:mediccare/gui/profile.dart';
+import 'package:mediccare/gui/profile_page.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
-import 'package:mediccare/gui/medicine_profile.dart';
+import 'package:mediccare/gui/medicine_page.dart';
 import 'package:mediccare/gui/add_doctor_page.dart';
 
 class Homepage extends StatefulWidget {
@@ -42,7 +42,7 @@ class _HomepageState extends State<Homepage> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => MedicineProfile()),
+            MaterialPageRoute(builder: (context) => MedicinePage()),
           );
         },
       );
@@ -254,7 +254,7 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Profile()),
+              MaterialPageRoute(builder: (context) => ProfilePage()),
             );
           },
         ),

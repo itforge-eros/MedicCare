@@ -24,19 +24,9 @@ class _LoginPageState extends State<LoginPage> {
   static final TextEditingController _controllerEmail = TextEditingController();
   static final TextEditingController _controllerPassword = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    FirebaseUtils.getUser().then((user) {
-      if (user != null) {
-        Navigator.pushNamed(context, 'Homepage');
-      }
-    });
-  }
-
   void signInWithEmail() async {
     FirebaseUser user;
-    this._trimEmailField();
+    this.trimEmailField();
 
     try {
       user = await _auth.signInWithEmailAndPassword(
@@ -48,29 +38,39 @@ class _LoginPageState extends State<LoginPage> {
     } finally {
       if (user != null) {
         Navigator.pushNamed(context, 'Homepage');
-        this._clearFields();
+        this.clearFields();
       } else {
         Alert.displayConfirm(
           context: context,
           title: 'Login failed',
           content: 'Invalid email address or password.',
         );
-        this._clearPasswordField();
+        this.clearPasswordField();
       }
     }
   }
 
-  void _clearFields() {
+  void clearFields() {
     _LoginPageState._controllerEmail.text = '';
     _LoginPageState._controllerPassword.text = '';
   }
 
-  void _clearPasswordField() {
+  void clearPasswordField() {
     _LoginPageState._controllerPassword.text = '';
   }
 
-  void _trimEmailField() {
+  void trimEmailField() {
     _LoginPageState._controllerEmail.text = _LoginPageState._controllerEmail.text.trim();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseUtils.getUser().then((user) {
+      if (user != null) {
+        Navigator.pushNamed(context, 'Homepage');
+      }
+    });
   }
 
   @override

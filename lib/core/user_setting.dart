@@ -42,6 +42,13 @@ class UserSettings {
     this._userTime[3] = sleepTime ?? UserSettings.defaultTime[3];
   }
 
+  UserSettings.fromMap(Map<String, dynamic> map) {
+    this._userTime[0] = map['userTime'][0] ?? UserSettings.defaultTime[0];
+    this._userTime[1] = map['userTime'][1] ?? UserSettings.defaultTime[1];
+    this._userTime[2] = map['userTime'][2] ?? UserSettings.defaultTime[2];
+    this._userTime[3] = map['userTime'][3] ?? UserSettings.defaultTime[3];
+  }
+
   List<Duration> get userTime => this._userTime;
 
   Duration get breakfastTime => this._userTime[0];
@@ -71,12 +78,5 @@ class UserSettings {
     return <String, dynamic>{
       'userTime': this._userTime.map((e) => _toTime(e)).toList(),
     };
-  }
-
-  UserSettings.fromMap(Map<String, dynamic> map) {
-    this._userTime[0] = map['userTime'][0] ?? UserSettings.defaultTime[0];
-    this._userTime[1] = map['userTime'][1] ?? UserSettings.defaultTime[1];
-    this._userTime[2] = map['userTime'][2] ?? UserSettings.defaultTime[2];
-    this._userTime[3] = map['userTime'][3] ?? UserSettings.defaultTime[3];
   }
 }

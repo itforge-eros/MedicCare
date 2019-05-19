@@ -1,11 +1,18 @@
+///
+/// `medicine_page.dart`
+/// Class for medicine page GUI
+/// 
+
 import 'package:flutter/material.dart';
 
-class MedicineProfile extends StatefulWidget {
+class MedicinePage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => MedicineProfileState();
+  State<StatefulWidget> createState() {
+    return _MedicinePageState();
+  }
 }
 
-class MedicineProfileState extends State {
+class _MedicinePageState extends State<MedicinePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

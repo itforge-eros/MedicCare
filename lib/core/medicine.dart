@@ -42,6 +42,19 @@ class Medicine {
     this._medicineSchedule = medicineSchedule;
   }
 
+  Medicine.fromMap(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._name = map['name'];
+    this._description = map['description'];
+    this._type = map['type'];
+    this._image = map['image']; //TODO: Check Image properties
+    this._doseAmount = map['doseAmount'];
+    this._totalAmount = map['totalAmount'];
+    this._remainingAmount = map['totalAmount'];
+    this._skippedTimes = map['skippedTimes'];
+    this._medicineSchedule = MedicineSchedule.fromMap(map['medicineSchedule']);
+  }
+
   String get id => this._id;
   set id(String id) => this._id = id;
 
@@ -101,18 +114,5 @@ class Medicine {
       'medicineSchedule': this._medicineSchedule.toMap(), 
       'dateAdded': this._dateAdded.toString(),
     };
-  }
-
-  Medicine.fromMap(Map<String, dynamic> map) {
-    this._id = map['id'];
-    this._name = map['name'];
-    this._description = map['description'];
-    this._type = map['type'];
-    this._image = map['image']; //TODO: Check Image properties
-    this._doseAmount = map['doseAmount'];
-    this._totalAmount = map['totalAmount'];
-    this._remainingAmount = map['totalAmount'];
-    this._skippedTimes = map['skippedTimes'];
-    this._medicineSchedule = MedicineSchedule.fromMap(map['medicineSchedule']);
   }
 }
