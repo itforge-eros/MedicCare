@@ -12,7 +12,7 @@ class Doctor {
   String _firstName;
   String _lastName;
   String _ward;
-  Hospital _hospital;
+  String _hospital;
   String _phone;
   String _notes;
   Image _image;
@@ -23,7 +23,7 @@ class Doctor {
     String firstName,
     String lastName,
     String ward,
-    Hospital hospital,
+    String hospital,
     String phone,
     String notes,
     Image image,
@@ -37,6 +37,18 @@ class Doctor {
     this._phone = phone;
     this._notes = notes;
     this._image = image;
+  }
+
+  Doctor.fromMap(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._prefix = map['prefix'];
+    this._firstName = map['firstName'];
+    this._lastName = map['lastName'];
+    this._ward = map['ward'];
+    this._hospital = map['hospital'];
+    this._phone = map['phone'];
+    this._notes = map['notes'];
+    this._image = map['image']; //TODO: Check Image properties
   }
 
   String get id => this._id;
@@ -54,8 +66,8 @@ class Doctor {
   String get ward => this._ward;
   set ward(String ward) => this._ward = ward;
 
-  Hospital get hospital => this._hospital;
-  set hospital(Hospital hospital) => this._hospital = hospital;
+  String get hospital => this._hospital;
+  set hospital(String hospital) => this._hospital = hospital;
 
   String get phone => this._phone;
   set phone(String phone) => this._phone = phone;
@@ -73,22 +85,10 @@ class Doctor {
       'firstName': this._firstName,
       'lastName': this._lastName,
       'ward': this._ward,
-      'hospital': this._hospital.toMap(),
+      'hospital': this._hospital,
       'phone': this._phone,
       'notes': this._notes,
       'image': this._image, //TODO: Check Image properties
     };
-  }
-
-  Doctor.fromMap(Map<String, dynamic> map) {
-    this._id = map['id'];
-    this._prefix = map['prefix'];
-    this._firstName = map['firstName'];
-    this._lastName = map['lastName'];
-    this._ward = map['ward'];
-    this._hospital = Hospital.fromMap(map['hospital']);
-    this._phone = map['phone'];
-    this._notes = map['notes'];
-    this._image = map['image']; //TODO: Check Image properties
   }
 }

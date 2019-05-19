@@ -1,7 +1,7 @@
 ///
 /// `hospital.dart`
 /// Class contains data of hospital
-/// 
+///
 
 import 'package:flutter/material.dart';
 
@@ -24,6 +24,14 @@ class Hospital {
     this._address = address;
     this._notes = notes;
     this._image = image;
+  }
+
+  Hospital.fromMap(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._name = map['name'];
+    this._address = map['address'];
+    this._notes = map['notes'];
+    this._image = map['image']; //TODO: Check Image properties
   }
 
   String get id => this._id;
@@ -49,13 +57,5 @@ class Hospital {
       'notes': this._notes,
       'image': this._image, //TODO: Check Image properties
     };
-  }
-
-  Hospital.fromMap(Map<String, dynamic> map) {
-    this._id = map['id'];
-    this._name = map['name'];
-    this._address = map['address'];
-    this._notes = map['notes'];
-    this._image = map['image']; //TODO: Check Image properties
   }
 }

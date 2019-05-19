@@ -5,9 +5,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
-import 'package:mediccare/gui/profile.dart';
+import 'package:mediccare/gui/profile_page.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
-import 'package:mediccare/gui/medicine_profile.dart';
+import 'package:mediccare/gui/medicine_page.dart';
 import 'package:mediccare/gui/add_doctor_page.dart';
 
 class Homepage extends StatefulWidget {
@@ -42,7 +42,7 @@ class _HomepageState extends State<Homepage> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => MedicineProfile()),
+            MaterialPageRoute(builder: (context) => MedicinePage()),
           );
         },
       );
@@ -61,7 +61,7 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  Text texttitle({String title}) {
+  Text textTitle({String title}) {
     return Text(
       title,
       style: TextStyle(
@@ -73,19 +73,19 @@ class _HomepageState extends State<Homepage> {
 // |-------------------------- Overview
   List<Widget> remainIndose() {
     List<Widget> list = [
-      Padding(padding: const EdgeInsets.all(10), child: texttitle(title: "Remaining Indose"))
+      Padding(padding: const EdgeInsets.all(10), child: textTitle(title: "Remaining Indose"))
     ];
     for (int i = 0; i < 10; i++) {
       list.add(
-          cusCard(name: "Paracetimal", subtitle: "2 shot after lunch", icon: Icons.battery_alert));
+          cusCard(name: "Paracetamal", subtitle: "2 shot after lunch", icon: Icons.battery_alert));
     }
     return list;
   }
 
-  List<Widget> commingAppoint() {
+  List<Widget> comingAppointment() {
     List<Widget> list = [
       Padding(
-          padding: const EdgeInsets.all(10), child: texttitle(title: "Your Comming\nAppointment"))
+          padding: const EdgeInsets.all(10), child: textTitle(title: "Your Coming\nAppointments"))
     ];
     for (int i = 0; i < 3; i++) {
       list.add(cusCard(
@@ -98,7 +98,7 @@ class _HomepageState extends State<Homepage> {
 
   ListView overView() => ListView(
         shrinkWrap: true,
-        children: commingAppoint() + remainIndose(),
+        children: comingAppointment() + remainIndose(),
       );
 
   // |----------------------end Overview
@@ -254,8 +254,7 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Profile()),
-              // TODO: Implements route
+              MaterialPageRoute(builder: (context) => ProfilePage()),
             );
           },
         ),
@@ -272,7 +271,6 @@ class _HomepageState extends State<Homepage> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => AddDoctorPage(_refreshState)),
-              // TODO: Implements route
             );
           },
         ),
@@ -342,7 +340,7 @@ class _HomepageState extends State<Homepage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_pin_circle),
-            title: Text('Appoint'),
+            title: Text('Appointment'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.local_pharmacy, color: Colors.white),

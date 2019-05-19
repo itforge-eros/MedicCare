@@ -2,17 +2,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class EditProfile extends StatefulWidget {
+class EditProfilePage extends StatefulWidget {
   final Function _refreshState;
-  EditProfile(this._refreshState);
+
+  EditProfilePage(this._refreshState);
+
   @override
   State<StatefulWidget> createState() {
-    return EditProfileState();
+    return _EditProfilePageState();
   }
 }
 
-class EditProfileState extends State<EditProfile> {
+class _EditProfilePageState extends State<EditProfilePage> {
   File _image;
+  
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
     setState(() {

@@ -4,7 +4,7 @@
 ///
 
 import 'package:flutter/material.dart';
-import 'gui/medic_care_app.dart';
+import 'gui/mediccare_app.dart';
 
 void main() {
   runApp(MedicCareApp());

@@ -1,17 +1,22 @@
+///
+/// `profile_page.dart`
+/// Class for profile page GUI
+/// 
+
 import 'package:flutter/material.dart';
-import 'package:mediccare/gui/profile_edit.dart';
+import 'package:mediccare/gui/edit_profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class Profile extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return ProfileState();
+    return _ProfilePageState();
   }
 }
 
-class ProfileState extends State<Profile> {
+class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   void _refreshState() {
     // TODO: Implements method
     setState(() {});
@@ -42,7 +47,6 @@ class ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
@@ -142,7 +146,7 @@ class ProfileState extends State<Profile> {
                   splashColor: Colors.blueAccent,
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => EditProfile(_refreshState)));
+                        MaterialPageRoute(builder: (context) => EditProfilePage(this._refreshState)));
                   },
                 ),
                 RaisedButton(

@@ -40,6 +40,19 @@ class MedicineSchedule {
     this._isBeforeMeal = isBeforeMeal;
   }
 
+  MedicineSchedule.fromMap(Map<String, dynamic> map) {
+    if (map['time'] != null) {
+      _checkTimeException(map['time']);
+    }
+    if (map['day'] != null) {
+      _checkDayException(day);
+    }
+
+    this._time = map['time'] ?? [true, true, true, false];
+    this._day = map['day'] ?? [true, true, true, true, true, true, true];
+    this._isBeforeMeal = map['isBeforeMeal'];
+  }
+
   List<bool> get time => this._time;
   set time(List<bool> time) {
     _checkTimeException(time);
@@ -77,18 +90,5 @@ class MedicineSchedule {
       'day': this._day,
       'isBeforeMeal': this._isBeforeMeal,
     };
-  }
-
-  MedicineSchedule.fromMap(Map<String, dynamic> map) {
-    if (map['time'] != null) {
-      _checkTimeException(map['time']);
-    }
-    if (map['day'] != null) {
-      _checkDayException(day);
-    }
-
-    this._time = map['time'] ?? [true, true, true, false];
-    this._day = map['day'] ?? [true, true, true, true, true, true, true];
-    this._isBeforeMeal = map['isBeforeMeal'];
   }
 }

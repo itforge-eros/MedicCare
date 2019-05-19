@@ -61,6 +61,23 @@ class User {
     this._userSettings = userSettings ?? UserSettings();
   }
 
+  User.fromMap(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._email = map['email'];
+    this._firstName = map['firstName'];
+    this._lastName = map['lastName'];
+    this._birthDate = DateTime.parse(map['birthDate']);
+    this._gender = map['gender'];
+    this._height = map['height'];
+    this._weight = map['weight'];
+    this._image = map['image']; //TODO: Check Image properties
+    this._medicineList = map['medicineList'].map((e) => Medicine.fromMap(e)).toList() ?? List<Medicine>();
+    this._appointmentList = map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ?? List<Appointment>();
+    this._doctorList = map['doctorList'].map((e) => Doctor.fromMap(e)).toList() ?? List<Doctor>();
+    this._hospitalList = map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ?? List<Hospital>();
+    this._userSettings = UserSettings.fromMap(map['userSettings']) ?? UserSettings();
+  }
+
   String get id => this._id;
   set id(String id) => this._id = id;
 
@@ -274,22 +291,5 @@ class User {
       'hospitalList': this._hospitalList.map((e) => e.toMap()).toList(),
       'userSettings': this._userSettings.toMap(),
     };
-  }
-
-  User.fromMap(Map<String, dynamic> map) {
-    this._id = map['id'];
-    this._email = map['email'];
-    this._firstName = map['firstName'];
-    this._lastName = map['lastName'];
-    this._birthDate = DateTime.parse(map['birthDate']);
-    this._gender = map['gender'];
-    this._height = map['height'];
-    this._weight = map['weight'];
-    this._image = map['image']; //TODO: Check Image properties
-    this._medicineList = map['medicineList'].map((e) => Medicine.fromMap(e)).toList() ?? List<Medicine>();
-    this._appointmentList = map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ?? List<Appointment>();
-    this._doctorList = map['doctorList'].map((e) => Doctor.fromMap(e)).toList() ?? List<Doctor>();
-    this._hospitalList = map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ?? List<Hospital>();
-    this._userSettings = UserSettings.fromMap(map['userSettings']) ?? UserSettings();
   }
 }
