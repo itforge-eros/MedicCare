@@ -7,11 +7,20 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mediccare/core/doctor.dart';
 
 class AddDoctorPage extends StatefulWidget {
-  final Function _refreshState;
+  Function _refreshState;
+  Doctor _doctor;
 
-  AddDoctorPage(this._refreshState);
+  AddDoctorPage(Function refreshState) {
+    this._refreshState = refreshState;
+  }
+
+  AddDoctorPage.editMode(Function refreshState, Doctor doctor) {
+    this._refreshState = refreshState;
+    this._doctor = doctor;
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -36,6 +45,30 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
     setState(() {
       _image = image;
     });
+  }
+
+  void clearFields() {
+    _controllerPrefix.text = '';
+    _controllerFirstName.text = '';
+    _controllerLastName.text = '';
+    _controllerWard.text = '';
+    _controllerHospital.text = '';
+    _controllerPhone.text = '';
+    _controllerNotes.text = '';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget._doctor != null) {
+      _controllerPrefix.text = widget._doctor.prefix;
+      _controllerFirstName.text = widget._doctor.firstName;
+      _controllerLastName.text = widget._doctor.lastName;
+      _controllerWard.text = widget._doctor.ward;
+      _controllerHospital.text = widget._doctor.hospital.name;
+      _controllerPhone.text = widget._doctor.phone;
+      _controllerNotes.text = widget._doctor.notes;
+    }
   }
 
   @override
