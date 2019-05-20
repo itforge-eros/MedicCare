@@ -258,6 +258,12 @@ class _HomepageState extends State<Homepage> {
             );
           },
         ),
+        IconButton(
+            icon: Icon(Icons.help, color: Colors.blue),
+            onPressed: () {
+              Navigator.pushNamed(context, 'IntroPage');
+            },
+          ),
       ],
 
       // Index 3 : Doctor
@@ -326,6 +332,8 @@ class _HomepageState extends State<Homepage> {
       ),
       body: _pages[this._currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedFontSize: 13.5,
+        unselectedFontSize: 11.5,
         type: BottomNavigationBarType.fixed,
         currentIndex: this._currentIndex,
         onTap: (int i) {

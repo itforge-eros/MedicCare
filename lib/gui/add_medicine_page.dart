@@ -33,7 +33,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   static final TextEditingController _controllerDescription = TextEditingController();
   static final TextEditingController _controllerDoseAmount = TextEditingController();
   static final TextEditingController _controllerTotalAmount = TextEditingController();
-  String _currentMedicineType = 'tablet';
+  String _currentMedicineType = 'capsule';
   MedicineSchedule _schedule = MedicineSchedule();
 
   void clearFields() {
@@ -41,13 +41,11 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
     _controllerDescription.text = '';
     _controllerDoseAmount.text = '';
     _controllerTotalAmount.text = '';
+    this._currentMedicineType = 'capsule';
+    this._schedule = MedicineSchedule();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    this.clearFields();
-
+  void loadFields() {
     if (widget._medicine != null) {
       _controllerMedicineName.text = widget._medicine.name;
       _controllerDescription.text = widget._medicine.description;
@@ -56,6 +54,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
       this._currentMedicineType = widget._medicine.type;
       this._schedule = widget._medicine.medicineSchedule;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.clearFields();
+    this.loadFields();
   }
 
   @override
@@ -69,6 +74,27 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
         elevation: 0.1,
+        actions: (widget._medicine == null)
+            ? <Widget>[]
+            : <Widget>[
+                IconButton(
+                  color: Colors.red,
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    Alert.displayConfirmDelete(
+                      context,
+                      title: 'Delete Medicine?',
+                      content: 'Deleting this medicine will permanently remove it from your medicine list.',
+                      onPressedConfirm: () {
+                        // TODO: Implements medicine deletion
+                        Navigator.of(context).pop();
+                        Navigator.pop(context);
+                        widget._refreshState();
+                      },
+                    );
+                  },
+                ),
+              ],
       ),
       body: Form(
         key: this._formKey,
@@ -357,8 +383,8 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                   if (this._formKey.currentState.validate()) {
                     if (int.parse(_controllerDoseAmount.text) >
                         int.parse(_controllerTotalAmount.text)) {
-                      Alert.displayConfirm(
-                        context: context,
+                      Alert.displayAlert(
+                        context,
                         title: 'Invalid Data',
                         content: 'Dose amount must be less than or equal to total amount.',
                       );
