@@ -58,9 +58,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
     _controllerNotes.text = '';
   }
 
-  @override
-  void initState() {
-    super.initState();
+  void loadFields() {
     if (widget._doctor != null) {
       _controllerPrefix.text = widget._doctor.prefix;
       _controllerFirstName.text = widget._doctor.firstName;
@@ -70,6 +68,13 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
       _controllerPhone.text = widget._doctor.phone;
       _controllerNotes.text = widget._doctor.notes;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.clearFields();
+    this.loadFields();
   }
 
   @override
