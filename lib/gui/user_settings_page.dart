@@ -23,12 +23,6 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
     dinnerTime: Duration(hours: 18, minutes: 30), // TODO: Loads user settings from FireStore
     sleepTime: Duration(hours: 22, minutes: 30), // TODO: Loads user settings from FireStore
   );
-  final UserSettings _userSettingsTemporary = UserSettings(
-    breakfastTime: Duration(hours: 7, minutes: 30), // TODO: Loads user settings from FireStore
-    lunchTime: Duration(hours: 11, minutes: 30), // TODO: Loads user settings from FireStore
-    dinnerTime: Duration(hours: 18, minutes: 30), // TODO: Loads user settings from FireStore
-    sleepTime: Duration(hours: 22, minutes: 30), // TODO: Loads user settings from FireStore
-  );
 
   DateTime durationToDateTime(Duration duration) {
     return DateTime(
@@ -68,8 +62,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
           child: ListView(
             children: <Widget>[
               DateTimePickerFormField(
-                initialValue: durationToDateTime(_userSettingsTemporary.breakfastTime),
-                initialTime: durationToTimeOfDay(_userSettingsTemporary.breakfastTime),
+                initialValue: durationToDateTime(_userSettings.breakfastTime),
+                initialTime: durationToTimeOfDay(_userSettings.breakfastTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -79,7 +73,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 ),
                 onChanged: (time) {
                   try {
-                    _userSettingsTemporary.breakfastTime = Duration(
+                    _userSettings.breakfastTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
@@ -92,8 +86,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 },
               ),
               DateTimePickerFormField(
-                initialValue: durationToDateTime(_userSettingsTemporary.lunchTime),
-                initialTime: durationToTimeOfDay(_userSettingsTemporary.lunchTime),
+                initialValue: durationToDateTime(_userSettings.lunchTime),
+                initialTime: durationToTimeOfDay(_userSettings.lunchTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -103,7 +97,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 ),
                 onChanged: (time) {
                   try {
-                    _userSettingsTemporary.lunchTime = Duration(
+                    _userSettings.lunchTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
@@ -116,8 +110,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 },
               ),
               DateTimePickerFormField(
-                initialValue: durationToDateTime(_userSettingsTemporary.dinnerTime),
-                initialTime: durationToTimeOfDay(_userSettingsTemporary.dinnerTime),
+                initialValue: durationToDateTime(_userSettings.dinnerTime),
+                initialTime: durationToTimeOfDay(_userSettings.dinnerTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -126,14 +120,14 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                   prefixIcon: Icon(Icons.local_dining),
                 ),
                 onChanged: (time) {
-                  _userSettingsTemporary.dinnerTime = Duration(
+                  _userSettings.dinnerTime = Duration(
                     hours: time.hour,
                     minutes: time.minute,
                   );
                 },
                 validator: (time) {
                   try {
-                    _userSettingsTemporary.dinnerTime = Duration(
+                    _userSettings.dinnerTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
@@ -141,8 +135,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 },
               ),
               DateTimePickerFormField(
-                initialValue: durationToDateTime(_userSettingsTemporary.sleepTime),
-                initialTime: durationToTimeOfDay(_userSettingsTemporary.sleepTime),
+                initialValue: durationToDateTime(_userSettings.sleepTime),
+                initialTime: durationToTimeOfDay(_userSettings.sleepTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -152,7 +146,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 ),
                 onChanged: (time) {
                   try {
-                    _userSettingsTemporary.sleepTime = Duration(
+                    _userSettings.sleepTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
@@ -170,10 +164,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 child: Text('Save'),
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
-                    _userSettings.breakfastTime = _userSettingsTemporary.breakfastTime;
-                    _userSettings.lunchTime = _userSettingsTemporary.lunchTime;
-                    _userSettings.dinnerTime = _userSettingsTemporary.dinnerTime;
-                    _userSettings.sleepTime = _userSettingsTemporary.sleepTime;
+                    // TODO: Implements saving data to FireStore
                     Navigator.pop(context);
                   }
                 },
