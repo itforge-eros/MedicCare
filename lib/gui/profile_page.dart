@@ -52,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         title: Text(
-          "Profile",
+          'Profile',
           style: TextStyle(color: Colors.blueGrey),
           textAlign: TextAlign.center,
         ),
@@ -79,19 +79,19 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Text(
-              "Rawit",
+              'Rawit',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.blueGrey, fontSize: 30, fontWeight: FontWeight.bold),
             ),
             Text(
-              "Lohakhachornphan",
+              'Lohakhachornphan',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.blueGrey, fontSize: 25, fontWeight: FontWeight.bold),
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 10),
               child: Text(
-                "Rawitgun@gmail.com",
+                'Rawitgun@gmail.com',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Theme.of(context).primaryColorDark,
@@ -103,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[titleText(title: "Gender"), contextText(context: "Male")],
+                children: <Widget>[titleText(title: 'Gender'), contextText(context: 'Male')],
               ),
             ),
             Container(
@@ -111,8 +111,8 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  titleText(title: "Date of Birth"),
-                  contextText(context: "4 April 1999")
+                  titleText(title: 'Date of Birth'),
+                  contextText(context: '4 April 1999')
                 ],
               ),
             ),
@@ -120,14 +120,21 @@ class _ProfilePageState extends State<ProfilePage> {
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[titleText(title: "Height"), contextText(context: "170 cm")],
+                children: <Widget>[titleText(title: 'Height'), contextText(context: '170 cm')],
               ),
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[titleText(title: "Weight"), contextText(context: "60 kg")],
+                children: <Widget>[titleText(title: 'Weight'), contextText(context: '60 kg')],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[titleText(title: 'Blood Group'), contextText(context: 'O+')],
               ),
             ),
             Row(
@@ -147,7 +154,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       MaterialPageRoute(
                         builder: (context) => EditProfilePage(
                               this._refreshState,
-                              User(),
+                              User(
+                                firstName: 'Rawit',
+                                lastName: 'Lohakhachornphan',
+                                birthDate: DateTime(1999, 4, 4),
+                                height: 172,
+                                weight: 53,
+                              ),
                             ),
                       ),
                     );
