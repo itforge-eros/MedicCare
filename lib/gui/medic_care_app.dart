@@ -8,6 +8,7 @@ import 'package:mediccare/gui/intro_page.dart';
 import 'package:mediccare/gui/login_page.dart';
 import 'package:mediccare/gui/register_page.dart';
 import 'package:mediccare/gui/homepage.dart';
+import 'package:mediccare/gui/user_settings_page.dart';
 
 class MedicCareApp extends StatelessWidget {
   @override
@@ -20,9 +21,10 @@ class MedicCareApp extends StatelessWidget {
       routes: {
         'LoginPage': (context) => LoginPage(),
         'RegisterPage': (context) => RegisterPage(),
-        'InitAccountPage': (context) => null,
+        'InitAccountPage': (context) => null, //TODO: Implements class
         'Homepage': (context) => Homepage(),
         'IntroPage': (context) => IntroPage(),
+        'UserSettingsPage': (context) => UserSettingsPage(),
       },
     );
   }
