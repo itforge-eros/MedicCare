@@ -258,6 +258,12 @@ class _HomepageState extends State<Homepage> {
             );
           },
         ),
+        IconButton(
+            icon: Icon(Icons.help, color: Colors.blue),
+            onPressed: () {
+              Navigator.pushNamed(context, 'IntroPage');
+            },
+          ),
       ],
 
       // Index 3 : Doctor
