@@ -4,9 +4,10 @@
 ///
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/util/alert.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:mediccare/util/datetime_picker_formfield.dart';
 
 class AddAppointmentPage extends StatefulWidget {
   Function _refreshState;
@@ -108,7 +109,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
             children: <Widget>[
               TextFormField(
                 controller: _controllerTitle,
-                decoration: InputDecoration(hintText: 'Appointment Title'),
+                decoration: InputDecoration(labelText: 'Appointment Title'),
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill appointment title';
@@ -118,61 +119,40 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
               TextFormField(
                 controller: _controllerDescription,
                 maxLines: 4,
-                decoration: InputDecoration(hintText: 'Description'),
+                decoration: InputDecoration(labelText: 'Description'),
               ),
               TextFormField(
-                decoration: InputDecoration(hintText: 'Doctor'),
+                decoration: InputDecoration(labelText: 'Doctor'),
               ),
               TextFormField(
                 controller: _controllerHospital,
-                decoration: InputDecoration(hintText: 'Hospital'),
+                decoration: InputDecoration(labelText: 'Hospital'),
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill hospital';
                   }
                 },
               ),
-              TextFormField(
-                controller: _controllerDateTime,
-                enabled: true,
-                decoration: InputDecoration(hintText: 'Date and time'),
-                validator: (String text) {
-                  if (text.isEmpty) {
-                    return 'Please select date and time';
-                  }
-
+              DateTimePickerFormField(
+                initialValue: DateTime.now().add(Duration(days: 1)),
+                initialDate: DateTime.now().add(Duration(days: 1)),
+                format: DateFormat('yyyy-MM-dd HH:mm'),
+                inputType: InputType.both,
+                editable: true,
+                decoration: InputDecoration(
+                  labelText: 'Date and Time',
+                  prefixIcon: Icon(Icons.calendar_today),
+                ),
+                onChanged: (DateTime dateTime) {},
+                validator: (DateTime dateTime) {
                   try {
-                    if (DateTime.parse(text).compareTo(DateTime.now()) < 0) {
+                    if (dateTime.compareTo(DateTime.now()) < 0) {
                       return 'Appointment date and time must be in the future';
                     }
                   } catch (e) {
                     return 'Invalid date and time format';
                   }
                 },
-              ),
-              FlatButton(
-                onPressed: () {
-                  DatePicker.showDateTimePicker(
-                    context,
-                    theme: DatePickerTheme(
-                      itemStyle: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: 18.0,
-                      ),
-                    ),
-                    showTitleActions: true,
-                    onChanged: (DateTime value) {},
-                    onConfirm: (DateTime value) {
-                      _controllerDateTime.text = value.toString().replaceAll('.000', '');
-                    },
-                    currentTime: loadTime(),
-                    locale: LocaleType.en,
-                  );
-                },
-                child: Text(
-                  'Select appointment date and time',
-                  style: TextStyle(color: Colors.blue),
-                ),
               ),
               SizedBox(height: 20.0),
               RaisedButton(

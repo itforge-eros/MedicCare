@@ -20,33 +20,37 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   int _currentIndex = 2;
 
-  Widget listTileCus({String name, String subtitle, Object icon, Object page}) => ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        leading: Container(
-          padding: EdgeInsets.only(right: 12.0),
-          decoration:
-              BoxDecoration(border: Border(right: BorderSide(width: 1.0, color: Colors.black38))),
-          child: Icon(icon, color: Colors.blue[300]),
-        ),
-        title: Text(
-          name,
-          style: TextStyle(color: Colors.blue[300], fontWeight: FontWeight.bold),
-        ),
-        subtitle: Row(
-          children: <Widget>[
-            Icon(Icons.linear_scale, color: Colors.blueAccent),
-            Text(subtitle, style: TextStyle(color: Colors.black54))
-          ],
-        ),
-        trailing: Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MedicinePage()),
-          );
-        },
-      );
+  // Utility Method: Returns ...something?
+  ListTile listTileCus({String name, String subtitle, Object icon, Object page}) {
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      leading: Container(
+        padding: EdgeInsets.only(right: 12.0),
+        decoration:
+            BoxDecoration(border: Border(right: BorderSide(width: 1.0, color: Colors.black38))),
+        child: Icon(icon, color: Colors.blue[300]),
+      ),
+      title: Text(
+        name,
+        style: TextStyle(color: Colors.blue[300], fontWeight: FontWeight.bold),
+      ),
+      subtitle: Row(
+        children: <Widget>[
+          Icon(Icons.linear_scale, color: Colors.blueAccent),
+          Text(subtitle, style: TextStyle(color: Colors.black54))
+        ],
+      ),
+      trailing: Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MedicinePage()),
+        );
+      },
+    );
+  }
 
+  // Utility Method: Returns a card
   Card cusCard({String name, String subtitle, Object icon}) {
     return Card(
       shape: RoundedRectangleBorder(
@@ -56,61 +60,38 @@ class _HomepageState extends State<Homepage> {
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       child: Container(
         decoration: BoxDecoration(color: Colors.white),
-        child: listTileCus(name: name, subtitle: subtitle, icon: icon),
+        child: listTileCus(
+          name: name,
+          subtitle: subtitle,
+          icon: icon,
+        ),
       ),
     );
   }
 
+  // Utility Method: Returns text title
   Text textTitle({String title}) {
     return Text(
       title,
       style: TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 25, fontFamily: 'Raleway', color: Colors.blueGrey),
+        fontWeight: FontWeight.bold,
+        fontSize: 25,
+        fontFamily: 'Raleway',
+        color: Colors.blueGrey,
+      ),
       textAlign: TextAlign.center,
     );
   }
 
-// |-------------------------- Overview
-  List<Widget> remainIndose() {
-    List<Widget> list = [
-      Padding(padding: const EdgeInsets.all(10), child: textTitle(title: "Remaining Indose"))
-    ];
-    for (int i = 0; i < 10; i++) {
-      list.add(
-          cusCard(name: "Paracetamal", subtitle: "2 shot after lunch", icon: Icons.battery_alert));
-    }
-    return list;
-  }
-
-  List<Widget> comingAppointment() {
-    List<Widget> list = [
-      Padding(
-          padding: const EdgeInsets.all(10), child: textTitle(title: "Your Coming\nAppointments"))
-    ];
-    for (int i = 0; i < 3; i++) {
-      list.add(cusCard(
-          name: "Appointment with Dr.Rawit",
-          subtitle: "This Saturday afternoon",
-          icon: Icons.local_hospital));
-    }
-    return list;
-  }
-
-  ListView overView() => ListView(
-        shrinkWrap: true,
-        children: comingAppointment() + remainIndose(),
-      );
-
-  // |----------------------end Overview
   // |----------------------Medicine
 
+  // Data Method: Returns a list of medicine
   List<Widget> totalMedic() {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
         child: TextField(
           onChanged: (value) {},
-          // controller: ,
           decoration: InputDecoration(
             labelText: "Search",
             hintText: "Search",
@@ -120,12 +101,19 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    for (int i = 0; i < 6; i++) {
-      list.add(cusCard(name: "Pracetimal", subtitle: "5 left", icon: Icons.battery_full));
+    for (int i = 0; i < 4; i++) {
+      list.add(
+        cusCard(
+          name: "Paracetamal",
+          subtitle: "5 left",
+          icon: Icons.battery_full,
+        ),
+      );
     }
     return list;
   }
 
+  // GUI Method: Returns GUI of medicine tab
   ListView leftMedicine() {
     return ListView(
       shrinkWrap: true,
@@ -133,8 +121,10 @@ class _HomepageState extends State<Homepage> {
     );
   }
   // |----------------------end Medicine
+
   // |----------------------Appointment
 
+  // Data Method: Returns a list of appointments
   List<Widget> totalAppoint() {
     List<Widget> list = [
       Padding(
@@ -153,15 +143,16 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 4; i++) {
       list.add(cusCard(
           name: "Appointment with Dr.Rawit",
           subtitle: "At Payathai Ht. afternoon",
-          icon: Icons.local_hospital));
+          icon: Icons.person_pin_circle));
     }
     return list;
   }
 
+  // GUI Method: Returns GUI of appointment tab
   ListView leftAppointment() {
     return ListView(
       shrinkWrap: true,
@@ -170,12 +161,61 @@ class _HomepageState extends State<Homepage> {
   }
 
   // |----------------------end Appointment
-  void _refreshState() {
-    // TODO: Implements method
-    setState(() {});
+
+  // |-------------------------- Overview
+
+  // Data Method: Returns list of coming appointments
+  List<Widget> comingAppointment() {
+    List<Widget> list = [
+      Padding(
+        padding: const EdgeInsets.all(10),
+        child: textTitle(title: "Coming Appointments"),
+      ),
+    ];
+    for (int i = 0; i < 2; i++) {
+      list.add(
+        cusCard(
+          name: "Appointment with Dr.Rawit",
+          subtitle: "This Saturday afternoon",
+          icon: Icons.local_hospital,
+        ),
+      );
+    }
+    return list;
   }
 
-  //---------------------doctor
+  // Data Method: Returns list of remaining indose
+  List<Widget> remainIndose() {
+    List<Widget> list = [
+      Padding(padding: const EdgeInsets.all(10), child: textTitle(title: "Remaining Indose"))
+    ];
+
+    for (int i = 0; i < 4; i++) {
+      list.add(
+        cusCard(
+          name: "Paracetamal",
+          subtitle: "2 shot after lunch",
+          icon: Icons.battery_full,
+        ),
+      );
+    }
+
+    return list;
+  }
+
+  // GUI Method: Returns GUI of overview tab
+  ListView overview() {
+    return ListView(
+      shrinkWrap: true,
+      children: comingAppointment() + [SizedBox(height: 20.0)] + remainIndose(),
+    );
+  }
+
+  // |----------------------end Overview
+
+  // |----------------------Doctor
+
+  // Data Method: Returns a list of doctors
   List<Widget> allDoctor() {
     List<Widget> list = [
       Padding(
@@ -194,18 +234,30 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    for (int i = 0; i < 6; i++) {
-      list.add(cusCard(
-          name: "Dr.Rawit", subtitle: "At Payathai Ht. afternoon", icon: Icons.local_hospital));
+    for (int i = 0; i < 4; i++) {
+      list.add(
+        cusCard(
+          name: "Dr.Rawit",
+          subtitle: "At Payathai Ht. afternoon",
+          icon: Icons.person,
+        ),
+      );
     }
+    
     return list;
   }
 
+  // GUI Method: Returns GUI of doctor tab
   ListView rightDoctor() {
     return ListView(
       shrinkWrap: true,
       children: allDoctor(),
     );
+  }
+
+  void _refreshState() {
+    // TODO: Implements method
+    setState(() {});
   }
 
   @override
@@ -247,8 +299,14 @@ class _HomepageState extends State<Homepage> {
       // Index 2 : Overview
       <IconButton>[
         IconButton(
+          icon: Icon(Icons.help, color: Colors.blue),
+          onPressed: () {
+            Navigator.pushNamed(context, 'IntroPage');
+          },
+        ),
+        IconButton(
           icon: Icon(
-            Icons.person,
+            Icons.account_circle,
             color: color,
           ),
           onPressed: () {
@@ -258,12 +316,6 @@ class _HomepageState extends State<Homepage> {
             );
           },
         ),
-        IconButton(
-            icon: Icon(Icons.help, color: Colors.blue),
-            onPressed: () {
-              Navigator.pushNamed(context, 'IntroPage');
-            },
-          ),
       ],
 
       // Index 3 : Doctor
@@ -283,34 +335,23 @@ class _HomepageState extends State<Homepage> {
       ],
 
       // Index 4 : Hospital
-      <IconButton>[
-        IconButton(
-          icon: Icon(Icons.add, color: color),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => null),
-              // TODO: Implements route
-            );
-          },
-        ),
-      ],
+      <IconButton>[],
     ];
 
-    List<Widget> _pages = <Widget>[
+    List<Widget> pages = <Widget>[
       leftMedicine(),
       leftAppointment(),
-      overView(),
+      overview(),
       rightDoctor(),
-      Text('#4'),
+      Center(child: Text('Waiting for map API implementation.')),
     ];
 
     List headerTitle = [
-      Text('Your Medicine', style: TextStyle(color: Colors.blueGrey)),
-      Text('Your Appointment', style: TextStyle(color: Colors.blueGrey)),
+      Text('Medicine List', style: TextStyle(color: Colors.blueGrey)),
+      Text('Appointment List', style: TextStyle(color: Colors.blueGrey)),
       Text('MedicCare', style: TextStyle(color: Colors.blueGrey)),
-      Text('Your Doctor', style: TextStyle(color: Colors.blueGrey)),
-      Text('Your Hospital', style: TextStyle(color: Colors.blueGrey))
+      Text('Doctor List', style: TextStyle(color: Colors.blueGrey)),
+      Text('Nearby Hospitals', style: TextStyle(color: Colors.blueGrey))
     ];
 
     return Scaffold(
@@ -330,7 +371,7 @@ class _HomepageState extends State<Homepage> {
         child: Icon(Icons.face),
         elevation: 3.0,
       ),
-      body: _pages[this._currentIndex],
+      body: pages[this._currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 13.5,
         unselectedFontSize: 11.5,
@@ -343,7 +384,7 @@ class _HomepageState extends State<Homepage> {
         },
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.battery_unknown),
+            icon: Icon(Icons.battery_full),
             title: Text('Medicine'),
           ),
           BottomNavigationBarItem(

@@ -142,7 +142,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 editable: true,
                 decoration: InputDecoration(
                   labelText: 'Bedtime',
-                  prefixIcon: Icon(Icons.access_time),
+                  prefixIcon: Icon(Icons.brightness_3),
                 ),
                 onChanged: (time) {
                   try {
