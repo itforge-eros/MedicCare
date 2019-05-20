@@ -4,6 +4,7 @@
 ///
 
 import 'package:flutter/material.dart';
+import 'package:mediccare/core/user.dart';
 import 'package:mediccare/gui/edit_profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -142,9 +143,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   splashColor: Colors.blueAccent,
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditProfilePage(this._refreshState)));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfilePage(
+                              this._refreshState,
+                              User(),
+                            ),
+                      ),
+                    );
                   },
                 ),
                 RaisedButton(
