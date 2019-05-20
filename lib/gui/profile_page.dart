@@ -1,7 +1,7 @@
 ///
 /// `profile_page.dart`
 /// Class for profile page GUI
-/// 
+///
 
 import 'package:flutter/material.dart';
 import 'package:mediccare/gui/edit_profile_page.dart';
@@ -62,11 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: Icon(Icons.settings, color: Colors.blue),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => null),
-                // TODO: Implements route
-              );
+              Navigator.pushNamed(context, 'UserSettingsPage');
             },
           ),
         ],
@@ -145,8 +141,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   elevation: 4.0,
                   splashColor: Colors.blueAccent,
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => EditProfilePage(this._refreshState)));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditProfilePage(this._refreshState)));
                   },
                 ),
                 RaisedButton(
