@@ -69,6 +69,27 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
         elevation: 0.1,
+        actions: (widget._medicine == null)
+            ? <Widget>[]
+            : <Widget>[
+                IconButton(
+                  color: Colors.red,
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    Alert.displayConfirmDelete(
+                      context,
+                      title: 'Delete Medicine',
+                      content: 'Are you sure you want to delete this medicine?',
+                      onPressedConfirm: () {
+                        // TODO: Implements medicine deletion
+                        Navigator.of(context).pop();
+                        Navigator.pop(context);
+                        widget._refreshState();
+                      },
+                    );
+                  },
+                ),
+              ],
       ),
       body: Form(
         key: this._formKey,
@@ -357,8 +378,8 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                   if (this._formKey.currentState.validate()) {
                     if (int.parse(_controllerDoseAmount.text) >
                         int.parse(_controllerTotalAmount.text)) {
-                      Alert.displayConfirm(
-                        context: context,
+                      Alert.displayAlert(
+                        context,
                         title: 'Invalid Data',
                         content: 'Dose amount must be less than or equal to total amount.',
                       );

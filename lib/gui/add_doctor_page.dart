@@ -1,13 +1,14 @@
-import 'dart:io';
-
 ///
 /// `add_doctor_page.dart`
 /// Class for medicine addition page GUI
 ///
 
+import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/util/alert.dart';
 
 class AddDoctorPage extends StatefulWidget {
   Function _refreshState;
@@ -77,11 +78,32 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         title: Text(
-          'Add Doctor',
+          (widget._doctor == null) ? 'Add Doctor' : 'Edit Doctor',
           style: TextStyle(color: Colors.blueGrey),
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
         elevation: 0.1,
+        actions: (widget._doctor == null)
+            ? <Widget>[]
+            : <Widget>[
+                IconButton(
+                  color: Colors.red,
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    Alert.displayConfirmDelete(
+                      context,
+                      title: 'Delete Doctor',
+                      content: 'Are you sure you want to delete this doctor?',
+                      onPressedConfirm: () {
+                        // TODO: Implements doctor deletion
+                        Navigator.of(context).pop();
+                        Navigator.pop(context);
+                        widget._refreshState();
+                      },
+                    );
+                  },
+                ),
+              ],
       ),
       body: Form(
         key: this._formKey,

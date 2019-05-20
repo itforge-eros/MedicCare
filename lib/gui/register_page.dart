@@ -37,8 +37,8 @@ class _RegisterPageState extends State<RegisterPage> {
     } finally {
       if (user != null) {
         // Event: sign up successful
-        Alert.displayConfirm(
-          context: context,
+        Alert.displayAlert(
+          context,
           title: 'Registration Success',
           content: 'New account created, you are now able to use this new account to login.',
           onPressed: () {
@@ -49,8 +49,8 @@ class _RegisterPageState extends State<RegisterPage> {
         FirebaseUtils.createUserData(user.uid, _controllerEmail.text);
       } else {
         // Event: Sign up failed
-        Alert.displayConfirm(
-          context: context,
+        Alert.displayAlert(
+          context,
           title: 'Registration failed',
           content:
               'This email address has already been registered. Please try again with a different email address.',

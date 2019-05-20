@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/appointment.dart';
+import 'package:mediccare/util/alert.dart';
 
 class AddAppointmentPage extends StatefulWidget {
   Function _refreshState;
@@ -34,11 +35,32 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         title: Text(
-          'Add Appointment',
+          (widget._appointment == null) ? 'Add Appointment' : 'Edit Appointment',
           style: TextStyle(color: Colors.blueGrey),
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
         elevation: 0.1,
+        actions: (widget._appointment == null)
+            ? <Widget>[]
+            : <Widget>[
+                IconButton(
+                  color: Colors.red,
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    Alert.displayConfirmDelete(
+                      context,
+                      title: 'Delete Appointment',
+                      content: 'Are you sure you want to delete this appointment?',
+                      onPressedConfirm: () {
+                        // TODO: Implements appointment deletion
+                        Navigator.of(context).pop();
+                        Navigator.pop(context);
+                        widget._refreshState();
+                      },
+                    );
+                  },
+                ),
+              ],
       ),
       body: Form(
         key: this._formKey,
