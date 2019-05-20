@@ -40,7 +40,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
         elevation: 0.1,
-        actions: (widget._appointment == null)
+        actions: (widget._appointment != null)
             ? <Widget>[]
             : <Widget>[
                 IconButton(
@@ -49,8 +49,8 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                   onPressed: () {
                     Alert.displayConfirmDelete(
                       context,
-                      title: 'Delete Appointment',
-                      content: 'Are you sure you want to delete this appointment?',
+                      title: 'Delete Appointment?',
+                      content: 'Deleting this appointment will permanently remove it from your appointment list.',
                       onPressedConfirm: () {
                         // TODO: Implements appointment deletion
                         Navigator.of(context).pop();

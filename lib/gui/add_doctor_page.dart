@@ -92,8 +92,8 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                   onPressed: () {
                     Alert.displayConfirmDelete(
                       context,
-                      title: 'Delete Doctor',
-                      content: 'Are you sure you want to delete this doctor?',
+                      title: 'Delete Doctor?',
+                      content: 'Deleting this doctor will permanently remove it from your doctor list.',
                       onPressedConfirm: () {
                         // TODO: Implements doctor deletion
                         Navigator.of(context).pop();

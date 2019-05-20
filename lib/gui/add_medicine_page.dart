@@ -78,8 +78,8 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                   onPressed: () {
                     Alert.displayConfirmDelete(
                       context,
-                      title: 'Delete Medicine',
-                      content: 'Are you sure you want to delete this medicine?',
+                      title: 'Delete Medicine?',
+                      content: 'Deleting this medicine will permanently remove it from your medicine list.',
                       onPressedConfirm: () {
                         // TODO: Implements medicine deletion
                         Navigator.of(context).pop();
