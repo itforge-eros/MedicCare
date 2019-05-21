@@ -247,7 +247,7 @@ class User {
     List<DateTime> temp = List<DateTime>();
 
     for (int i = 0; i < this._medicineList.length; i++) {
-      temp = this._getMedicineSchedule(this._medicineList[i]);
+      temp = this.getMedicineSchedule(this._medicineList[i]);
       for (int j = 0; j < temp.length; j++) {
         medicineOverviewDataList.add(MedicineOverviewData(
           medicine: this._medicineList[i],
@@ -261,8 +261,8 @@ class User {
     return medicineOverviewDataList;
   }
 
-  // Private method: Get medicine schedule of a single medicine
-  List<DateTime> _getMedicineSchedule(Medicine medicine) {
+  // Data Method: Get medicine schedule of a single medicine
+  List<DateTime> getMedicineSchedule(Medicine medicine) {
     DateTime firstDay;
     Duration firstTime;
     final List<Duration> oneDayTime = List<Duration>();
@@ -271,14 +271,14 @@ class User {
     int offset = 0;
 
     // Logic: Calculate `firstDay`
-    firstDay = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    firstDay = DateTime(medicine.dateUpdated.year, medicine.dateUpdated.month, medicine.dateUpdated.day);
     while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
       firstDay = firstDay.add(Duration(days: 1));
     }
 
     // Logic: Calculate `firstTime`
     for (int i = 0; i < 4; i++) {
-      if (DateTime.now().day != firstDay.day) {
+      if (medicine.dateUpdated.day != firstDay.day) {
         firstTime = this._userSettings.userTime[medicine.medicineSchedule.time.indexOf(true)];
         offset = 0;
         break;
@@ -287,8 +287,8 @@ class User {
       if (!medicine.medicineSchedule.time[i]) {
         offset--;
       } else if (Duration(
-            hours: DateTime.now().hour,
-            minutes: DateTime.now().minute,
+            hours: medicine.dateUpdated.hour,
+            minutes: medicine.dateUpdated.minute,
           ) <
           this._userSettings.userTime[i]) {
         firstTime = this._userSettings.userTime[i];
@@ -321,6 +321,11 @@ class User {
       while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
         firstDay = firstDay.add(Duration(days: 1));
       }
+    }
+
+    // Logic: Remove taken medicine
+    for (int i = 0; i < (medicine.totalAmount - medicine.remainingAmount)/medicine.doseAmount; i++) {
+      medicineSchedule.removeAt(0);
     }
 
     return medicineSchedule;

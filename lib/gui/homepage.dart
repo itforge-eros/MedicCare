@@ -93,6 +93,51 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
+  // Utility Method
+  String getFormattedDate(DateTime dateTime) {
+    String month;
+
+    switch (dateTime.month) {
+      case 1:
+        month = 'January';
+        break;
+      case 2:
+        month = 'February';
+        break;
+      case 3:
+        month = 'March';
+        break;
+      case 4:
+        month = 'April';
+        break;
+      case 5:
+        month = 'May';
+        break;
+      case 6:
+        month = 'June';
+        break;
+      case 7:
+        month = 'July';
+        break;
+      case 8:
+        month = 'August';
+        break;
+      case 9:
+        month = 'September';
+        break;
+      case 10:
+        month = 'October';
+        break;
+      case 11:
+        month = 'November';
+        break;
+      case 12:
+        month = 'December';
+        break;
+    }
+    return dateTime.day.toString() + ' ' + month + ' ' + dateTime.year.toString();
+  }
+
   // |----------------------Medicine
 
   // Data Method: Returns a list of medicine
@@ -115,7 +160,7 @@ class _HomepageState extends State<Homepage> {
       list.add(
         cardCustom(
           name: e.name,
-          subtitle: e.remainingAmount.toString() + ' Left',
+          subtitle: e.getSubtitle(),
           icon: Icons.battery_full,
           page: MedicinePage(
             refreshState: this._refreshState,
@@ -206,15 +251,40 @@ class _HomepageState extends State<Homepage> {
       Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose'))
     ];
 
-    for (int i = 0; i < 4; i++) {
+    List<DateTime> dateList = List<DateTime>();
+    this._user.getMedicineOverview().forEach((e) {
+      if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
+        dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
+      }
+    });
+
+    dateList.forEach((e) {
       list.add(
-        cardCustom(
-          name: 'Paracetamal',
-          subtitle: '2 shot after lunch',
-          icon: Icons.battery_full,
+        Container(
+          padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+          alignment: Alignment.center,
+          child: Text(
+            getFormattedDate(e),
+            style: TextStyle(
+              fontSize: 14,
+              fontFamily: 'Raleway',
+              color: Colors.blueGrey[400],
+            ),
+          ),
         ),
       );
-    }
+      this._user.getMedicineOverview().forEach((f) {
+        if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
+          list.add(
+            cardCustom(
+              name: f.medicine.name,
+              subtitle: f.getSubtitle(),
+              icon: Icons.battery_full,
+            ),
+          );
+        }
+      });
+    });
 
     return list;
   }
@@ -305,6 +375,7 @@ class _HomepageState extends State<Homepage> {
             day: [true, true, true, true, true, true, true],
             isBeforeMeal: false,
           ),
+          dateUpdated: DateTime(2019, 5, 18),
         ),
         Medicine(
           id: '2',
@@ -320,6 +391,7 @@ class _HomepageState extends State<Homepage> {
             day: [true, false, true, false, true, false, true],
             isBeforeMeal: false,
           ),
+          dateUpdated: DateTime(2019, 5, 20),
         ),
       ],
       appointmentList: List<Appointment>(),

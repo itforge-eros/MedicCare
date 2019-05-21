@@ -5,7 +5,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/user.dart';
-import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/gui/edit_profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mediccare/gui/user_settings_page.dart';

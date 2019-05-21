@@ -134,6 +134,10 @@ class _MedicinePageState extends State<MedicinePage> {
     return list;
   }
 
+  void refreshState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

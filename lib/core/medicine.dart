@@ -1,7 +1,7 @@
 ///
 /// `medicine.dart`
 /// Class contains data of medicine
-/// 
+///
 
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
@@ -18,7 +18,7 @@ class Medicine {
   int _remainingAmount;
   int _skippedTimes;
   MedicineSchedule _medicineSchedule;
-  final DateTime _dateAdded = DateTime.now();
+  DateTime _dateUpdated = DateTime.now();
 
   Medicine({
     String id,
@@ -29,6 +29,7 @@ class Medicine {
     int doseAmount = 1,
     int totalAmount = 10,
     MedicineSchedule medicineSchedule,
+    DateTime dateUpdated,
   }) {
     this._id = id;
     this._name = name;
@@ -40,6 +41,7 @@ class Medicine {
     this._remainingAmount = totalAmount;
     this._skippedTimes = 0;
     this._medicineSchedule = medicineSchedule;
+    this._dateUpdated = dateUpdated ?? DateTime.now();
   }
 
   Medicine.fromMap(Map<String, dynamic> map) {
@@ -77,14 +79,18 @@ class Medicine {
   set totalAmount(int totalAmount) => this._totalAmount = totalAmount;
 
   int get remainingAmount => this._remainingAmount;
+  set remainingAmount(int remainingAmount) => this._remainingAmount = remainingAmount;
 
   int get skippedTimes => this._skippedTimes;
 
   MedicineSchedule get medicineSchedule => this._medicineSchedule;
-  set medicineSchedule(MedicineSchedule medicineSchedule) =>
-      this._medicineSchedule = medicineSchedule;
+  set medicineSchedule(MedicineSchedule medicineSchedule) {
+    updateTime();
+    this._medicineSchedule = medicineSchedule;
+  }
 
-  DateTime get dateAdded => this._dateAdded;
+  DateTime get dateUpdated => this._dateUpdated;
+  set dateUpdated(DateTime dateUpdated) => this._dateUpdated = dateUpdated;
 
   void takeMedicine() {
     if (this._remainingAmount == 0) {
@@ -100,6 +106,35 @@ class Medicine {
     this._skippedTimes++;
   }
 
+  void updateTime() {
+    this._totalAmount = this._remainingAmount;
+    this._dateUpdated = DateTime.now();
+  }
+
+  String getSubtitle() {
+    switch (this._type) {
+      case 'capsule':
+      case 'drop':
+      case 'lozenge':
+      case 'tablet':
+        return ' ' +
+            this._remainingAmount.toString() +
+            ' ' +
+            ((this._remainingAmount == 1) ? this._type : this._type + 's') +
+            ' remaining.';
+      case 'cream':
+      case 'spray':
+        return ' ' +
+            this._remainingAmount.toString() +
+            ' ' +
+            ((this._remainingAmount == 1) ? 'time' : 'times') +
+            ' remaining.';
+      case 'liquid':
+        return ' ' + this._remainingAmount.toString() + ' ml remaining.';
+    }
+    return null;
+  }
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': this._id,
@@ -111,8 +146,8 @@ class Medicine {
       'totalAmount': this._totalAmount,
       'remainingAmount': this._remainingAmount,
       'skippedTimes': this._skippedTimes,
-      'medicineSchedule': this._medicineSchedule.toMap(), 
-      'dateAdded': this._dateAdded.toString(),
+      'medicineSchedule': this._medicineSchedule.toMap(),
+      'dateAdded': this._dateUpdated.toString(),
     };
   }
 }

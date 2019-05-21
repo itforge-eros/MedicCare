@@ -72,6 +72,23 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
     }
   }
 
+  // Utility Method
+  String getUnit() {
+    switch (this._currentMedicineType) {
+      case 'capsule':
+      case 'drop':
+      case 'lozenge':
+      case 'tablet':
+        return this._currentMedicineType + '(s)';
+      case 'cream':
+      case 'spray':
+        return 'time(s)';
+      case 'liquid':
+        return 'ml';
+    }
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -186,7 +203,11 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
               TextFormField(
                 controller: _controllerDoseAmount,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Dose Amount'),
+                decoration: InputDecoration(
+                  labelText: 'Dose Amount',
+                  suffixText: getUnit(),
+                ),
+                enabled: (widget._medicine == null),
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill dose amount';
@@ -205,7 +226,11 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
               TextFormField(
                 controller: _controllerTotalAmount,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Total Amount'),
+                decoration: InputDecoration(
+                  labelText: 'Total Amount',
+                  suffixText: getUnit(),
+                ),
+                enabled: (widget._medicine == null),
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill total amount';
@@ -269,11 +294,11 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.time[0],
-                            onChanged: (bool value) {
+                            onChanged: (widget._medicine == null) ? (bool value) {
                               setState(() {
                                 this._currentMedicineSchedule.time[0] = value;
                               });
-                            },
+                            }:null,
                           ),
                           Text('Breakfast'),
                         ],
@@ -282,11 +307,11 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.time[2],
-                            onChanged: (bool value) {
+                            onChanged: (widget._medicine == null) ? (bool value) {
                               setState(() {
                                 this._currentMedicineSchedule.time[2] = value;
                               });
-                            },
+                            }:null,
                           ),
                           Text('Dinner'),
                         ],
@@ -301,11 +326,11 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.time[1],
-                            onChanged: (bool value) {
+                            onChanged: (widget._medicine == null) ? (bool value) {
                               setState(() {
                                 this._currentMedicineSchedule.time[1] = value;
                               });
-                            },
+                            }:null,
                           ),
                           Text('Lunch'),
                         ],
@@ -314,11 +339,11 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.time[3],
-                            onChanged: (bool value) {
+                            onChanged: (widget._medicine == null) ? (bool value) {
                               setState(() {
                                 this._currentMedicineSchedule.time[3] = value;
                               });
-                            },
+                            }:null,
                           ),
                           Text('Bedtime'),
                         ],
@@ -339,11 +364,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.day[0],
-                            onChanged: (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.day[0] = value;
-                              });
-                            },
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.day[0] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Monday'),
                         ],
@@ -352,11 +379,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.day[1],
-                            onChanged: (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.day[1] = value;
-                              });
-                            },
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.day[1] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Tuesday'),
                         ],
@@ -365,11 +394,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.day[2],
-                            onChanged: (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.day[2] = value;
-                              });
-                            },
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.day[2] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Wednesday'),
                         ],
@@ -378,11 +409,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.day[3],
-                            onChanged: (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.day[3] = value;
-                              });
-                            },
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.day[3] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Thursday'),
                         ],
@@ -397,11 +430,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.day[4],
-                            onChanged: (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.day[4] = value;
-                              });
-                            },
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.day[4] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Friday'),
                         ],
@@ -410,11 +445,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.day[5],
-                            onChanged: (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.day[5] = value;
-                              });
-                            },
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.day[5] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Saturday'),
                         ],
@@ -423,11 +460,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.day[6],
-                            onChanged: (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.day[6] = value;
-                              });
-                            },
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.day[6] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Sunday'),
                         ],
@@ -449,13 +488,22 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         title: 'Invalid Medicine Amount',
                         content: 'Dose amount must be less than or equal to total amount.',
                       );
-                    } else if (!widget._medicine.medicineSchedule.time.contains(true)) {
+                    }
+                    if (int.parse(_controllerTotalAmount.text) %
+                            int.parse(_controllerDoseAmount.text) !=
+                        0) {
+                      Alert.displayAlert(
+                        context,
+                        title: 'Invalid Medicine Dose',
+                        content: 'Total amount must be able to divide by dose amount.',
+                      );
+                    } else if (!_currentMedicineSchedule.time.contains(true)) {
                       Alert.displayAlert(
                         context,
                         title: 'Invalid Medicine Time',
                         content: 'Medicine must be taken at least once per day to be taken.',
                       );
-                    } else if (!widget._medicine.medicineSchedule.day.contains(true)) {
+                    } else if (!_currentMedicineSchedule.day.contains(true)) {
                       Alert.displayAlert(
                         context,
                         title: 'Invalid Medicine Day',
@@ -483,15 +531,11 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                           ),
                         );
                       } else {
-                        widget._medicine = Medicine(
-                          name: _controllerMedicineName.text,
-                          description: _controllerDescription.text,
-                          type: this._currentMedicineType,
-                          image: image,
-                          doseAmount: int.parse(_controllerDoseAmount.text),
-                          totalAmount: int.parse(_controllerTotalAmount.text),
-                          medicineSchedule: this._currentMedicineSchedule,
-                        );
+                        widget._medicine.name = _controllerMedicineName.text;
+                        widget._medicine.description = _controllerDescription.text;
+                        widget._medicine.type = this._currentMedicineType;
+                        widget._medicine.image = image;
+                        widget._medicine.medicineSchedule = this._currentMedicineSchedule;
                       }
                       widget._refreshState();
                       Navigator.pop(context);
