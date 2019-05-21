@@ -288,50 +288,62 @@ class _HomepageState extends State<Homepage> {
               name: f.medicine.name,
               subtitle: f.getSubtitle(),
               icon: Icons.battery_full,
-              trailing: DropdownButtonHideUnderline(
-                child: DropdownButton(
-                  icon: Icon(
-                    Icons.edit,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  underline: null,
-                  items: <DropdownMenuItem>[
-                    DropdownMenuItem(
-                      value: 'take',
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.check,
-                            color: Colors.green,
+              trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
+                      DateTime(
+                            f.dateTime.year,
+                            f.dateTime.month,
+                            f.dateTime.day,
+                            f.dateTime.hour,
+                            f.dateTime.minute,
+                          ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
+                          0)
+                  ? DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                        icon: Icon(
+                          Icons.edit,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        items: <DropdownMenuItem>[
+                          DropdownMenuItem(
+                            value: 'take',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.check,
+                                  color: Colors.green,
+                                ),
+                                Text('  Take'),
+                              ],
+                            ),
                           ),
-                          Text('  Take'),
-                        ],
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: 'skip',
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.cancel,
-                            color: Colors.red,
+                          DropdownMenuItem(
+                            value: 'skip',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.cancel,
+                                  color: Colors.red,
+                                ),
+                                Text('  Skip'),
+                              ],
+                            ),
                           ),
-                          Text('  Skip'),
                         ],
+                        onChanged: (value) {
+                          setState(() {
+                            if (value == 'take') {
+                              f.medicine.takeMedicine();
+                            } else if (value == 'skip') {
+                              f.medicine.skipMedicine();
+                            }
+                          });
+                        },
                       ),
+                    )
+                  : Icon(
+                      Icons.edit,
+                      color: Colors.grey,
                     ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      if (value == 'take') {
-                        f.medicine.takeMedicine();
-                      } else if (value == 'skip') {
-                        f.medicine.skipMedicine();
-                      }
-                    });
-                  },
-                ),
-              ),
             ),
           );
         }
