@@ -327,7 +327,7 @@ class _HomepageState extends State<Homepage> {
       hospitalList: List<Hospital>(),
       userSettings: UserSettings(
         notificationOn: true,
-        notifyAheadTime: Duration(minutes: 30),
+        notifyAheadDuration: Duration(minutes: 30),
         breakfastTime: Duration(hours: 7, minutes: 15),
         lunchTime: Duration(hours: 12, minutes: 0),
         dinnerTime: Duration(hours: 19, minutes: 0),

@@ -126,7 +126,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 child: Icon(Icons.add_a_photo),
               ),
               TextFormField(
-                decoration: InputDecoration(hintText: 'Medicine Name'),
+                decoration: InputDecoration(labelText: 'Medicine Name'),
                 controller: _controllerMedicineName,
                 validator: (String text) {
                   if (text.isEmpty) {
@@ -137,7 +137,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
               TextFormField(
                 controller: _controllerDescription,
                 maxLines: 4,
-                decoration: InputDecoration(hintText: 'Description'),
+                decoration: InputDecoration(labelText: 'Description'),
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill description';

@@ -12,7 +12,7 @@ class UserSettings {
   ];
 
   bool _notificationOn;
-  Duration _notifyAheadTime;
+  Duration _notifyAheadDuration;
   final List<Duration> _userTime = [
     null, // breakfast
     null, // lunch
@@ -22,14 +22,14 @@ class UserSettings {
 
   UserSettings({
     bool notificationOn = true,
-    Duration notifyAheadTime,
+    Duration notifyAheadDuration,
     Duration breakfastTime,
     Duration lunchTime,
     Duration dinnerTime,
     Duration sleepTime,
   }) {
     this._notificationOn = notificationOn;
-    this._notifyAheadTime = notifyAheadTime ?? Duration(minutes: 30);
+    this._notifyAheadDuration = notifyAheadDuration ?? Duration(minutes: 30);
     this._userTime[0] = breakfastTime ?? UserSettings.defaultTime[0];
     this._userTime[1] = lunchTime ?? UserSettings.defaultTime[1];
     this._userTime[2] = dinnerTime ?? UserSettings.defaultTime[2];
@@ -38,7 +38,7 @@ class UserSettings {
 
   UserSettings.fromMap(Map<String, dynamic> map) {
     this._notificationOn = map['notificationOn'];
-    this._notifyAheadTime = map['notifyAheadTime'].split(':');
+    this._notifyAheadDuration = map['notifyAheadDuration'].split(':');
     this._userTime[0] = map['userTime'][0] ?? UserSettings.defaultTime[0];
     this._userTime[1] = map['userTime'][1] ?? UserSettings.defaultTime[1];
     this._userTime[2] = map['userTime'][2] ?? UserSettings.defaultTime[2];
@@ -46,6 +46,12 @@ class UserSettings {
   }
 
   List<Duration> get userTime => this._userTime;
+
+  bool get notificationOn => this._notificationOn;
+  set notificationOn(bool notificationOn) => this._notificationOn = notificationOn;
+
+  Duration get notifyAheadDuration => this._notifyAheadDuration;
+  set notifyAheadDuration(Duration notifyAheadDuration) => this._notifyAheadDuration = notifyAheadDuration;
 
   Duration get breakfastTime => this._userTime[0];
   set breakfastTime(Duration breakfastTime) => this._userTime[0] = breakfastTime;
@@ -61,7 +67,7 @@ class UserSettings {
 
   void resetDefault() {
     this._notificationOn = true;
-    this._notifyAheadTime = Duration(minutes: 30);
+    this._notifyAheadDuration = Duration(minutes: 30);
     this._userTime[0] = UserSettings.defaultTime[0];
     this._userTime[1] = UserSettings.defaultTime[1];
     this._userTime[2] = UserSettings.defaultTime[2];
@@ -82,7 +88,7 @@ class UserSettings {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'notificationOn': this._notificationOn,
-      'notifyAheadTime': durationToString(this._notifyAheadTime),
+      'notifyAheadDuration': durationToString(this._notifyAheadDuration),
       'userTime': this._userTime.map((e) => durationToString(e)).toList(),
     };
   }
