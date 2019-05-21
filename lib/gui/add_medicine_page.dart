@@ -42,13 +42,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   static final TextEditingController _controllerTotalAmount = TextEditingController();
   String _currentMedicineType = 'capsule';
   MedicineSchedule _currentMedicineSchedule = MedicineSchedule();
-  File _image;
+  File _currentImage;
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
 
     setState(() {
-      _image = image;
+      _currentImage = image;
     });
   }
 
@@ -446,19 +446,53 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         int.parse(_controllerTotalAmount.text)) {
                       Alert.displayAlert(
                         context,
-                        title: 'Invalid Data',
+                        title: 'Invalid Medicine Amount',
                         content: 'Dose amount must be less than or equal to total amount.',
                       );
+                    } else if (!widget._medicine.medicineSchedule.time.contains(true)) {
+                      Alert.displayAlert(
+                        context,
+                        title: 'Invalid Medicine Time',
+                        content: 'Medicine must be taken at least once per day to be taken.',
+                      );
+                    } else if (!widget._medicine.medicineSchedule.day.contains(true)) {
+                      Alert.displayAlert(
+                        context,
+                        title: 'Invalid Medicine Day',
+                        content: 'Medicine must be taken at least one day per week.',
+                      );
                     } else {
-                      widget._user.medicineList.add(Medicine(
-                        name: _controllerMedicineName.text,
-                        description: _controllerDescription.text,
-                        type: this._currentMedicineType,
-                        image: Image.file(this._image),
-                        doseAmount: int.parse(_controllerDoseAmount.text),
-                        totalAmount: int.parse(_controllerTotalAmount.text),
-                        medicineSchedule: this._currentMedicineSchedule,
-                      ));
+                      Image image;
+
+                      try {
+                        image = Image.file(this._currentImage);
+                      } catch (e) {
+                        image = null;
+                      }
+
+                      if (widget._medicine == null) {
+                        widget._user.medicineList.add(
+                          Medicine(
+                            name: _controllerMedicineName.text,
+                            description: _controllerDescription.text,
+                            type: this._currentMedicineType,
+                            image: image,
+                            doseAmount: int.parse(_controllerDoseAmount.text),
+                            totalAmount: int.parse(_controllerTotalAmount.text),
+                            medicineSchedule: this._currentMedicineSchedule,
+                          ),
+                        );
+                      } else {
+                        widget._medicine = Medicine(
+                          name: _controllerMedicineName.text,
+                          description: _controllerDescription.text,
+                          type: this._currentMedicineType,
+                          image: image,
+                          doseAmount: int.parse(_controllerDoseAmount.text),
+                          totalAmount: int.parse(_controllerTotalAmount.text),
+                          medicineSchedule: this._currentMedicineSchedule,
+                        );
+                      }
                       widget._refreshState();
                       Navigator.pop(context);
                     }

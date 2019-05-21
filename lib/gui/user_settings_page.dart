@@ -22,6 +22,7 @@ class UserSettingsPage extends StatefulWidget {
 
 class _UserSettingsPageState extends State<UserSettingsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  static final TextEditingController _controllerNotifyAhead = TextEditingController();
 
   DateTime durationToDateTime(Duration duration) {
     return DateTime(
@@ -60,6 +61,35 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
           key: this._formKey,
           child: ListView(
             children: <Widget>[
+              // Switch(
+              //   value: true,
+              //   onChanged: (value) {},
+              // ),
+              TextFormField(
+                controller: _controllerNotifyAhead,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Notify Ahead Time',
+                  prefixIcon: Icon(Icons.timer),
+                  suffixText: 'Minutes',
+                ),
+                validator: (String text) {
+                  if (text.isEmpty) {
+                    return 'Please fill notify ahead time';
+                  } else {
+                    try {
+                      int time = int.parse(text);
+                      if (time <= 0) {
+                        return 'Notify ahead time must be at least 1';
+                      } else if (time > 120) {
+                        return 'Notify ahead time must be not exceed 2 hours';
+                      }
+                    } catch (e) {
+                      return 'Notify ahead time must be an integer';
+                    }
+                  }
+                },
+              ),
               DateTimePickerFormField(
                 initialValue: durationToDateTime(widget._user.userSettings.breakfastTime),
                 initialTime: durationToTimeOfDay(widget._user.userSettings.breakfastTime),
