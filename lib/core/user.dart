@@ -353,12 +353,6 @@ class User {
     }
 
     // Logic: Calculate `medicineSchedule`
-    print(medicine.name);
-    print(firstTime.toString());
-    print('---');
-    print('OFFSET: ' + offset.toString());
-    durations.forEach((e) => print(e));
-
     firstDay = firstDay.add(firstTime);
     for (int i = 0;
         i < (medicine.totalAmount / medicine.doseAmount).ceil() + medicine.skippedTimes;
