@@ -317,7 +317,14 @@ class _HomepageState extends State<Homepage> {
       appointmentList: List<Appointment>(),
       doctorList: List<Doctor>(),
       hospitalList: List<Hospital>(),
-      userSettings: UserSettings(),
+      userSettings: UserSettings(
+        notificationOn: true,
+        notifyAheadTime: Duration(minutes: 30),
+        breakfastTime: Duration(hours: 7, minutes: 15),
+        lunchTime: Duration(hours: 12, minutes: 0),
+        dinnerTime: Duration(hours: 19, minutes: 0),
+        sleepTime: Duration(hours: 23, minutes: 0),
+      ),
     );
   }
 
