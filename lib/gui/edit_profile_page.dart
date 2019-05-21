@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mediccare/core/user.dart';
+import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -23,7 +24,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   static final TextEditingController _controllerLastName = TextEditingController();
   static final TextEditingController _controllerHeight = TextEditingController();
   static final TextEditingController _controllerWeight = TextEditingController();
-  DateTime _birthdate;
+  DateTime _currentBirthDate;
   String _currentGender;
   String _currentBloodGroup;
   File _image;
@@ -35,6 +36,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
+  void updateProfile() {
+    widget._user.firstName = _controllerFirstName.text;
+    widget._user.lastName = _controllerLastName.text;
+    widget._user.gender = this._currentGender;
+    widget._user.birthDate = this._currentBirthDate;
+    widget._user.height = (double.parse(_controllerHeight.text) * 10).roundToDouble() / 10;
+    widget._user.weight = (double.parse(_controllerWeight.text) * 10).roundToDouble() / 10;
+    widget._user.bloodGroup = this._currentBloodGroup;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -42,9 +53,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _controllerLastName.text = widget._user.lastName;
     _controllerHeight.text = widget._user.height.toString();
     _controllerWeight.text = widget._user.weight.toString();
-    _birthdate = DateTime.now();
-    _currentGender = 'male';
-    _currentBloodGroup = 'O+';
+    _currentBirthDate = widget._user.birthDate;
+    _currentGender = widget._user.gender;
+    _currentBloodGroup = widget._user.bloodGroup;
   }
 
   @override
@@ -128,7 +139,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   labelText: 'Birthdate',
                   prefixIcon: Icon(Icons.cake),
                 ),
-                onChanged: (DateTime time) {},
+                onChanged: (DateTime date) {
+                  _currentBirthDate = date;
+                },
                 validator: (DateTime time) {
                   if (time == null) {
                     return 'Please fill birthdate';
@@ -229,7 +242,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 child: Text('Save'),
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
-                    // TODO: Implements saving data to FireStore
+                    this.updateProfile();
                     widget._refreshState();
                     Navigator.pop(context);
                   }

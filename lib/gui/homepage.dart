@@ -4,6 +4,13 @@
 ///
 
 import 'package:flutter/material.dart';
+import 'package:mediccare/core/appointment.dart';
+import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/core/hospital.dart';
+import 'package:mediccare/core/medicine.dart';
+import 'package:mediccare/core/medicine_schedule.dart';
+import 'package:mediccare/core/user.dart';
+import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
 import 'package:mediccare/gui/profile_page.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
@@ -18,6 +25,8 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  User _user;
+
   int _currentIndex = 2;
 
   // Utility Method: Returns ...something?
@@ -243,7 +252,7 @@ class _HomepageState extends State<Homepage> {
         ),
       );
     }
-    
+
     return list;
   }
 
@@ -258,6 +267,58 @@ class _HomepageState extends State<Homepage> {
   void _refreshState() {
     // TODO: Implements method
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Implements loading data from firebase
+    this._user = User(
+      id: '',
+      email: 'teerapat_saint@hotmail.com',
+      firstName: 'Teerapat',
+      lastName: 'Kraisrisirikul',
+      gender: 'male',
+      bloodGroup: 'O+',
+      birthDate: DateTime(1999, 6, 15),
+      height: 172.0,
+      weight: 53.0,
+      image: null,
+      medicineList: <Medicine>[
+        Medicine(
+          id: '1',
+          name: 'Dibendryl',
+          description: '',
+          type: 'tablet',
+          image: null,
+          doseAmount: 1,
+          totalAmount: 10,
+          medicineSchedule: MedicineSchedule(
+            time: [true, true, true, false],
+            day: [true, true, true, true, true, true, true],
+            isBeforeMeal: false,
+          ),
+        ),
+        Medicine(
+          id: '2',
+          name: 'Isotetronoine',
+          description: '',
+          type: 'tablet',
+          image: null,
+          doseAmount: 1,
+          totalAmount: 10,
+          medicineSchedule: MedicineSchedule(
+            time: [false, false, true, false],
+            day: [true, false, true, false, true, false, true],
+            isBeforeMeal: false,
+          ),
+        ),
+      ],
+      appointmentList: List<Appointment>(),
+      doctorList: List<Doctor>(),
+      hospitalList: List<Hospital>(),
+      userSettings: UserSettings(),
+    );
   }
 
   @override
@@ -312,7 +373,7 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
+              MaterialPageRoute(builder: (context) => ProfilePage(this._user)),
             );
           },
         ),

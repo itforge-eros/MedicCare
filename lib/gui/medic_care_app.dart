@@ -24,7 +24,6 @@ class MedicCareApp extends StatelessWidget {
         'InitAccountPage': (context) => null, //TODO: Implements class
         'Homepage': (context) => Homepage(),
         'IntroPage': (context) => IntroPage(),
-        'UserSettingsPage': (context) => UserSettingsPage(),
       },
     );
   }
