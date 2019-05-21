@@ -30,7 +30,7 @@ class _HomepageState extends State<Homepage> {
   int _currentIndex = 2;
 
   // Utility Method: Returns ...something?
-  ListTile listTileCus({String name, String subtitle, Object icon, Object page}) {
+  ListTile listTileCustom({String name, String subtitle, Object icon, Widget page}) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       leading: Container(
@@ -53,14 +53,14 @@ class _HomepageState extends State<Homepage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MedicinePage()),
+          MaterialPageRoute(builder: (context) => page),
         );
       },
     );
   }
 
   // Utility Method: Returns a card
-  Card cusCard({String name, String subtitle, Object icon}) {
+  Card cardCustom({String name, String subtitle, Object icon, Widget page}) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -69,10 +69,11 @@ class _HomepageState extends State<Homepage> {
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       child: Container(
         decoration: BoxDecoration(color: Colors.white),
-        child: listTileCus(
+        child: listTileCustom(
           name: name,
           subtitle: subtitle,
           icon: icon,
+          page: page,
         ),
       ),
     );
@@ -112,10 +113,15 @@ class _HomepageState extends State<Homepage> {
 
     this._user.medicineList.forEach((e) {
       list.add(
-        cusCard(
+        cardCustom(
           name: e.name,
           subtitle: e.remainingAmount.toString() + ' Left',
           icon: Icons.battery_full,
+          page: MedicinePage(
+            refreshState: this._refreshState,
+            user: this._user,
+            medicine: e,
+          ),
         ),
       );
     });
@@ -154,7 +160,7 @@ class _HomepageState extends State<Homepage> {
     ];
 
     for (int i = 0; i < 4; i++) {
-      list.add(cusCard(
+      list.add(cardCustom(
           name: 'Appointment with Dr.Rawit',
           subtitle: 'At Payathai Ht. afternoon',
           icon: Icons.person_pin_circle));
@@ -184,7 +190,7 @@ class _HomepageState extends State<Homepage> {
     ];
     for (int i = 0; i < 2; i++) {
       list.add(
-        cusCard(
+        cardCustom(
           name: 'Appointment with Dr.Rawit',
           subtitle: 'This Saturday afternoon',
           icon: Icons.local_hospital,
@@ -202,7 +208,7 @@ class _HomepageState extends State<Homepage> {
 
     for (int i = 0; i < 4; i++) {
       list.add(
-        cusCard(
+        cardCustom(
           name: 'Paracetamal',
           subtitle: '2 shot after lunch',
           icon: Icons.battery_full,
@@ -246,7 +252,7 @@ class _HomepageState extends State<Homepage> {
 
     for (int i = 0; i < 4; i++) {
       list.add(
-        cusCard(
+        cardCustom(
           name: 'Dr.Rawit',
           subtitle: 'At Payathai Ht. afternoon',
           icon: Icons.person,
@@ -289,7 +295,7 @@ class _HomepageState extends State<Homepage> {
         Medicine(
           id: '1',
           name: 'Dibendryl',
-          description: '',
+          description: 'Cures coughing.',
           type: 'tablet',
           image: null,
           doseAmount: 1,
@@ -303,7 +309,8 @@ class _HomepageState extends State<Homepage> {
         Medicine(
           id: '2',
           name: 'Isotetronoine',
-          description: '',
+          description:
+              'Cures pimples. Do not take this medicine during or within 1 month before pregnancy.',
           type: 'tablet',
           image: null,
           doseAmount: 1,
@@ -343,7 +350,12 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => AddMedicinePage(_refreshState)),
+              MaterialPageRoute(
+                builder: (context) => AddMedicinePage(
+                      refreshState: this._refreshState,
+                      user: this._user,
+                    ),
+              ),
             );
           },
         ),
@@ -434,8 +446,9 @@ class _HomepageState extends State<Homepage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _currentIndex = 2;
-          setState(() {});
+          setState(() {
+            _currentIndex = 2;
+          });
         },
         child: Icon(Icons.face),
         elevation: 3.0,
