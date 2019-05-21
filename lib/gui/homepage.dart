@@ -102,23 +102,24 @@ class _HomepageState extends State<Homepage> {
         child: TextField(
           onChanged: (value) {},
           decoration: InputDecoration(
-            labelText: "Search",
-            hintText: "Search",
+            labelText: 'Search',
+            hintText: 'Search',
             prefixIcon: Icon(Icons.search),
           ),
         ),
       ),
     ];
 
-    for (int i = 0; i < 4; i++) {
+    this._user.medicineList.forEach((e) {
       list.add(
         cusCard(
-          name: "Paracetamal",
-          subtitle: "5 left",
+          name: e.name,
+          subtitle: e.remainingAmount.toString() + ' Left',
           icon: Icons.battery_full,
         ),
       );
-    }
+    });
+
     return list;
   }
 
@@ -142,8 +143,8 @@ class _HomepageState extends State<Homepage> {
           onChanged: (value) {},
           // controller: ,
           decoration: InputDecoration(
-            labelText: "Search",
-            hintText: "Search",
+            labelText: 'Search',
+            hintText: 'Search',
             prefixIcon: Icon(Icons.search),
             // border: OutlineInputBorder(
             //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
@@ -154,8 +155,8 @@ class _HomepageState extends State<Homepage> {
 
     for (int i = 0; i < 4; i++) {
       list.add(cusCard(
-          name: "Appointment with Dr.Rawit",
-          subtitle: "At Payathai Ht. afternoon",
+          name: 'Appointment with Dr.Rawit',
+          subtitle: 'At Payathai Ht. afternoon',
           icon: Icons.person_pin_circle));
     }
     return list;
@@ -178,14 +179,14 @@ class _HomepageState extends State<Homepage> {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(10),
-        child: textTitle(title: "Coming Appointments"),
+        child: textTitle(title: 'Coming Appointments'),
       ),
     ];
     for (int i = 0; i < 2; i++) {
       list.add(
         cusCard(
-          name: "Appointment with Dr.Rawit",
-          subtitle: "This Saturday afternoon",
+          name: 'Appointment with Dr.Rawit',
+          subtitle: 'This Saturday afternoon',
           icon: Icons.local_hospital,
         ),
       );
@@ -196,14 +197,14 @@ class _HomepageState extends State<Homepage> {
   // Data Method: Returns list of remaining indose
   List<Widget> remainIndose() {
     List<Widget> list = [
-      Padding(padding: const EdgeInsets.all(10), child: textTitle(title: "Remaining Indose"))
+      Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose'))
     ];
 
     for (int i = 0; i < 4; i++) {
       list.add(
         cusCard(
-          name: "Paracetamal",
-          subtitle: "2 shot after lunch",
+          name: 'Paracetamal',
+          subtitle: '2 shot after lunch',
           icon: Icons.battery_full,
         ),
       );
@@ -233,8 +234,8 @@ class _HomepageState extends State<Homepage> {
           onChanged: (value) {},
           // controller: ,
           decoration: InputDecoration(
-            labelText: "Search",
-            hintText: "Search",
+            labelText: 'Search',
+            hintText: 'Search',
             prefixIcon: Icon(Icons.search),
             // border: OutlineInputBorder(
             //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
@@ -246,8 +247,8 @@ class _HomepageState extends State<Homepage> {
     for (int i = 0; i < 4; i++) {
       list.add(
         cusCard(
-          name: "Dr.Rawit",
-          subtitle: "At Payathai Ht. afternoon",
+          name: 'Dr.Rawit',
+          subtitle: 'At Payathai Ht. afternoon',
           icon: Icons.person,
         ),
       );

@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => UserSettingsPage(widget._user.userSettings),
+                  builder: (context) => UserSettingsPage(widget._user),
                 ),
               );
             },

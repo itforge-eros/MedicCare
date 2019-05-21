@@ -5,13 +5,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mediccare/core/user.dart';
 import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
 
 class UserSettingsPage extends StatefulWidget {
-  final UserSettings _userSettings;
+  final User _user;
 
-  UserSettingsPage(this._userSettings);
+  UserSettingsPage(this._user);
 
   @override
   State<StatefulWidget> createState() {
@@ -60,8 +61,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
           child: ListView(
             children: <Widget>[
               DateTimePickerFormField(
-                initialValue: durationToDateTime(widget._userSettings.breakfastTime),
-                initialTime: durationToTimeOfDay(widget._userSettings.breakfastTime),
+                initialValue: durationToDateTime(widget._user.userSettings.breakfastTime),
+                initialTime: durationToTimeOfDay(widget._user.userSettings.breakfastTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -71,7 +72,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 ),
                 onChanged: (time) {
                   try {
-                    widget._userSettings.breakfastTime = Duration(
+                    widget._user.userSettings.breakfastTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
@@ -84,8 +85,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 },
               ),
               DateTimePickerFormField(
-                initialValue: durationToDateTime(widget._userSettings.lunchTime),
-                initialTime: durationToTimeOfDay(widget._userSettings.lunchTime),
+                initialValue: durationToDateTime(widget._user.userSettings.lunchTime),
+                initialTime: durationToTimeOfDay(widget._user.userSettings.lunchTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -95,7 +96,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 ),
                 onChanged: (time) {
                   try {
-                    widget._userSettings.lunchTime = Duration(
+                    widget._user.userSettings.lunchTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
@@ -108,8 +109,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 },
               ),
               DateTimePickerFormField(
-                initialValue: durationToDateTime(widget._userSettings.dinnerTime),
-                initialTime: durationToTimeOfDay(widget._userSettings.dinnerTime),
+                initialValue: durationToDateTime(widget._user.userSettings.dinnerTime),
+                initialTime: durationToTimeOfDay(widget._user.userSettings.dinnerTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -118,14 +119,14 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                   prefixIcon: Icon(Icons.local_dining),
                 ),
                 onChanged: (time) {
-                  widget._userSettings.dinnerTime = Duration(
+                  widget._user.userSettings.dinnerTime = Duration(
                     hours: time.hour,
                     minutes: time.minute,
                   );
                 },
                 validator: (time) {
                   try {
-                    widget._userSettings.dinnerTime = Duration(
+                    widget._user.userSettings.dinnerTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
@@ -133,8 +134,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 },
               ),
               DateTimePickerFormField(
-                initialValue: durationToDateTime(widget._userSettings.sleepTime),
-                initialTime: durationToTimeOfDay(widget._userSettings.sleepTime),
+                initialValue: durationToDateTime(widget._user.userSettings.sleepTime),
+                initialTime: durationToTimeOfDay(widget._user.userSettings.sleepTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -144,7 +145,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 ),
                 onChanged: (time) {
                   try {
-                    widget._userSettings.sleepTime = Duration(
+                    widget._user.userSettings.sleepTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
