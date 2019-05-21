@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 class Alert {
   static Future displayAlertPlain(
     BuildContext context, {
-    String title,
-    String content,
+    String title = '',
+    String content = '',
   }) {
     return showDialog(
       context: context,

@@ -16,7 +16,6 @@ import 'package:mediccare/gui/profile_page.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
 import 'package:mediccare/gui/medicine_page.dart';
 import 'package:mediccare/gui/add_doctor_page.dart';
-import 'package:mediccare/util/alert.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -272,7 +271,14 @@ class _HomepageState extends State<Homepage> {
           padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
           alignment: Alignment.center,
           child: Text(
-            getFormattedDate(e),
+            (e.compareTo(DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                    )) !=
+                    0)
+                ? getFormattedDate(e)
+                : getFormattedDate(e) + ' (Today)',
             style: TextStyle(
               fontSize: 14,
               fontFamily: 'Raleway',
@@ -439,7 +445,7 @@ class _HomepageState extends State<Homepage> {
             day: [true, true, true, true, true, true, true],
             isBeforeMeal: false,
           ),
-          dateUpdated: DateTime(2019, 5, 18),
+          dateAdded: DateTime(2019, 5, 20, 9, 0),
         ),
         Medicine(
           id: '2',
@@ -455,7 +461,7 @@ class _HomepageState extends State<Homepage> {
             day: [true, false, true, false, true, false, true],
             isBeforeMeal: false,
           ),
-          dateUpdated: DateTime(2019, 5, 20),
+          dateAdded: DateTime(2019, 5, 21, 9, 0),
         ),
       ],
       appointmentList: List<Appointment>(),

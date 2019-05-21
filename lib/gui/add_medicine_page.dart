@@ -528,6 +528,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                             doseAmount: int.parse(_controllerDoseAmount.text),
                             totalAmount: int.parse(_controllerTotalAmount.text),
                             medicineSchedule: this._currentMedicineSchedule,
+                            dateAdded: DateTime.now(),
                           ),
                         );
                       } else {

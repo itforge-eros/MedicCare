@@ -188,18 +188,17 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                   prefixIcon: Icon(Icons.local_dining),
                 ),
                 onChanged: (time) {
-                  this._currentUserSettings.dinnerTime = Duration(
-                    hours: time.hour,
-                    minutes: time.minute,
-                  );
-                },
-                validator: (time) {
                   try {
                     this._currentUserSettings.dinnerTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
                   } catch (e) {}
+                },
+                validator: (time) {
+                  if (time == null) {
+                    return 'Please pick dinner time';
+                  }
                 },
               ),
               DateTimePickerFormField(
@@ -259,6 +258,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                     }
 
                     widget._user.userSettings = this._currentUserSettings;
+
                     Navigator.pop(context);
                   }
                 },

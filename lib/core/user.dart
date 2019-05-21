@@ -11,6 +11,7 @@ import 'package:mediccare/core/medicine_overview_data.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/exceptions.dart';
+import 'package:mediccare/util/alert.dart';
 
 class User {
   String _id;
@@ -271,29 +272,51 @@ class User {
     int offset = 0;
 
     // Logic: Calculate `firstDay`
-    firstDay = DateTime(medicine.dateUpdated.year, medicine.dateUpdated.month, medicine.dateUpdated.day);
+    firstDay = DateTime(medicine.dateAdded.year, medicine.dateAdded.month, medicine.dateAdded.day);
+    bool _availableFirstDay = false;
+
+    for (int i = 0; i < 4; i++) {
+      if (Duration(hours: medicine.dateAdded.hour, minutes: medicine.dateAdded.minute) <
+              this._userSettings.userTime[i] &&
+          medicine.medicineSchedule.time[i]) {
+        _availableFirstDay = true;
+        break;
+      }
+    }
+
+    if (!_availableFirstDay) {
+      // If not able to take any medicine on the first day, skip a day.
+      firstDay = firstDay.add(Duration(days: 1));
+    }
+
     while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
       firstDay = firstDay.add(Duration(days: 1));
     }
 
     // Logic: Calculate `firstTime`
+
     for (int i = 0; i < 4; i++) {
-      if (medicine.dateUpdated.day != firstDay.day) {
+      if (medicine.dateAdded.day != firstDay.day) {
         firstTime = this._userSettings.userTime[medicine.medicineSchedule.time.indexOf(true)];
-        offset = 0;
         break;
       }
 
-      if (!medicine.medicineSchedule.time[i]) {
-        offset--;
-      } else if (Duration(
-            hours: medicine.dateUpdated.hour,
-            minutes: medicine.dateUpdated.minute,
-          ) <
-          this._userSettings.userTime[i]) {
-        firstTime = this._userSettings.userTime[i];
-        offset += i;
-        break;
+      if (medicine.medicineSchedule.time[i] &&
+          medicine.dateAdded.compareTo(
+                DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day,
+                  this._userSettings.userTime[i].inHours % 24,
+                  this._userSettings.userTime[i].inMinutes % 60,
+                ),
+              ) <
+              0) {
+        if (firstTime == null) {
+          firstTime = this._userSettings.userTime[i];
+        } else if (this._userSettings.userTime[i].compareTo(firstTime) < 0) {
+          firstTime = this._userSettings.userTime[i];
+        }
       }
     }
 
@@ -306,11 +329,36 @@ class User {
 
     // Logic: Calculate `durations`
     for (int i = 0; i < oneDayTime.length - 1; i++) {
-      durations.add(oneDayTime[i + 1] - oneDayTime[i]);
+      if ((oneDayTime[i + 1] - oneDayTime[i]).isNegative) {
+        durations.add(oneDayTime[i + 1] - oneDayTime[i] + Duration(days: 1));
+      } else {
+        durations.add(oneDayTime[i + 1] - oneDayTime[i]);
+      }
     }
-    durations.add(Duration(days: 1) - oneDayTime[oneDayTime.length - 1] + oneDayTime[0]);
+
+    if ((oneDayTime[0] - oneDayTime[oneDayTime.length - 1]).isNegative ||
+        (oneDayTime[0] - oneDayTime[oneDayTime.length - 1]) == Duration(seconds: 0)) {
+      durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1] + Duration(days: 1));
+    } else {
+      durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1]);
+    }
+
+    // Logic: Calculate `offset`
+    for (int i = 0; i < oneDayTime.length; i++) {
+      if (firstTime.compareTo(oneDayTime[i]) != 0) {
+        offset++;
+      } else {
+        break;
+      }
+    }
 
     // Logic: Calculate `medicineSchedule`
+    print(medicine.name);
+    print(firstTime.toString());
+    print('---');
+    print('OFFSET: ' + offset.toString());
+    durations.forEach((e) => print(e));
+
     firstDay = firstDay.add(firstTime);
     for (int i = 0;
         i < (medicine.totalAmount / medicine.doseAmount).ceil() + medicine.skippedTimes;
@@ -324,7 +372,11 @@ class User {
     }
 
     // Logic: Remove taken and skipped medicine
-    for (int i = 0; i < (medicine.totalAmount - medicine.remainingAmount)/medicine.doseAmount + medicine.skippedTimes; i++) {
+    for (int i = 0;
+        i <
+            (medicine.totalAmount - medicine.remainingAmount) / medicine.doseAmount +
+                medicine.skippedTimes;
+        i++) {
       medicineSchedule.removeAt(0);
     }
 

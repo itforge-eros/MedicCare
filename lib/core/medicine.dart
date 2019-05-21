@@ -18,7 +18,7 @@ class Medicine {
   int _remainingAmount;
   int _skippedTimes;
   MedicineSchedule _medicineSchedule;
-  DateTime _dateUpdated = DateTime.now();
+  DateTime _dateAdded = DateTime.now();
 
   Medicine({
     String id,
@@ -29,7 +29,7 @@ class Medicine {
     int doseAmount = 1,
     int totalAmount = 10,
     MedicineSchedule medicineSchedule,
-    DateTime dateUpdated,
+    DateTime dateAdded,
   }) {
     this._id = id;
     this._name = name;
@@ -40,8 +40,8 @@ class Medicine {
     this._totalAmount = totalAmount;
     this._remainingAmount = totalAmount;
     this._skippedTimes = 0;
-    this._medicineSchedule = medicineSchedule;
-    this._dateUpdated = dateUpdated ?? DateTime.now();
+    this._medicineSchedule = medicineSchedule ?? MedicineSchedule();
+    this._dateAdded = dateAdded ?? DateTime.now();
   }
 
   Medicine.fromMap(Map<String, dynamic> map) {
@@ -84,13 +84,11 @@ class Medicine {
   int get skippedTimes => this._skippedTimes;
 
   MedicineSchedule get medicineSchedule => this._medicineSchedule;
-  set medicineSchedule(MedicineSchedule medicineSchedule) {
-    updateTime();
-    this._medicineSchedule = medicineSchedule;
-  }
+  set medicineSchedule(MedicineSchedule medicineSchedule) =>
+      this._medicineSchedule = medicineSchedule;
 
-  DateTime get dateUpdated => this._dateUpdated;
-  set dateUpdated(DateTime dateUpdated) => this._dateUpdated = dateUpdated;
+  DateTime get dateAdded => this._dateAdded;
+  set dateAdded(DateTime dateAdded) => this._dateAdded = dateAdded;
 
   void takeMedicine() {
     if (this._remainingAmount == 0) {
@@ -107,8 +105,7 @@ class Medicine {
   }
 
   void updateTime() {
-    this._totalAmount = this._remainingAmount;
-    this._dateUpdated = DateTime.now();
+    this._dateAdded = DateTime.now();
   }
 
   String getSubtitle() {
@@ -147,7 +144,7 @@ class Medicine {
       'remainingAmount': this._remainingAmount,
       'skippedTimes': this._skippedTimes,
       'medicineSchedule': this._medicineSchedule.toMap(),
-      'dateAdded': this._dateUpdated.toString(),
+      'dateAdded': this._dateAdded.toString(),
     };
   }
 }

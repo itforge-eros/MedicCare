@@ -14,7 +14,7 @@ import 'package:mediccare/core/user.dart';
 import 'package:mediccare/util/validator.dart';
 
 void main() {
-  // medicineScheduleTest();
+  medicineScheduleTest();
   // emailTest();
 }
 
@@ -44,7 +44,7 @@ void medicineScheduleTest() {
           day: [true, true, true, true, true, true, true],
           isBeforeMeal: false,
         ),
-        dateUpdated: DateTime(2019, 5, 18),
+        dateAdded: DateTime(2019, 5, 18),
       ),
       Medicine(
         id: '2',
@@ -60,7 +60,7 @@ void medicineScheduleTest() {
           day: [true, false, true, false, true, false, true],
           isBeforeMeal: false,
         ),
-        dateUpdated: DateTime(2019, 5, 20),
+        dateAdded: DateTime(2019, 5, 20),
       ),
     ],
     appointmentList: List<Appointment>(),
