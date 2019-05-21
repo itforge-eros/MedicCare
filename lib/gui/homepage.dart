@@ -16,6 +16,7 @@ import 'package:mediccare/gui/profile_page.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
 import 'package:mediccare/gui/medicine_page.dart';
 import 'package:mediccare/gui/add_doctor_page.dart';
+import 'package:mediccare/util/alert.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -30,7 +31,8 @@ class _HomepageState extends State<Homepage> {
   int _currentIndex = 2;
 
   // Utility Method: Returns ...something?
-  ListTile listTileCustom({String name, String subtitle, Object icon, Widget page}) {
+  ListTile listTileCustom(
+      {String name, String subtitle, Object icon, Widget trailing, Function onTap}) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       leading: Container(
@@ -49,18 +51,13 @@ class _HomepageState extends State<Homepage> {
           Text(subtitle, style: TextStyle(color: Colors.black54))
         ],
       ),
-      trailing: Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => page),
-        );
-      },
+      trailing: trailing ?? Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
+      onTap: onTap ?? () {},
     );
   }
 
   // Utility Method: Returns a card
-  Card cardCustom({String name, String subtitle, Object icon, Widget page}) {
+  Card cardCustom({String name, String subtitle, Object icon, Widget trailing, Function onTap}) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -73,7 +70,8 @@ class _HomepageState extends State<Homepage> {
           name: name,
           subtitle: subtitle,
           icon: icon,
-          page: page,
+          trailing: trailing,
+          onTap: onTap,
         ),
       ),
     );
@@ -162,11 +160,18 @@ class _HomepageState extends State<Homepage> {
           name: e.name,
           subtitle: e.getSubtitle(),
           icon: Icons.battery_full,
-          page: MedicinePage(
-            refreshState: this._refreshState,
-            user: this._user,
-            medicine: e,
-          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MedicinePage(
+                      refreshState: this._refreshState,
+                      user: this._user,
+                      medicine: e,
+                    ),
+              ),
+            );
+          },
         ),
       );
     });
@@ -205,10 +210,13 @@ class _HomepageState extends State<Homepage> {
     ];
 
     for (int i = 0; i < 4; i++) {
-      list.add(cardCustom(
+      list.add(
+        cardCustom(
           name: 'Appointment with Dr.Rawit',
           subtitle: 'At Payathai Ht. afternoon',
-          icon: Icons.person_pin_circle));
+          icon: Icons.person_pin_circle,
+        ),
+      );
     }
     return list;
   }
@@ -280,6 +288,50 @@ class _HomepageState extends State<Homepage> {
               name: f.medicine.name,
               subtitle: f.getSubtitle(),
               icon: Icons.battery_full,
+              trailing: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  icon: Icon(
+                    Icons.edit,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  underline: null,
+                  items: <DropdownMenuItem>[
+                    DropdownMenuItem(
+                      value: 'take',
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          ),
+                          Text('  Take'),
+                        ],
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: 'skip',
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.cancel,
+                            color: Colors.red,
+                          ),
+                          Text('  Skip'),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      if (value == 'take') {
+                        f.medicine.takeMedicine();
+                      } else if (value == 'skip') {
+                        f.medicine.skipMedicine();
+                      }
+                    });
+                  },
+                ),
+              ),
             ),
           );
         }

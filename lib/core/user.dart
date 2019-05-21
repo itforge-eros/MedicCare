@@ -323,8 +323,8 @@ class User {
       }
     }
 
-    // Logic: Remove taken medicine
-    for (int i = 0; i < (medicine.totalAmount - medicine.remainingAmount)/medicine.doseAmount; i++) {
+    // Logic: Remove taken and skipped medicine
+    for (int i = 0; i < (medicine.totalAmount - medicine.remainingAmount)/medicine.doseAmount + medicine.skippedTimes; i++) {
       medicineSchedule.removeAt(0);
     }
 
