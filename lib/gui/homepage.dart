@@ -4,6 +4,13 @@
 ///
 
 import 'package:flutter/material.dart';
+import 'package:mediccare/core/appointment.dart';
+import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/core/hospital.dart';
+import 'package:mediccare/core/medicine.dart';
+import 'package:mediccare/core/medicine_schedule.dart';
+import 'package:mediccare/core/user.dart';
+import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
 import 'package:mediccare/gui/profile_page.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
@@ -18,10 +25,13 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  User _user;
+
   int _currentIndex = 2;
 
   // Utility Method: Returns ...something?
-  ListTile listTileCus({String name, String subtitle, Object icon, Object page}) {
+  ListTile listTileCustom(
+      {String name, String subtitle, Object icon, Widget trailing, Function onTap}) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       leading: Container(
@@ -40,18 +50,13 @@ class _HomepageState extends State<Homepage> {
           Text(subtitle, style: TextStyle(color: Colors.black54))
         ],
       ),
-      trailing: Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MedicinePage()),
-        );
-      },
+      trailing: trailing ?? Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
+      onTap: onTap ?? () {},
     );
   }
 
   // Utility Method: Returns a card
-  Card cusCard({String name, String subtitle, Object icon}) {
+  Card cardCustom({String name, String subtitle, Object icon, Widget trailing, Function onTap}) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -60,10 +65,12 @@ class _HomepageState extends State<Homepage> {
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       child: Container(
         decoration: BoxDecoration(color: Colors.white),
-        child: listTileCus(
+        child: listTileCustom(
           name: name,
           subtitle: subtitle,
           icon: icon,
+          trailing: trailing,
+          onTap: onTap,
         ),
       ),
     );
@@ -83,6 +90,51 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
+  // Utility Method
+  String getFormattedDate(DateTime dateTime) {
+    String month;
+
+    switch (dateTime.month) {
+      case 1:
+        month = 'January';
+        break;
+      case 2:
+        month = 'February';
+        break;
+      case 3:
+        month = 'March';
+        break;
+      case 4:
+        month = 'April';
+        break;
+      case 5:
+        month = 'May';
+        break;
+      case 6:
+        month = 'June';
+        break;
+      case 7:
+        month = 'July';
+        break;
+      case 8:
+        month = 'August';
+        break;
+      case 9:
+        month = 'September';
+        break;
+      case 10:
+        month = 'October';
+        break;
+      case 11:
+        month = 'November';
+        break;
+      case 12:
+        month = 'December';
+        break;
+    }
+    return dateTime.day.toString() + ' ' + month + ' ' + dateTime.year.toString();
+  }
+
   // |----------------------Medicine
 
   // Data Method: Returns a list of medicine
@@ -93,23 +145,36 @@ class _HomepageState extends State<Homepage> {
         child: TextField(
           onChanged: (value) {},
           decoration: InputDecoration(
-            labelText: "Search",
-            hintText: "Search",
+            labelText: 'Search',
+            hintText: 'Search',
             prefixIcon: Icon(Icons.search),
           ),
         ),
       ),
     ];
 
-    for (int i = 0; i < 4; i++) {
+    this._user.medicineList.forEach((e) {
       list.add(
-        cusCard(
-          name: "Paracetamal",
-          subtitle: "5 left",
+        cardCustom(
+          name: e.name,
+          subtitle: e.getSubtitle(),
           icon: Icons.battery_full,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MedicinePage(
+                      refreshState: this._refreshState,
+                      user: this._user,
+                      medicine: e,
+                    ),
+              ),
+            );
+          },
         ),
       );
-    }
+    });
+
     return list;
   }
 
@@ -133,8 +198,8 @@ class _HomepageState extends State<Homepage> {
           onChanged: (value) {},
           // controller: ,
           decoration: InputDecoration(
-            labelText: "Search",
-            hintText: "Search",
+            labelText: 'Search',
+            hintText: 'Search',
             prefixIcon: Icon(Icons.search),
             // border: OutlineInputBorder(
             //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
@@ -144,10 +209,13 @@ class _HomepageState extends State<Homepage> {
     ];
 
     for (int i = 0; i < 4; i++) {
-      list.add(cusCard(
-          name: "Appointment with Dr.Rawit",
-          subtitle: "At Payathai Ht. afternoon",
-          icon: Icons.person_pin_circle));
+      list.add(
+        cardCustom(
+          name: 'Appointment with Dr.Rawit',
+          subtitle: 'At Payathai Ht. afternoon',
+          icon: Icons.person_pin_circle,
+        ),
+      );
     }
     return list;
   }
@@ -169,14 +237,14 @@ class _HomepageState extends State<Homepage> {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(10),
-        child: textTitle(title: "Coming Appointments"),
+        child: textTitle(title: 'Coming Appointments'),
       ),
     ];
     for (int i = 0; i < 2; i++) {
       list.add(
-        cusCard(
-          name: "Appointment with Dr.Rawit",
-          subtitle: "This Saturday afternoon",
+        cardCustom(
+          name: 'Appointment with Dr.Rawit',
+          subtitle: 'This Saturday afternoon',
           icon: Icons.local_hospital,
         ),
       );
@@ -187,18 +255,106 @@ class _HomepageState extends State<Homepage> {
   // Data Method: Returns list of remaining indose
   List<Widget> remainIndose() {
     List<Widget> list = [
-      Padding(padding: const EdgeInsets.all(10), child: textTitle(title: "Remaining Indose"))
+      Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose'))
     ];
 
-    for (int i = 0; i < 4; i++) {
+    List<DateTime> dateList = List<DateTime>();
+    this._user.getMedicineOverview().forEach((e) {
+      if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
+        dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
+      }
+    });
+
+    dateList.forEach((e) {
       list.add(
-        cusCard(
-          name: "Paracetamal",
-          subtitle: "2 shot after lunch",
-          icon: Icons.battery_full,
+        Container(
+          padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+          alignment: Alignment.center,
+          child: Text(
+            (e.compareTo(DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                    )) !=
+                    0)
+                ? getFormattedDate(e)
+                : getFormattedDate(e) + ' (Today)',
+            style: TextStyle(
+              fontSize: 14,
+              fontFamily: 'Raleway',
+              color: Colors.blueGrey[400],
+            ),
+          ),
         ),
       );
-    }
+      this._user.getMedicineOverview().forEach((f) {
+        if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
+          list.add(
+            cardCustom(
+              name: f.medicine.name,
+              subtitle: f.getSubtitle(),
+              icon: Icons.battery_full,
+              trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
+                      DateTime(
+                            f.dateTime.year,
+                            f.dateTime.month,
+                            f.dateTime.day,
+                            f.dateTime.hour,
+                            f.dateTime.minute,
+                          ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
+                          0)
+                  ? DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                        icon: Icon(
+                          Icons.edit,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        items: <DropdownMenuItem>[
+                          DropdownMenuItem(
+                            value: 'take',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.check,
+                                  color: Colors.green,
+                                ),
+                                Text('  Take'),
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'skip',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.cancel,
+                                  color: Colors.red,
+                                ),
+                                Text('  Skip'),
+                              ],
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            if (value == 'take') {
+                              f.medicine.takeMedicine();
+                            } else if (value == 'skip') {
+                              f.medicine.skipMedicine();
+                            }
+                          });
+                        },
+                      ),
+                    )
+                  : Icon(
+                      Icons.edit,
+                      color: Colors.grey,
+                    ),
+            ),
+          );
+        }
+      });
+    });
 
     return list;
   }
@@ -224,8 +380,8 @@ class _HomepageState extends State<Homepage> {
           onChanged: (value) {},
           // controller: ,
           decoration: InputDecoration(
-            labelText: "Search",
-            hintText: "Search",
+            labelText: 'Search',
+            hintText: 'Search',
             prefixIcon: Icon(Icons.search),
             // border: OutlineInputBorder(
             //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
@@ -236,14 +392,14 @@ class _HomepageState extends State<Homepage> {
 
     for (int i = 0; i < 4; i++) {
       list.add(
-        cusCard(
-          name: "Dr.Rawit",
-          subtitle: "At Payathai Ht. afternoon",
+        cardCustom(
+          name: 'Dr.Rawit',
+          subtitle: 'At Payathai Ht. afternoon',
           icon: Icons.person,
         ),
       );
     }
-    
+
     return list;
   }
 
@@ -261,6 +417,68 @@ class _HomepageState extends State<Homepage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Implements loading data from firebase
+    this._user = User(
+      id: '',
+      email: 'teerapat_saint@hotmail.com',
+      firstName: 'Teerapat',
+      lastName: 'Kraisrisirikul',
+      gender: 'male',
+      bloodGroup: 'O+',
+      birthDate: DateTime(1999, 6, 15),
+      height: 172.0,
+      weight: 53.0,
+      image: null,
+      medicineList: <Medicine>[
+        Medicine(
+          id: '1',
+          name: 'Dibendryl',
+          description: 'Cures coughing.',
+          type: 'tablet',
+          image: null,
+          doseAmount: 1,
+          totalAmount: 10,
+          medicineSchedule: MedicineSchedule(
+            time: [true, true, true, false],
+            day: [true, true, true, true, true, true, true],
+            isBeforeMeal: false,
+          ),
+          dateAdded: DateTime(2019, 5, 20, 9, 0),
+        ),
+        Medicine(
+          id: '2',
+          name: 'Isotetronoine',
+          description:
+              'Cures pimples. Do not take this medicine during or within 1 month before pregnancy.',
+          type: 'tablet',
+          image: null,
+          doseAmount: 1,
+          totalAmount: 10,
+          medicineSchedule: MedicineSchedule(
+            time: [false, false, true, false],
+            day: [true, false, true, false, true, false, true],
+            isBeforeMeal: false,
+          ),
+          dateAdded: DateTime(2019, 5, 21, 9, 0),
+        ),
+      ],
+      appointmentList: List<Appointment>(),
+      doctorList: List<Doctor>(),
+      hospitalList: List<Hospital>(),
+      userSettings: UserSettings(
+        notificationOn: true,
+        notifyAheadDuration: Duration(minutes: 30),
+        breakfastTime: Duration(hours: 7, minutes: 15),
+        lunchTime: Duration(hours: 12, minutes: 0),
+        dinnerTime: Duration(hours: 19, minutes: 0),
+        sleepTime: Duration(hours: 23, minutes: 0),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).primaryColor;
     final List<List<IconButton>> actions = <List<IconButton>>[
@@ -274,7 +492,12 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => AddMedicinePage(_refreshState)),
+              MaterialPageRoute(
+                builder: (context) => AddMedicinePage(
+                      refreshState: this._refreshState,
+                      user: this._user,
+                    ),
+              ),
             );
           },
         ),
@@ -312,7 +535,7 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
+              MaterialPageRoute(builder: (context) => ProfilePage(this._user)),
             );
           },
         ),
@@ -365,8 +588,9 @@ class _HomepageState extends State<Homepage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _currentIndex = 2;
-          setState(() {});
+          setState(() {
+            _currentIndex = 2;
+          });
         },
         child: Icon(Icons.face),
         elevation: 3.0,

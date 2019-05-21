@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       print(e.toString());
     } finally {
       if (user != null) {
-        Navigator.pushNamed(context, 'Homepage');
+        Navigator.pushReplacementNamed(context, 'Homepage');
         this.clearFields();
       } else {
         Alert.displayAlert(

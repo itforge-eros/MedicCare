@@ -5,10 +5,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mediccare/core/user.dart';
 import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
 
 class UserSettingsPage extends StatefulWidget {
+  final User _user;
+
+  UserSettingsPage(this._user);
+
   @override
   State<StatefulWidget> createState() {
     return _UserSettingsPageState();
@@ -17,13 +22,10 @@ class UserSettingsPage extends StatefulWidget {
 
 class _UserSettingsPageState extends State<UserSettingsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final UserSettings _userSettings = UserSettings(
-    breakfastTime: Duration(hours: 7, minutes: 30), // TODO: Loads user settings from FireStore
-    lunchTime: Duration(hours: 11, minutes: 30), // TODO: Loads user settings from FireStore
-    dinnerTime: Duration(hours: 18, minutes: 30), // TODO: Loads user settings from FireStore
-    sleepTime: Duration(hours: 22, minutes: 30), // TODO: Loads user settings from FireStore
-  );
+  final UserSettings _currentUserSettings = UserSettings();
+  static final TextEditingController _controllerNotifyAheadDuration = TextEditingController();
 
+  // Utility Method
   DateTime durationToDateTime(Duration duration) {
     return DateTime(
       DateTime.now().year,
@@ -34,11 +36,24 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
     );
   }
 
+  // Utility Method
   TimeOfDay durationToTimeOfDay(Duration duration) {
     return TimeOfDay(
       hour: duration.inHours % 24,
       minute: duration.inMinutes % 60,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this._currentUserSettings.notificationOn = widget._user.userSettings.notificationOn;
+    _controllerNotifyAheadDuration.text =
+        widget._user.userSettings.notifyAheadDuration.inMinutes.toString();
+    this._currentUserSettings.breakfastTime = widget._user.userSettings.breakfastTime;
+    this._currentUserSettings.lunchTime = widget._user.userSettings.lunchTime;
+    this._currentUserSettings.dinnerTime = widget._user.userSettings.dinnerTime;
+    this._currentUserSettings.sleepTime = widget._user.userSettings.sleepTime;
   }
 
   @override
@@ -61,9 +76,62 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
           key: this._formKey,
           child: ListView(
             children: <Widget>[
+              SizedBox(height: 10.0),
+              Row(
+                children: <Widget>[
+                  SizedBox(width: 12.0),
+                  (this._currentUserSettings.notificationOn)
+                      ? Icon(
+                          Icons.notifications_active,
+                          color: Theme.of(context).primaryColor,
+                        )
+                      : Icon(Icons.notifications_off, color: Colors.grey),
+                  SizedBox(width: 12.0),
+                  Text('Notifications'),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Switch(
+                      value: this._currentUserSettings.notificationOn,
+                      onChanged: (value) {
+                        setState(() {
+                          this._currentUserSettings.notificationOn = value;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              TextFormField(
+                controller: _controllerNotifyAheadDuration,
+                keyboardType: TextInputType.number,
+                enabled: this._currentUserSettings.notificationOn,
+                decoration: InputDecoration(
+                  labelText: 'Notify Ahead Time',
+                  prefixIcon: Icon(Icons.timer),
+                  suffixText: 'Minutes',
+                ),
+                validator: (String text) {
+                  if (this._currentUserSettings.notificationOn) {
+                    if (text.isEmpty) {
+                      return 'Please fill notify ahead time';
+                    } else {
+                      try {
+                        int time = int.parse(text);
+                        if (time <= 0) {
+                          return 'Notify ahead time must be at least 1';
+                        } else if (time > 120) {
+                          return 'Notify ahead time must be not exceed 2 hours';
+                        }
+                      } catch (e) {
+                        return 'Notify ahead time must be an integer';
+                      }
+                    }
+                  }
+                },
+              ),
               DateTimePickerFormField(
-                initialValue: durationToDateTime(_userSettings.breakfastTime),
-                initialTime: durationToTimeOfDay(_userSettings.breakfastTime),
+                initialValue: durationToDateTime(this._currentUserSettings.breakfastTime),
+                initialTime: durationToTimeOfDay(this._currentUserSettings.breakfastTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -73,7 +141,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 ),
                 onChanged: (time) {
                   try {
-                    _userSettings.breakfastTime = Duration(
+                    this._currentUserSettings.breakfastTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
@@ -86,8 +154,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 },
               ),
               DateTimePickerFormField(
-                initialValue: durationToDateTime(_userSettings.lunchTime),
-                initialTime: durationToTimeOfDay(_userSettings.lunchTime),
+                initialValue: durationToDateTime(this._currentUserSettings.lunchTime),
+                initialTime: durationToTimeOfDay(this._currentUserSettings.lunchTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -97,7 +165,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 ),
                 onChanged: (time) {
                   try {
-                    _userSettings.lunchTime = Duration(
+                    this._currentUserSettings.lunchTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
@@ -110,8 +178,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 },
               ),
               DateTimePickerFormField(
-                initialValue: durationToDateTime(_userSettings.dinnerTime),
-                initialTime: durationToTimeOfDay(_userSettings.dinnerTime),
+                initialValue: durationToDateTime(this._currentUserSettings.dinnerTime),
+                initialTime: durationToTimeOfDay(this._currentUserSettings.dinnerTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -120,23 +188,22 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                   prefixIcon: Icon(Icons.local_dining),
                 ),
                 onChanged: (time) {
-                  _userSettings.dinnerTime = Duration(
-                    hours: time.hour,
-                    minutes: time.minute,
-                  );
-                },
-                validator: (time) {
                   try {
-                    _userSettings.dinnerTime = Duration(
+                    this._currentUserSettings.dinnerTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
                   } catch (e) {}
                 },
+                validator: (time) {
+                  if (time == null) {
+                    return 'Please pick dinner time';
+                  }
+                },
               ),
               DateTimePickerFormField(
-                initialValue: durationToDateTime(_userSettings.sleepTime),
-                initialTime: durationToTimeOfDay(_userSettings.sleepTime),
+                initialValue: durationToDateTime(this._currentUserSettings.sleepTime),
+                initialTime: durationToTimeOfDay(this._currentUserSettings.sleepTime),
                 format: DateFormat('HH:mm'),
                 inputType: InputType.time,
                 editable: true,
@@ -146,7 +213,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 ),
                 onChanged: (time) {
                   try {
-                    _userSettings.sleepTime = Duration(
+                    this._currentUserSettings.sleepTime = Duration(
                       hours: time.hour,
                       minutes: time.minute,
                     );
@@ -164,7 +231,34 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 child: Text('Save'),
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
-                    // TODO: Implements saving data to FireStore
+                    if (this._currentUserSettings.notificationOn) {
+                      // If notification is on, save value normally. (Already validated)
+                      this._currentUserSettings.notifyAheadDuration = Duration(
+                        minutes: int.parse(_controllerNotifyAheadDuration.text),
+                      );
+                    } else {
+                      // If notification is off, save value manually. (Validate again)
+                      try {
+                        // Try saving the value, if over 120, force to save as 120.
+                        if (int.parse(_controllerNotifyAheadDuration.text) > 120) {
+                          this._currentUserSettings.notifyAheadDuration = Duration(
+                            minutes: 120,
+                          );
+                        } else {
+                          this._currentUserSettings.notifyAheadDuration = Duration(
+                            minutes: int.parse(_controllerNotifyAheadDuration.text),
+                          );
+                        }
+                      } catch (e) {
+                        // If parsing error, reset notify ahead time to 30 minutes.
+                        this._currentUserSettings.notifyAheadDuration = Duration(
+                          minutes: 30,
+                        );
+                      }
+                    }
+
+                    widget._user.userSettings = this._currentUserSettings;
+
                     Navigator.pop(context);
                   }
                 },

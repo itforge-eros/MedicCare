@@ -14,21 +14,19 @@ import 'package:mediccare/core/user.dart';
 import 'package:mediccare/util/validator.dart';
 
 void main() {
-  // medicineScheduleTest();
+  medicineScheduleTest();
   // emailTest();
-  Duration a = Duration(hours: 14, minutes: 34);
-
-  print(a.toString());
 }
 
 void medicineScheduleTest() {
   User user = User(
-    id: '60070183',
-    email: 'teerapat_saint@hotmai.com',
+    id: '',
+    email: 'teerapat_saint@hotmail.com',
     firstName: 'Teerapat',
     lastName: 'Kraisrisirikul',
-    birthDate: DateTime(1999, 6, 15),
     gender: 'male',
+    bloodGroup: 'O+',
+    birthDate: DateTime(1999, 6, 15),
     height: 172.0,
     weight: 53.0,
     image: null,
@@ -36,7 +34,7 @@ void medicineScheduleTest() {
       Medicine(
         id: '1',
         name: 'Dibendryl',
-        description: '',
+        description: 'Cures coughing.',
         type: 'tablet',
         image: null,
         doseAmount: 1,
@@ -46,11 +44,13 @@ void medicineScheduleTest() {
           day: [true, true, true, true, true, true, true],
           isBeforeMeal: false,
         ),
+        dateAdded: DateTime(2019, 5, 18),
       ),
       Medicine(
         id: '2',
         name: 'Isotetronoine',
-        description: '',
+        description:
+            'Cures pimples. Do not take this medicine during or within 1 month before pregnancy.',
         type: 'tablet',
         image: null,
         doseAmount: 1,
@@ -60,12 +60,20 @@ void medicineScheduleTest() {
           day: [true, false, true, false, true, false, true],
           isBeforeMeal: false,
         ),
+        dateAdded: DateTime(2019, 5, 20),
       ),
     ],
     appointmentList: List<Appointment>(),
     doctorList: List<Doctor>(),
     hospitalList: List<Hospital>(),
-    userSettings: UserSettings(),
+    userSettings: UserSettings(
+      notificationOn: true,
+      notifyAheadDuration: Duration(minutes: 30),
+      breakfastTime: Duration(hours: 7, minutes: 15),
+      lunchTime: Duration(hours: 12, minutes: 0),
+      dinnerTime: Duration(hours: 19, minutes: 0),
+      sleepTime: Duration(hours: 23, minutes: 0),
+    ),
   );
 
   List<MedicineOverviewData> medicineOverview = user.getMedicineOverview();

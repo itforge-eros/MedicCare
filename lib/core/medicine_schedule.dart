@@ -29,10 +29,10 @@ class MedicineSchedule {
     bool isBeforeMeal = false,
   }) {
     if (time != null) {
-      _checkTimeException(time);
+      checkTimeException(time);
     }
     if (day != null) {
-      _checkDayException(day);
+      checkDayException(day);
     }
 
     this._time = time ?? [true, true, true, false];
@@ -42,10 +42,10 @@ class MedicineSchedule {
 
   MedicineSchedule.fromMap(Map<String, dynamic> map) {
     if (map['time'] != null) {
-      _checkTimeException(map['time']);
+      checkTimeException(map['time']);
     }
     if (map['day'] != null) {
-      _checkDayException(day);
+      checkDayException(day);
     }
 
     this._time = map['time'] ?? [true, true, true, false];
@@ -55,20 +55,20 @@ class MedicineSchedule {
 
   List<bool> get time => this._time;
   set time(List<bool> time) {
-    _checkTimeException(time);
+    checkTimeException(time);
     this._time = time;
   }
 
   List<bool> get day => this._day;
   set day(List<bool> day) {
-    _checkDayException(day);
+    checkDayException(day);
     this._day = day;
   }
 
   bool get isBeforeMeal => this._isBeforeMeal;
   set isBeforeMeal(bool isBeforeMeal) => this._isBeforeMeal = isBeforeMeal;
 
-  void _checkTimeException(List<bool> time) {
+  void checkTimeException(List<bool> time) {
     if (time.length != 4) {
       throw InvalidMedicineTimeException();
     } else if (!time.contains(true)) {
@@ -76,7 +76,7 @@ class MedicineSchedule {
     }
   }
 
-  void _checkDayException(List<bool> day) {
+  void checkDayException(List<bool> day) {
     if (day.length != 7) {
       throw InvalidMedicineDayException();
     } else if (!day.contains(true)) {

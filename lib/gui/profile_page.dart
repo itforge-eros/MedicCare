@@ -7,8 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/gui/edit_profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mediccare/gui/user_settings_page.dart';
 
 class ProfilePage extends StatefulWidget {
+  final User _user;
+
+  ProfilePage(this._user);
+
   @override
   State<StatefulWidget> createState() {
     return _ProfilePageState();
@@ -19,7 +24,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void _refreshState() {
-    // TODO: Implements method
     setState(() {});
   }
 
@@ -63,7 +67,12 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: Icon(Icons.settings, color: Colors.blue),
             onPressed: () {
-              Navigator.pushNamed(context, 'UserSettingsPage');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserSettingsPage(widget._user),
+                ),
+              );
             },
           ),
         ],
@@ -79,19 +88,19 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Text(
-              'Rawit',
+              widget._user.firstName,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.blueGrey, fontSize: 30, fontWeight: FontWeight.bold),
             ),
             Text(
-              'Lohakhachornphan',
+              widget._user.lastName,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.blueGrey, fontSize: 25, fontWeight: FontWeight.bold),
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 10),
               child: Text(
-                'Rawitgun@gmail.com',
+                widget._user.email,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Theme.of(context).primaryColorDark,
@@ -103,7 +112,13 @@ class _ProfilePageState extends State<ProfilePage> {
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[titleText(title: 'Gender'), contextText(context: 'Male')],
+                children: <Widget>[
+                  titleText(title: 'Gender'),
+                  contextText(
+                    context: widget._user.gender[0].toUpperCase() +
+                        widget._user.gender.replaceRange(0, 1, ''),
+                  ),
+                ],
               ),
             ),
             Container(
@@ -112,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   titleText(title: 'Date of Birth'),
-                  contextText(context: '4 April 1999')
+                  contextText(context: widget._user.getFormattedBirthDate())
                 ],
               ),
             ),
@@ -120,21 +135,30 @@ class _ProfilePageState extends State<ProfilePage> {
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[titleText(title: 'Height'), contextText(context: '170 cm')],
+                children: <Widget>[
+                  titleText(title: 'Height'),
+                  contextText(context: widget._user.height.toString() + ' cm'),
+                ],
               ),
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[titleText(title: 'Weight'), contextText(context: '60 kg')],
+                children: <Widget>[
+                  titleText(title: 'Weight'),
+                  contextText(context: widget._user.weight.toString() + ' kg'),
+                ],
               ),
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[titleText(title: 'Blood Group'), contextText(context: 'O+')],
+                children: <Widget>[
+                  titleText(title: 'Blood Group'),
+                  contextText(context: widget._user.bloodGroup),
+                ],
               ),
             ),
             Row(
@@ -152,16 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditProfilePage(
-                              this._refreshState,
-                              User(
-                                firstName: 'Rawit',
-                                lastName: 'Lohakhachornphan',
-                                birthDate: DateTime(1999, 4, 4),
-                                height: 172,
-                                weight: 53,
-                              ),
-                            ),
+                        builder: (context) => EditProfilePage(this._refreshState, widget._user),
                       ),
                     );
                   },

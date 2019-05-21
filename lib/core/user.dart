@@ -11,6 +11,7 @@ import 'package:mediccare/core/medicine_overview_data.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/exceptions.dart';
+import 'package:mediccare/util/alert.dart';
 
 class User {
   String _id;
@@ -30,14 +31,15 @@ class User {
   UserSettings _userSettings;
 
   User({
-    String id,
-    String email,
-    String firstName,
-    String lastName,
-    DateTime birthDate,
-    String gender,
+    String id = '',
+    String email = '',
+    String firstName = '',
+    String lastName = '',
+    String gender = '',
+    String bloodGroup = '',
     double height,
     double weight,
+    DateTime birthDate,
     Image image,
     List<Medicine> medicineList,
     List<Appointment> appointmentList,
@@ -49,10 +51,11 @@ class User {
     this._email = email;
     this._firstName = firstName;
     this._lastName = lastName;
-    this._birthDate = birthDate;
     this._gender = gender;
+    this._bloodGroup = bloodGroup;
     this._height = height;
     this._weight = weight;
+    this._birthDate = birthDate;
     this._image = image;
     this._medicineList = medicineList ?? List<Medicine>();
     this._appointmentList = appointmentList ?? List<Appointment>();
@@ -71,10 +74,13 @@ class User {
     this._height = map['height'];
     this._weight = map['weight'];
     this._image = map['image']; //TODO: Check Image properties
-    this._medicineList = map['medicineList'].map((e) => Medicine.fromMap(e)).toList() ?? List<Medicine>();
-    this._appointmentList = map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ?? List<Appointment>();
+    this._medicineList =
+        map['medicineList'].map((e) => Medicine.fromMap(e)).toList() ?? List<Medicine>();
+    this._appointmentList =
+        map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ?? List<Appointment>();
     this._doctorList = map['doctorList'].map((e) => Doctor.fromMap(e)).toList() ?? List<Doctor>();
-    this._hospitalList = map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ?? List<Hospital>();
+    this._hospitalList =
+        map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ?? List<Hospital>();
     this._userSettings = UserSettings.fromMap(map['userSettings']) ?? UserSettings();
   }
 
@@ -92,8 +98,8 @@ class User {
 
   String get gender => this._gender;
   set gender(String gender) {
-    if (<String>['Male', 'Female', 'Others'].contains(gender)) {
-      this._gender = gender;
+    if (<String>['male', 'female', 'others'].contains(gender.toLowerCase())) {
+      this._gender = gender.toLowerCase();
     } else {
       throw InvalidGenderException();
     }
@@ -101,21 +107,22 @@ class User {
 
   String get bloodGroup => this._bloodGroup;
   set bloodGroup(String bloodGroup) {
-    if (<String>['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'].contains(bloodGroup)) {
-      this._bloodGroup = bloodGroup;
+    if (<String>['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-']
+        .contains(bloodGroup.toUpperCase())) {
+      this._bloodGroup = bloodGroup.toUpperCase();
     } else {
       throw InvalidBloodGroupException();
     }
   }
-
-  DateTime get birthDate => this._birthDate;
-  set birthDate(DateTime birthDate) => this._birthDate = birthDate;
 
   double get height => this._height;
   set height(double height) => this._height = height;
 
   double get weight => this._weight;
   set weight(double weight) => this._weight = weight;
+
+  DateTime get birthDate => this._birthDate;
+  set birthDate(DateTime birthDate) => this._birthDate = birthDate;
 
   Image get image => this._image;
   set image(Image image) => this._image = image;
@@ -131,6 +138,53 @@ class User {
 
   List<Hospital> get hospitalList => this._hospitalList;
   set hospitalList(List<Hospital> hospitalList) => this._hospitalList = hospitalList;
+
+  UserSettings get userSettings => this._userSettings;
+  set userSettings(UserSettings userSettings) => this._userSettings = userSettings;
+
+  String getFormattedBirthDate() {
+    String month;
+
+    switch (this._birthDate.month) {
+      case 1:
+        month = 'January';
+        break;
+      case 2:
+        month = 'February';
+        break;
+      case 3:
+        month = 'March';
+        break;
+      case 4:
+        month = 'April';
+        break;
+      case 5:
+        month = 'May';
+        break;
+      case 6:
+        month = 'June';
+        break;
+      case 7:
+        month = 'July';
+        break;
+      case 8:
+        month = 'August';
+        break;
+      case 9:
+        month = 'September';
+        break;
+      case 10:
+        month = 'October';
+        break;
+      case 11:
+        month = 'November';
+        break;
+      case 12:
+        month = 'December';
+        break;
+    }
+    return this._birthDate.day.toString() + ' ' + month + ' ' + this._birthDate.year.toString();
+  }
 
   void addMedicine(Medicine medicine) {
     this._medicineList.add(medicine);
@@ -194,7 +248,7 @@ class User {
     List<DateTime> temp = List<DateTime>();
 
     for (int i = 0; i < this._medicineList.length; i++) {
-      temp = this._getMedicineSchedule(this._medicineList[i]);
+      temp = this.getMedicineSchedule(this._medicineList[i]);
       for (int j = 0; j < temp.length; j++) {
         medicineOverviewDataList.add(MedicineOverviewData(
           medicine: this._medicineList[i],
@@ -208,8 +262,8 @@ class User {
     return medicineOverviewDataList;
   }
 
-  // Private method: Get medicine schedule of a single medicine
-  List<DateTime> _getMedicineSchedule(Medicine medicine) {
+  // Data Method: Get medicine schedule of a single medicine
+  List<DateTime> getMedicineSchedule(Medicine medicine) {
     DateTime firstDay;
     Duration firstTime;
     final List<Duration> oneDayTime = List<Duration>();
@@ -218,29 +272,51 @@ class User {
     int offset = 0;
 
     // Logic: Calculate `firstDay`
-    firstDay = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    firstDay = DateTime(medicine.dateAdded.year, medicine.dateAdded.month, medicine.dateAdded.day);
+    bool _availableFirstDay = false;
+
+    for (int i = 0; i < 4; i++) {
+      if (Duration(hours: medicine.dateAdded.hour, minutes: medicine.dateAdded.minute) <
+              this._userSettings.userTime[i] &&
+          medicine.medicineSchedule.time[i]) {
+        _availableFirstDay = true;
+        break;
+      }
+    }
+
+    if (!_availableFirstDay) {
+      // If not able to take any medicine on the first day, skip a day.
+      firstDay = firstDay.add(Duration(days: 1));
+    }
+
     while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
       firstDay = firstDay.add(Duration(days: 1));
     }
 
     // Logic: Calculate `firstTime`
+
     for (int i = 0; i < 4; i++) {
-      if (DateTime.now().day != firstDay.day) {
+      if (medicine.dateAdded.day != firstDay.day) {
         firstTime = this._userSettings.userTime[medicine.medicineSchedule.time.indexOf(true)];
-        offset = 0;
         break;
       }
 
-      if (!medicine.medicineSchedule.time[i]) {
-        offset--;
-      } else if (Duration(
-            hours: DateTime.now().hour,
-            minutes: DateTime.now().minute,
-          ) <
-          this._userSettings.userTime[i]) {
-        firstTime = this._userSettings.userTime[i];
-        offset += i;
-        break;
+      if (medicine.medicineSchedule.time[i] &&
+          medicine.dateAdded.compareTo(
+                DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day,
+                  this._userSettings.userTime[i].inHours % 24,
+                  this._userSettings.userTime[i].inMinutes % 60,
+                ),
+              ) <
+              0) {
+        if (firstTime == null) {
+          firstTime = this._userSettings.userTime[i];
+        } else if (this._userSettings.userTime[i].compareTo(firstTime) < 0) {
+          firstTime = this._userSettings.userTime[i];
+        }
       }
     }
 
@@ -253,11 +329,36 @@ class User {
 
     // Logic: Calculate `durations`
     for (int i = 0; i < oneDayTime.length - 1; i++) {
-      durations.add(oneDayTime[i + 1] - oneDayTime[i]);
+      if ((oneDayTime[i + 1] - oneDayTime[i]).isNegative) {
+        durations.add(oneDayTime[i + 1] - oneDayTime[i] + Duration(days: 1));
+      } else {
+        durations.add(oneDayTime[i + 1] - oneDayTime[i]);
+      }
     }
-    durations.add(Duration(days: 1) - oneDayTime[oneDayTime.length - 1] + oneDayTime[0]);
+
+    if ((oneDayTime[0] - oneDayTime[oneDayTime.length - 1]).isNegative ||
+        (oneDayTime[0] - oneDayTime[oneDayTime.length - 1]) == Duration(seconds: 0)) {
+      durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1] + Duration(days: 1));
+    } else {
+      durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1]);
+    }
+
+    // Logic: Calculate `offset`
+    for (int i = 0; i < oneDayTime.length; i++) {
+      if (firstTime.compareTo(oneDayTime[i]) != 0) {
+        offset++;
+      } else {
+        break;
+      }
+    }
 
     // Logic: Calculate `medicineSchedule`
+    print(medicine.name);
+    print(firstTime.toString());
+    print('---');
+    print('OFFSET: ' + offset.toString());
+    durations.forEach((e) => print(e));
+
     firstDay = firstDay.add(firstTime);
     for (int i = 0;
         i < (medicine.totalAmount / medicine.doseAmount).ceil() + medicine.skippedTimes;
@@ -268,6 +369,15 @@ class User {
       while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
         firstDay = firstDay.add(Duration(days: 1));
       }
+    }
+
+    // Logic: Remove taken and skipped medicine
+    for (int i = 0;
+        i <
+            (medicine.totalAmount - medicine.remainingAmount) / medicine.doseAmount +
+                medicine.skippedTimes;
+        i++) {
+      medicineSchedule.removeAt(0);
     }
 
     return medicineSchedule;
