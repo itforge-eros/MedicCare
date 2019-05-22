@@ -18,24 +18,30 @@ class FirebaseUtils {
     DocumentSnapshot userProfile =
         await firestore.collection('users').document(firebaseUSer.uid).get();
 
-    print(userProfile['userSettings']);
-
     UserSettings userSetting =
         UserSettings.fromMap(userProfile['userSettings']);
 
     User user = User(
-        email: firebaseUSer.email,
-        firstName: userProfile['firstName'],
-        lastName: userProfile['lastName'],
-        birthDate: DateTime.parse(userProfile['birthDate']),
-        bloodGroup: userProfile['bloodGroup'],
-        gender: userProfile['gender'],
-        height: userProfile['height'].toDouble(),
-        weight: userProfile['weight'].toDouble(),
-        userSettings: userSetting,
-        id: firebaseUSer.uid);
+      email: firebaseUSer.email,
+      firstName: userProfile['firstName'],
+      lastName: userProfile['lastName'],
+      birthDate: userProfile['birthDate'],
+      bloodGroup: userProfile['bloodGroup'],
+      gender: userProfile['gender'],
+      height: userProfile['height'].toDouble(),
+      weight: userProfile['weight'].toDouble(),
+      userSettings: userSetting,
+      id: firebaseUSer.uid,
+    );
 
     return user;
+  }
+
+  static void updateUserData(User user) {
+    Map<String, dynamic> map = user.toMap();
+    map.remove('id');
+
+    Firestore.instance.collection('users').document(user.id).setData(map);
   }
 
   static void createUserData(String id, String email) {
