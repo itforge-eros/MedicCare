@@ -249,7 +249,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                           FirebaseUtils.updateUserData(userInstance);
 
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
+                          Navigator.of(context).pop(true);
                         }
                       },
                     ),
