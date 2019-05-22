@@ -212,10 +212,12 @@ class _HomepageState extends State<Homepage> {
       list.add(
         cardCustom(
           name: e.title,
-          subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', '') +
+          subtitle: ' ' +
+              e.dateTime.toString().replaceAll(':00.000', '') +
               '\n ' +
               e.doctor.prefix +
-              e.doctor.firstName + ' ' +
+              e.doctor.firstName +
+              ' ' +
               e.doctor.lastName,
           icon: Icons.local_hospital,
         ),
@@ -245,18 +247,23 @@ class _HomepageState extends State<Homepage> {
         child: textTitle(title: 'Coming Appointments'),
       ),
     ];
+
     this._user.appointmentList.forEach((e) {
-      list.add(
-        cardCustom(
-          name: e.title,
-          subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', '') +
-              '\n ' +
-              e.doctor.prefix +
-              e.doctor.firstName + ' ' +
-              e.doctor.lastName,
-          icon: Icons.local_hospital,
-        ),
-      );
+      if (!e.completed) {
+        list.add(
+          cardCustom(
+            name: e.title,
+            subtitle: ' ' +
+                e.dateTime.toString().replaceAll(':00.000', '') +
+                '\n ' +
+                e.doctor.prefix +
+                e.doctor.firstName +
+                ' ' +
+                e.doctor.lastName,
+            icon: Icons.local_hospital,
+          ),
+        );
+      }
     });
 
     return list;
@@ -505,6 +512,7 @@ class _HomepageState extends State<Homepage> {
             doctor: this._user.doctorList[0],
             hospital: 'Rawitshie Personal Clinic',
             dateTime: DateTime(2019, 5, 24, 10, 30),
+            completed: false,
           ),
         );
   }
