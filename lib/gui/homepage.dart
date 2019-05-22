@@ -377,23 +377,6 @@ class _HomepageState extends State<Homepage> {
               name: e.title,
               subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
               icon: Icons.local_hospital,
-<<<<<<< HEAD
-              trailing: (DateTime.now().compareTo(
-                              e.dateTime.subtract(Duration(hours: 2))) >
-                          0 &&
-                      DateTime(
-                            e.dateTime.year,
-                            e.dateTime.month,
-                            e.dateTime.day,
-                            e.dateTime.hour,
-                            e.dateTime.minute,
-                            e.dateTime.second,
-                            e.dateTime.millisecond,
-                            e.dateTime.microsecond,
-                          ).compareTo(
-                              this._user.getMedicineOverview()[0].dateTime) ==
-                          0)
-=======
               trailing: (DateTime(
                             DateTime.now().year,
                             DateTime.now().month,
@@ -405,7 +388,6 @@ class _HomepageState extends State<Homepage> {
                           )) >=
                           0 ||
                       true) // TODO: Removes || true
->>>>>>> master
                   ? DropdownButtonHideUnderline(
                       child: DropdownButton(
                         icon: Icon(
@@ -522,14 +504,19 @@ class _HomepageState extends State<Homepage> {
                 name: f.medicine.name,
                 subtitle: f.getSubtitle(),
                 icon: Icons.battery_full,
-                trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
+                trailing: (DateTime.now().compareTo(
+                                    f.dateTime.subtract(Duration(hours: 1))) >
+                                0 &&
                             DateTime(
                                   f.dateTime.year,
                                   f.dateTime.month,
                                   f.dateTime.day,
                                   f.dateTime.hour,
                                   f.dateTime.minute,
-                                ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
+                                ).compareTo(this
+                                    ._user
+                                    .getMedicineOverview()[0]
+                                    .dateTime) ==
                                 0 ||
                         true) // TODO: Removes || true
                     ? DropdownButtonHideUnderline(
@@ -588,14 +575,17 @@ class _HomepageState extends State<Homepage> {
 
   // GUI Method: Returns GUI of overview tab
   Widget getOverviewPage() {
-    if (!this._user.containsComingAppointments() && !this._user.containsRemainingMedicine()) {
+    if (!this._user.containsComingAppointments() &&
+        !this._user.containsRemainingMedicine()) {
       return getSectionDivider(
           'Your overview feed is currently empty.\nAdding a medicine or an appointment will show them up here!');
     }
 
     return ListView(
       shrinkWrap: true,
-      children: getComingAppointmentList() + [SizedBox(height: 20.0)] + getRemainingIndoseList(),
+      children: getComingAppointmentList() +
+          [SizedBox(height: 20.0)] +
+          getRemainingIndoseList(),
     );
   }
 
@@ -840,15 +830,11 @@ class _HomepageState extends State<Homepage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-<<<<<<< HEAD
-                  builder: (context) => AddDoctorPage(refreshState)),
-=======
                 builder: (context) => AddDoctorPage(
                       refreshState: this.refreshState,
                       user: this._user,
                     ),
               ),
->>>>>>> master
             );
           },
         ),
