@@ -7,10 +7,12 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/util/alert.dart';
+import 'package:mediccare/util/datetime_picker_formfield.dart';
 
 class AddMedicinePage extends StatefulWidget {
   Function _refreshState;
@@ -41,6 +43,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   static final TextEditingController _controllerDoseAmount = TextEditingController();
   static final TextEditingController _controllerTotalAmount = TextEditingController();
   String _currentMedicineType = 'capsule';
+  DateTime _currentDateAdded;
   MedicineSchedule _currentMedicineSchedule = MedicineSchedule();
   File _currentImage;
 
@@ -58,6 +61,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
     _controllerDoseAmount.text = '';
     _controllerTotalAmount.text = '';
     this._currentMedicineType = 'capsule';
+    this._currentDateAdded = null;
     this._currentMedicineSchedule = MedicineSchedule();
   }
 
@@ -68,6 +72,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
       _controllerDoseAmount.text = widget._medicine.doseAmount.toString();
       _controllerTotalAmount.text = widget._medicine.totalAmount.toString();
       this._currentMedicineType = widget._medicine.type;
+      this._currentDateAdded = widget._medicine.dateAdded;
       this._currentMedicineSchedule = widget._medicine.medicineSchedule;
     }
   }
@@ -246,6 +251,30 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                   }
                 },
               ),
+              (widget._medicine == null)
+                  ? DateTimePickerFormField(
+                      initialDate: DateTime.now(),
+                      format: DateFormat('yyyy-MM-dd HH:mm'),
+                      inputType: InputType.both,
+                      decoration: InputDecoration(
+                        labelText: 'Date Added',
+                        helperText: 'Leave blank to use the current time.',
+                        prefixIcon: Icon(Icons.calendar_today),
+                      ),
+                      onChanged: (DateTime dateTime) {
+                        try {
+                          this._currentDateAdded = dateTime;
+                        } catch (e) {}
+                      },
+                      validator: (DateTime dateTime) {},
+                    )
+                  : TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Date Added',
+                      ),
+                      initialValue: widget._medicine.dateAdded.toString().replaceRange(16, 23, ''),
+                      enabled: false,
+                    ),
               SizedBox(height: 20.0),
               Text('Before/After Meal'),
               Row(
@@ -294,11 +323,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.time[0],
-                            onChanged: (widget._medicine == null) ? (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.time[0] = value;
-                              });
-                            }:null,
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.time[0] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Breakfast'),
                         ],
@@ -307,11 +338,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.time[2],
-                            onChanged: (widget._medicine == null) ? (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.time[2] = value;
-                              });
-                            }:null,
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.time[2] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Dinner'),
                         ],
@@ -326,11 +359,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.time[1],
-                            onChanged: (widget._medicine == null) ? (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.time[1] = value;
-                              });
-                            }:null,
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.time[1] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Lunch'),
                         ],
@@ -339,11 +374,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         children: <Widget>[
                           Checkbox(
                             value: this._currentMedicineSchedule.time[3],
-                            onChanged: (widget._medicine == null) ? (bool value) {
-                              setState(() {
-                                this._currentMedicineSchedule.time[3] = value;
-                              });
-                            }:null,
+                            onChanged: (widget._medicine == null)
+                                ? (bool value) {
+                                    setState(() {
+                                      this._currentMedicineSchedule.time[3] = value;
+                                    });
+                                  }
+                                : null,
                           ),
                           Text('Bedtime'),
                         ],
@@ -528,7 +565,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                             doseAmount: int.parse(_controllerDoseAmount.text),
                             totalAmount: int.parse(_controllerTotalAmount.text),
                             medicineSchedule: this._currentMedicineSchedule,
-                            dateAdded: DateTime.now(),
+                            dateAdded: this._currentDateAdded,
                           ),
                         );
                       } else {
@@ -536,7 +573,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         widget._medicine.description = _controllerDescription.text;
                         widget._medicine.type = this._currentMedicineType;
                         widget._medicine.image = image;
-                        widget._medicine.medicineSchedule = this._currentMedicineSchedule;
+                        widget._medicine.medicineSchedule.isBeforeMeal = this._currentMedicineSchedule.isBeforeMeal;
                       }
                       widget._refreshState();
                       Navigator.pop(context);
