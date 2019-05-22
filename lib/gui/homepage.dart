@@ -31,13 +31,18 @@ class _HomepageState extends State<Homepage> {
 
   // Utility Method: Returns ...something?
   ListTile listTileCustom(
-      {String name, String subtitle, Object icon, Widget trailing, Function onTap}) {
+      {String name,
+      String subtitle,
+      Object icon,
+      Widget trailing,
+      Function onTap}) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       leading: Container(
         padding: EdgeInsets.only(right: 12.0),
-        decoration:
-            BoxDecoration(border: Border(right: BorderSide(width: 1.0, color: Colors.black38))),
+        decoration: BoxDecoration(
+            border:
+                Border(right: BorderSide(width: 1.0, color: Colors.black38))),
         child: Icon(icon, color: Colors.blue[300]),
       ),
       title: Text(
@@ -50,13 +55,19 @@ class _HomepageState extends State<Homepage> {
           Text(subtitle, style: TextStyle(color: Colors.black54))
         ],
       ),
-      trailing: trailing ?? Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
+      trailing: trailing ??
+          Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
       onTap: onTap ?? () {},
     );
   }
 
   // Utility Method: Returns a card
-  Card cardCustom({String name, String subtitle, Object icon, Widget trailing, Function onTap}) {
+  Card cardCustom(
+      {String name,
+      String subtitle,
+      Object icon,
+      Widget trailing,
+      Function onTap}) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -148,7 +159,11 @@ class _HomepageState extends State<Homepage> {
         month = 'December';
         break;
     }
-    return dateTime.day.toString() + ' ' + month + ' ' + dateTime.year.toString();
+    return dateTime.day.toString() +
+        ' ' +
+        month +
+        ' ' +
+        dateTime.year.toString();
   }
 
   // |---------------------- Medicine List
@@ -308,7 +323,9 @@ class _HomepageState extends State<Homepage> {
               name: e.title,
               subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
               icon: Icons.local_hospital,
-              trailing: (DateTime.now().compareTo(e.dateTime.subtract(Duration(hours: 2))) > 0 &&
+              trailing: (DateTime.now().compareTo(
+                              e.dateTime.subtract(Duration(hours: 2))) >
+                          0 &&
                       DateTime(
                             e.dateTime.year,
                             e.dateTime.month,
@@ -318,7 +335,8 @@ class _HomepageState extends State<Homepage> {
                             e.dateTime.second,
                             e.dateTime.millisecond,
                             e.dateTime.microsecond,
-                          ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
+                          ).compareTo(
+                              this._user.getMedicineOverview()[0].dateTime) ==
                           0)
                   ? DropdownButtonHideUnderline(
                       child: DropdownButton(
@@ -379,13 +397,17 @@ class _HomepageState extends State<Homepage> {
 
     if (this._user.containsRemainingMedicine()) {
       list.add(
-        Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose')),
+        Padding(
+            padding: const EdgeInsets.all(10),
+            child: textTitle(title: 'Remaining Indose')),
       );
 
       List<DateTime> dateList = List<DateTime>();
       this._user.getMedicineOverview().forEach((e) {
-        if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
-          dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
+        if (!dateList.contains(
+            DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
+          dateList
+              .add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
         }
       });
 
@@ -404,20 +426,25 @@ class _HomepageState extends State<Homepage> {
         );
 
         this._user.getMedicineOverview().forEach((f) {
-          if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
+          if (e.year == f.dateTime.year &&
+              e.month == f.dateTime.month &&
+              e.day == f.dateTime.day) {
             list.add(
               cardCustom(
                 name: f.medicine.name,
                 subtitle: f.getSubtitle(),
                 icon: Icons.battery_full,
-                trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
+                trailing: (DateTime.now().compareTo(
+                                f.dateTime.subtract(Duration(hours: 1))) >
+                            0 &&
                         DateTime(
                               f.dateTime.year,
                               f.dateTime.month,
                               f.dateTime.day,
                               f.dateTime.hour,
                               f.dateTime.minute,
-                            ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
+                            ).compareTo(
+                                this._user.getMedicineOverview()[0].dateTime) ==
                             0)
                     ? DropdownButtonHideUnderline(
                         child: DropdownButton(
@@ -701,7 +728,8 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => AddDoctorPage(refreshState)),
+              MaterialPageRoute(
+                  builder: (context) => AddDoctorPage(refreshState)),
             );
           },
         ),

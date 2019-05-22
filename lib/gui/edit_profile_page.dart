@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mediccare/core/user.dart';
-import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
@@ -19,9 +19,12 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  DateTime _currentBirthDate;
-  String _currentGender;
-  String _currentBloodGroup;
+  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _controllerFirstName = TextEditingController();
+  final TextEditingController _controllerLastName = TextEditingController();
+  final TextEditingController _controllerHeight = TextEditingController();
+  final TextEditingController _controllerWeight = TextEditingController();
+  Future<User> _getUser;
   File _image;
 
   Future getImage() async {
@@ -34,6 +37,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
+    _getUser = getUser();
   }
 
   Future<User> getUser() async {
@@ -60,12 +64,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-    final TextEditingController _controllerFirstName = TextEditingController();
-    final TextEditingController _controllerLastName = TextEditingController();
-    final TextEditingController _controllerHeight = TextEditingController();
-    final TextEditingController _controllerWeight = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
@@ -77,13 +75,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
         elevation: 0.1,
       ),
       body: FutureBuilder(
-        future: getUser(),
+        future: _getUser,
         builder: (_, user) {
           if (user.connectionState == ConnectionState.waiting) {
             return Center(
               child: Text('Loading...'),
             );
-          } else {
+          } else if (user.connectionState == ConnectionState.done) {
             User userInstance = user.data;
 
             _controllerFirstName.text = userInstance.firstName;
@@ -148,7 +146,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ],
                       onChanged: (String value) {
                         setState(() {
-                          this._currentGender = value;
+                          userInstance.gender = value;
                         });
                       },
                     ),
@@ -162,7 +160,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         prefixIcon: Icon(Icons.cake),
                       ),
                       onChanged: (DateTime date) {
-                        _currentBirthDate = date;
+                        userInstance.birthDate = date;
                       },
                       validator: (DateTime time) {
                         if (time == null) {
