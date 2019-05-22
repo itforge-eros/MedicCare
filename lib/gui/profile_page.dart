@@ -15,9 +15,7 @@ import 'package:mediccare/gui/user_settings_page.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
 class ProfilePage extends StatefulWidget {
-  final User _user;
-
-  ProfilePage(this._user);
+  ProfilePage();
 
   @override
   State<StatefulWidget> createState() {
@@ -28,28 +26,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   Future<User> _getUser;
-
-  Future<User> getUser() async {
-    FirebaseUser firebaseUSer = await FirebaseUtils.getUser();
-
-    var firestore = Firestore.instance;
-
-    DocumentSnapshot userProfile =
-        await firestore.collection('users').document(firebaseUSer.uid).get();
-
-    User user = User(
-        email: firebaseUSer.email,
-        firstName: userProfile['firstName'],
-        lastName: userProfile['lastName'],
-        birthDate: DateTime.parse(userProfile['birthDate']),
-        bloodGroup: userProfile['bloodGroup'],
-        gender: userProfile['gender'],
-        height: userProfile['height'],
-        weight: userProfile['weight'],
-        id: firebaseUSer.uid);
-
-    return user;
-  }
 
   Text titleText({String title}) {
     return Text(
@@ -78,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
 
-    _getUser = getUser();
+    _getUser = FirebaseUtils.getUser();
   }
 
   @override
@@ -101,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => UserSettingsPage(widget._user),
+                  builder: (context) => UserSettingsPage(),
                 ),
               );
             },

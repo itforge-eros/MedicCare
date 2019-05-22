@@ -75,13 +75,19 @@ class User {
     this._weight = map['weight'];
     this._image = map['image']; //TODO: Check Image properties
     this._medicineList =
-        map['medicineList'].map((e) => Medicine.fromMap(e)).toList() ?? List<Medicine>();
+        map['medicineList'].map((e) => Medicine.fromMap(e)).toList() ??
+            List<Medicine>();
     this._appointmentList =
-        map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ?? List<Appointment>();
-    this._doctorList = map['doctorList'].map((e) => Doctor.fromMap(e)).toList() ?? List<Doctor>();
+        map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ??
+            List<Appointment>();
+    this._doctorList =
+        map['doctorList'].map((e) => Doctor.fromMap(e)).toList() ??
+            List<Doctor>();
     this._hospitalList =
-        map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ?? List<Hospital>();
-    this._userSettings = UserSettings.fromMap(map['userSettings']) ?? UserSettings();
+        map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ??
+            List<Hospital>();
+    this._userSettings =
+        UserSettings.fromMap(map['userSettings']) ?? UserSettings();
   }
 
   String get id => this._id;
@@ -128,19 +134,23 @@ class User {
   set image(Image image) => this._image = image;
 
   List<Medicine> get medicineList => this._medicineList;
-  set medicineList(List<Medicine> medicineList) => this._medicineList = medicineList;
+  set medicineList(List<Medicine> medicineList) =>
+      this._medicineList = medicineList;
 
   List<Appointment> get appointmentList => this._appointmentList;
-  set appointmentList(List<Appointment> appointmentList) => this._appointmentList = appointmentList;
+  set appointmentList(List<Appointment> appointmentList) =>
+      this._appointmentList = appointmentList;
 
   List<Doctor> get doctorList => this._doctorList;
   set doctorList(List<Doctor> doctorList) => this._doctorList = doctorList;
 
   List<Hospital> get hospitalList => this._hospitalList;
-  set hospitalList(List<Hospital> hospitalList) => this._hospitalList = hospitalList;
+  set hospitalList(List<Hospital> hospitalList) =>
+      this._hospitalList = hospitalList;
 
   UserSettings get userSettings => this._userSettings;
-  set userSettings(UserSettings userSettings) => this._userSettings = userSettings;
+  set userSettings(UserSettings userSettings) =>
+      this._userSettings = userSettings;
 
   String getFormattedBirthDate() {
     String month;
@@ -183,7 +193,11 @@ class User {
         month = 'December';
         break;
     }
-    return this._birthDate.day.toString() + ' ' + month + ' ' + this._birthDate.year.toString();
+    return this._birthDate.day.toString() +
+        ' ' +
+        month +
+        ' ' +
+        this._birthDate.year.toString();
   }
 
   void addMedicine(Medicine medicine) {
@@ -230,7 +244,8 @@ class User {
 
   // Method: Get all medicine overview item list
   List<MedicineOverviewData> getMedicineOverview() {
-    final List<MedicineOverviewData> medicineOverviewDataList = List<MedicineOverviewData>();
+    final List<MedicineOverviewData> medicineOverviewDataList =
+        List<MedicineOverviewData>();
     List<DateTime> temp = List<DateTime>();
 
     for (int i = 0; i < this._medicineList.length; i++) {
@@ -258,11 +273,14 @@ class User {
     int offset = 0;
 
     // Logic: Calculate `firstDay`
-    firstDay = DateTime(medicine.dateAdded.year, medicine.dateAdded.month, medicine.dateAdded.day);
+    firstDay = DateTime(medicine.dateAdded.year, medicine.dateAdded.month,
+        medicine.dateAdded.day);
     bool _availableFirstDay = false;
 
     for (int i = 0; i < 4; i++) {
-      if (Duration(hours: medicine.dateAdded.hour, minutes: medicine.dateAdded.minute) <
+      if (Duration(
+                  hours: medicine.dateAdded.hour,
+                  minutes: medicine.dateAdded.minute) <
               this._userSettings.userTime[i] &&
           medicine.medicineSchedule.time[i]) {
         _availableFirstDay = true;
@@ -282,7 +300,9 @@ class User {
     // Logic: Calculate `firstTime`
     for (int i = 0; i < 4; i++) {
       if (medicine.dateAdded.day != firstDay.day) {
-        firstTime = this._userSettings.userTime[medicine.medicineSchedule.time.indexOf(true)];
+        firstTime = this
+            ._userSettings
+            .userTime[medicine.medicineSchedule.time.indexOf(true)];
         break;
       }
 
@@ -322,8 +342,11 @@ class User {
     }
 
     if ((oneDayTime[0] - oneDayTime[oneDayTime.length - 1]).isNegative ||
-        (oneDayTime[0] - oneDayTime[oneDayTime.length - 1]) == Duration(seconds: 0)) {
-      durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1] + Duration(days: 1));
+        (oneDayTime[0] - oneDayTime[oneDayTime.length - 1]) ==
+            Duration(seconds: 0)) {
+      durations.add(oneDayTime[0] -
+          oneDayTime[oneDayTime.length - 1] +
+          Duration(days: 1));
     } else {
       durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1]);
     }
@@ -340,7 +363,9 @@ class User {
     // Logic: Calculate `medicineSchedule`
     firstDay = firstDay.add(firstTime);
     for (int i = 0;
-        i < (medicine.totalAmount / medicine.doseAmount).ceil() + medicine.skippedTimes;
+        i <
+            (medicine.totalAmount / medicine.doseAmount).ceil() +
+                medicine.skippedTimes;
         i++) {
       medicineSchedule.add(firstDay);
       firstDay = firstDay.add(durations[(i + offset) % durations.length]);
@@ -353,7 +378,8 @@ class User {
     // Logic: Remove taken and skipped medicine
     for (int i = 0;
         i <
-            (medicine.totalAmount - medicine.remainingAmount) / medicine.doseAmount +
+            (medicine.totalAmount - medicine.remainingAmount) /
+                    medicine.doseAmount +
                 medicine.skippedTimes;
         i++) {
       medicineSchedule.removeAt(0);

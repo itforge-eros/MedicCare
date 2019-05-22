@@ -37,29 +37,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    _getUser = getUser();
-  }
-
-  Future<User> getUser() async {
-    FirebaseUser firebaseUSer = await FirebaseUtils.getUser();
-
-    var firestore = Firestore.instance;
-
-    DocumentSnapshot userProfile =
-        await firestore.collection('users').document(firebaseUSer.uid).get();
-
-    User user = User(
-        email: firebaseUSer.email,
-        firstName: userProfile['firstName'],
-        lastName: userProfile['lastName'],
-        birthDate: DateTime.parse(userProfile['birthDate']),
-        bloodGroup: userProfile['bloodGroup'],
-        gender: userProfile['gender'],
-        height: userProfile['height'],
-        weight: userProfile['weight'],
-        id: firebaseUSer.uid);
-
-    return user;
+    _getUser = FirebaseUtils.getUser();
   }
 
   @override

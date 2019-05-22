@@ -36,25 +36,42 @@ class UserSettings {
     this._userTime[3] = sleepTime ?? UserSettings.defaultTime[3];
   }
 
-  UserSettings.fromMap(Map<String, dynamic> map) {
+  UserSettings.fromMap(Map<dynamic, dynamic> map) {
     this._notificationOn = map['notificationOn'];
-    this._notifyAheadDuration = map['notifyAheadDuration'].split(':');
-    this._userTime[0] = map['userTime'][0] ?? UserSettings.defaultTime[0];
-    this._userTime[1] = map['userTime'][1] ?? UserSettings.defaultTime[1];
-    this._userTime[2] = map['userTime'][2] ?? UserSettings.defaultTime[2];
-    this._userTime[3] = map['userTime'][3] ?? UserSettings.defaultTime[3];
+
+    List<dynamic> notifyAheadDuration = map['notifyAheadDuration'].split(':');
+
+    this._notifyAheadDuration = Duration(
+      hours: int.parse(notifyAheadDuration[0]),
+      minutes: int.parse(notifyAheadDuration[1]),
+    );
+
+    for (int i = 0; i <= 3; i++) {
+      List<dynamic> stringTime =
+          map['userTime'][i] != null ? map['userTime'][0].split(':') : null;
+
+      this._userTime[i] = stringTime != null
+          ? Duration(
+              hours: int.parse(stringTime[0]),
+              minutes: int.parse(stringTime[1]),
+            )
+          : UserSettings.defaultTime[i];
+    }
   }
 
   List<Duration> get userTime => this._userTime;
 
   bool get notificationOn => this._notificationOn;
-  set notificationOn(bool notificationOn) => this._notificationOn = notificationOn;
+  set notificationOn(bool notificationOn) =>
+      this._notificationOn = notificationOn;
 
   Duration get notifyAheadDuration => this._notifyAheadDuration;
-  set notifyAheadDuration(Duration notifyAheadDuration) => this._notifyAheadDuration = notifyAheadDuration;
+  set notifyAheadDuration(Duration notifyAheadDuration) =>
+      this._notifyAheadDuration = notifyAheadDuration;
 
   Duration get breakfastTime => this._userTime[0];
-  set breakfastTime(Duration breakfastTime) => this._userTime[0] = breakfastTime;
+  set breakfastTime(Duration breakfastTime) =>
+      this._userTime[0] = breakfastTime;
 
   Duration get lunchTime => this._userTime[1];
   set lunchTime(Duration lunchTime) => this._userTime[1] = lunchTime;
@@ -75,7 +92,9 @@ class UserSettings {
   }
 
   String durationToString(Duration duration) {
-    return duration.inHours.toString() + ':' + (duration.inMinutes % 60).toString();
+    return duration.inHours.toString() +
+        ':' +
+        (duration.inMinutes % 60).toString();
   }
 
   Duration stringToDuration(String time) {
