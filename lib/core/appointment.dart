@@ -26,7 +26,17 @@ class Appointment {
     this._title = title;
     this._description = description;
     this._doctor = doctor;
-    this._hospital = hospital;
+
+    try {
+      if (this._hospital.trim().isEmpty) {
+        this._hospital = this._doctor.hospital;
+      } else {
+        this._hospital = hospital;
+      }
+    } catch (e) {
+      this._hospital = hospital;
+    }
+
     this._dateTime = dateTime;
   }
 

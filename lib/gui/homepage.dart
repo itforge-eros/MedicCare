@@ -208,15 +208,20 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    for (int i = 0; i < 4; i++) {
+    this._user.appointmentList.forEach((e) {
       list.add(
         cardCustom(
-          name: 'Appointment with Dr.Rawit',
-          subtitle: 'At Payathai Ht. afternoon',
-          icon: Icons.person_pin_circle,
+          name: e.title,
+          subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', '') +
+              '\n ' +
+              e.doctor.prefix +
+              e.doctor.firstName + ' ' +
+              e.doctor.lastName,
+          icon: Icons.local_hospital,
         ),
       );
-    }
+    });
+
     return list;
   }
 
@@ -240,15 +245,20 @@ class _HomepageState extends State<Homepage> {
         child: textTitle(title: 'Coming Appointments'),
       ),
     ];
-    for (int i = 0; i < 2; i++) {
+    this._user.appointmentList.forEach((e) {
       list.add(
         cardCustom(
-          name: 'Appointment with Dr.Rawit',
-          subtitle: 'This Saturday afternoon',
+          name: e.title,
+          subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', '') +
+              '\n ' +
+              e.doctor.prefix +
+              e.doctor.firstName + ' ' +
+              e.doctor.lastName,
           icon: Icons.local_hospital,
         ),
       );
-    }
+    });
+
     return list;
   }
 
@@ -465,7 +475,19 @@ class _HomepageState extends State<Homepage> {
         ),
       ],
       appointmentList: List<Appointment>(),
-      doctorList: List<Doctor>(),
+      doctorList: <Doctor>[
+        Doctor(
+          id: '01',
+          prefix: 'Dr.',
+          firstName: 'Rawit',
+          lastName: 'Lohakachornphan',
+          ward: 'Dentist',
+          hospital: 'Rawitshie Personal Clinic',
+          phone: '081-XXX-XXXX',
+          notes: '',
+          image: null,
+        ),
+      ],
       hospitalList: List<Hospital>(),
       userSettings: UserSettings(
         notificationOn: true,
@@ -476,6 +498,15 @@ class _HomepageState extends State<Homepage> {
         sleepTime: Duration(hours: 23, minutes: 0),
       ),
     );
+    this._user.addAppointment(
+          Appointment(
+            title: 'Dentist Appointment',
+            description: 'Weekly check',
+            doctor: this._user.doctorList[0],
+            hospital: 'Rawitshie Personal Clinic',
+            dateTime: DateTime(2019, 5, 24, 10, 30),
+          ),
+        );
   }
 
   @override

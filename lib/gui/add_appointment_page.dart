@@ -145,16 +145,10 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                 onChanged: (DateTime dateTime) {
                   try {
                     this._currentDateTime = dateTime;
-                  } catch (e) {
-                    
-                  }
+                  } catch (e) {}
                 },
                 validator: (DateTime dateTime) {
-                  try {
-                    if (dateTime.compareTo(DateTime.now()) < 0) {
-                      return 'Appointment date and time must be in the future';
-                    }
-                  } catch (e) {
+                  if (this._currentDateTime == null) {
                     return 'Please select a valid date and time';
                   }
                 },
