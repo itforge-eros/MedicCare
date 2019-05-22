@@ -169,7 +169,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
               DropdownButton(
                 isExpanded: true,
                 value: this._currentMedicineType,
-                items: [
+                items: <DropdownMenuItem<String>>[
                   DropdownMenuItem(
                     value: 'capsule',
                     child: Text('Capsule'),

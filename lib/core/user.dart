@@ -280,7 +280,6 @@ class User {
     }
 
     // Logic: Calculate `firstTime`
-
     for (int i = 0; i < 4; i++) {
       if (medicine.dateAdded.day != firstDay.day) {
         firstTime = this._userSettings.userTime[medicine.medicineSchedule.time.indexOf(true)];
@@ -290,9 +289,9 @@ class User {
       if (medicine.medicineSchedule.time[i] &&
           medicine.dateAdded.compareTo(
                 DateTime(
-                  DateTime.now().year,
-                  DateTime.now().month,
-                  DateTime.now().day,
+                  firstDay.year,
+                  firstDay.month,
+                  firstDay.day,
                   this._userSettings.userTime[i].inHours % 24,
                   this._userSettings.userTime[i].inMinutes % 60,
                 ),
