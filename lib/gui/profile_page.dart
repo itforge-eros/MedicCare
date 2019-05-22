@@ -90,12 +90,18 @@ class _ProfilePageState extends State<ProfilePage> {
             Text(
               widget._user.firstName,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.blueGrey, fontSize: 30, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.blueGrey,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold),
             ),
             Text(
               widget._user.lastName,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.blueGrey, fontSize: 25, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.blueGrey,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold),
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 10),
@@ -176,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditProfilePage(this._refreshState, widget._user),
+                        builder: (context) => EditProfilePage(),
                       ),
                     );
                   },
@@ -184,15 +190,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 RaisedButton(
                   child: Text(
                     'Logout',
-                    style: TextStyle(color: Color.fromRGBO(216, 32, 32, 1), fontSize: 15),
+                    style: TextStyle(
+                        color: Color.fromRGBO(216, 32, 32, 1), fontSize: 15),
                   ),
                   color: Colors.white,
                   elevation: 4.0,
                   splashColor: Colors.redAccent,
                   onPressed: () {
                     _auth.signOut();
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('LoginPage', (Route<dynamic> route) => false);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        'LoginPage', (Route<dynamic> route) => false);
                   },
                 ),
               ],
