@@ -309,18 +309,17 @@ class _HomepageState extends State<Homepage> {
               subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
               icon: Icons.local_hospital,
               trailing: (DateTime.now().compareTo(e.dateTime.subtract(Duration(hours: 2))) > 0 &&
-                          DateTime(
-                                e.dateTime.year,
-                                e.dateTime.month,
-                                e.dateTime.day,
-                                e.dateTime.hour,
-                                e.dateTime.minute,
-                                e.dateTime.second,
-                                e.dateTime.millisecond,
-                                e.dateTime.microsecond,
-                              ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
-                              0 ||
-                      true)
+                      DateTime(
+                            e.dateTime.year,
+                            e.dateTime.month,
+                            e.dateTime.day,
+                            e.dateTime.hour,
+                            e.dateTime.minute,
+                            e.dateTime.second,
+                            e.dateTime.millisecond,
+                            e.dateTime.microsecond,
+                          ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
+                          0)
                   ? DropdownButtonHideUnderline(
                       child: DropdownButton(
                         icon: Icon(
@@ -376,96 +375,100 @@ class _HomepageState extends State<Homepage> {
 
   // Data Method: Returns list of remaining indose
   List<Widget> remainIndose() {
-    List<Widget> list = [
-      Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose'))
-    ];
+    List<Widget> list = List<Widget>();
 
-    List<DateTime> dateList = List<DateTime>();
-    this._user.getMedicineOverview().forEach((e) {
-      if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
-        dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
-      }
-    });
-
-    dateList.sort((a, b) => a.compareTo(b));
-
-    dateList.forEach((e) {
+    if (this._user.containsRemainingMedicine()) {
       list.add(
-        getSectionDivider((e.compareTo(DateTime(
-                  DateTime.now().year,
-                  DateTime.now().month,
-                  DateTime.now().day,
-                )) !=
-                0)
-            ? getFormattedDate(e)
-            : getFormattedDate(e) + ' (Today)'),
+        Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose')),
       );
 
-      this._user.getMedicineOverview().forEach((f) {
-        if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
-          list.add(
-            cardCustom(
-              name: f.medicine.name,
-              subtitle: f.getSubtitle(),
-              icon: Icons.battery_full,
-              trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
-                      DateTime(
-                            f.dateTime.year,
-                            f.dateTime.month,
-                            f.dateTime.day,
-                            f.dateTime.hour,
-                            f.dateTime.minute,
-                          ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
-                          0)
-                  ? DropdownButtonHideUnderline(
-                      child: DropdownButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        items: <DropdownMenuItem>[
-                          DropdownMenuItem(
-                            value: 'take',
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.check,
-                                  color: Colors.green,
-                                ),
-                                Text('  Take'),
-                              ],
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: 'skip',
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.cancel,
-                                  color: Colors.red,
-                                ),
-                                Text('  Skip'),
-                              ],
-                            ),
-                          ),
-                        ],
-                        onChanged: (dynamic value) {
-                          setState(() {
-                            if (value == 'take') {
-                              f.medicine.takeMedicine();
-                            } else if (value == 'skip') {
-                              f.medicine.skipMedicine();
-                            }
-                          });
-                        },
-                      ),
-                    )
-                  : Icon(Icons.edit, color: Colors.grey),
-            ),
-          );
+      List<DateTime> dateList = List<DateTime>();
+      this._user.getMedicineOverview().forEach((e) {
+        if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
+          dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
         }
       });
-    });
+
+      dateList.sort((a, b) => a.compareTo(b));
+
+      dateList.forEach((e) {
+        list.add(
+          getSectionDivider((e.compareTo(DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                  )) !=
+                  0)
+              ? getFormattedDate(e)
+              : getFormattedDate(e) + ' (Today)'),
+        );
+
+        this._user.getMedicineOverview().forEach((f) {
+          if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
+            list.add(
+              cardCustom(
+                name: f.medicine.name,
+                subtitle: f.getSubtitle(),
+                icon: Icons.battery_full,
+                trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
+                        DateTime(
+                              f.dateTime.year,
+                              f.dateTime.month,
+                              f.dateTime.day,
+                              f.dateTime.hour,
+                              f.dateTime.minute,
+                            ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
+                            0)
+                    ? DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          items: <DropdownMenuItem>[
+                            DropdownMenuItem(
+                              value: 'take',
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.check,
+                                    color: Colors.green,
+                                  ),
+                                  Text('  Take'),
+                                ],
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'skip',
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                  ),
+                                  Text('  Skip'),
+                                ],
+                              ),
+                            ),
+                          ],
+                          onChanged: (dynamic value) {
+                            setState(() {
+                              if (value == 'take') {
+                                f.medicine.takeMedicine();
+                              } else if (value == 'skip') {
+                                f.medicine.skipMedicine();
+                              }
+                            });
+                          },
+                        ),
+                      )
+                    : Icon(Icons.edit, color: Colors.grey),
+              ),
+            );
+          }
+        });
+      });
+    }
 
     return list;
   }
