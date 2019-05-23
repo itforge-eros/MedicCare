@@ -93,10 +93,11 @@ class _HomepageState extends State<Homepage> {
   // Utility Method: Returns section divider
   Container getSectionDivider(String text) {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
       alignment: Alignment.center,
       child: Text(
         text,
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 14,
           fontFamily: 'Raleway',
@@ -362,15 +363,16 @@ class _HomepageState extends State<Homepage> {
               subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
               icon: Icons.local_hospital,
               trailing: (DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day,
-                      ).compareTo(DateTime(
-                        e.dateTime.year,
-                        e.dateTime.month,
-                        e.dateTime.day,
-                      )) >=
-                      0)
+                            DateTime.now().year,
+                            DateTime.now().month,
+                            DateTime.now().day,
+                          ).compareTo(DateTime(
+                            e.dateTime.year,
+                            e.dateTime.month,
+                            e.dateTime.day,
+                          )) >=
+                          0 ||
+                      true) // TODO: Removes || true
                   ? DropdownButtonHideUnderline(
                       child: DropdownButton(
                         icon: Icon(
@@ -482,14 +484,15 @@ class _HomepageState extends State<Homepage> {
                 subtitle: f.getSubtitle(),
                 icon: Icons.battery_full,
                 trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
-                        DateTime(
-                              f.dateTime.year,
-                              f.dateTime.month,
-                              f.dateTime.day,
-                              f.dateTime.hour,
-                              f.dateTime.minute,
-                            ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
-                            0)
+                            DateTime(
+                                  f.dateTime.year,
+                                  f.dateTime.month,
+                                  f.dateTime.day,
+                                  f.dateTime.hour,
+                                  f.dateTime.minute,
+                                ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
+                                0 ||
+                        true) // TODO: Removes || true
                     ? DropdownButtonHideUnderline(
                         child: DropdownButton(
                           icon: Icon(
@@ -545,7 +548,12 @@ class _HomepageState extends State<Homepage> {
   }
 
   // GUI Method: Returns GUI of overview tab
-  ListView getOverviewPage() {
+  Widget getOverviewPage() {
+    if (!this._user.containsComingAppointments() && !this._user.containsRemainingMedicine()) {
+      return getSectionDivider(
+          'Your overview feed is currently empty.\nAdding a medicine or an appointment will show them up here!');
+    }
+
     return ListView(
       shrinkWrap: true,
       children: getComingAppointmentList() + [SizedBox(height: 20.0)] + getRemainingIndoseList(),
