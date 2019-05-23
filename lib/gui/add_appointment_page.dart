@@ -1,3 +1,5 @@
+import 'dart:math';
+
 ///
 /// `add_appointment_page.dart`
 /// Class for appointment addition page GUI
@@ -18,10 +20,12 @@ class AddAppointmentPage extends StatefulWidget {
 
   AddAppointmentPage({Function refreshState, User user}) {
     this._refreshState = refreshState;
+    this._user = user;
   }
 
   AddAppointmentPage.editMode({Function refreshState, User user, Appointment appointment}) {
     this._refreshState = refreshState;
+    this._user = user;
     this._appointment = appointment;
   }
 
@@ -119,16 +123,60 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                 maxLines: 4,
                 decoration: InputDecoration(labelText: 'Description'),
               ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Doctor'),
-                // TODO: Implements doctor selection
+              DropdownButton(
+                isExpanded: true,
+                value: this._currentDoctor,
+                items: widget._user.doctorList
+                        .map(
+                          (e) => DropdownMenuItem(
+                                value: e,
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.person,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    Text(' ' + e.prefix + ' ' + e.firstName + ' ' + e.lastName),
+                                  ],
+                                ),
+                              ),
+                        )
+                        .toList() +
+                    [
+                      DropdownMenuItem(
+                        value: null,
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.person_outline,
+                              color: Colors.grey,
+                            ),
+                            Text(' Unspecified'),
+                          ],
+                        ),
+                      ),
+                    ],
+                onChanged: (value) {
+                  setState(() {
+                    this._currentDoctor = value;
+                  });
+                },
               ),
               TextFormField(
                 controller: _controllerHospital,
-                decoration: InputDecoration(
-                  labelText: 'Hospital',
-                  helperText: 'Leave blank to use default hospital of the selected doctor.',
-                ),
+                decoration: (this._currentDoctor == null)
+                    ? InputDecoration(
+                        labelText: 'Hospital',
+                        helperText: 'Leave blank to use default hospital of the selected doctor.',
+                      )
+                    : InputDecoration(
+                        labelText: 'Hospital',
+                      ),
+                validator: (text) {
+                  if (this._currentDoctor == null && text.trim().isEmpty) {
+                    return 'Please fill hospital';
+                  }
+                },
               ),
               DateTimePickerFormField(
                 initialValue:
