@@ -228,20 +228,6 @@ class User {
     return false;
   }
 
-  void addHospital(Hospital hospital) {
-    this._hospitalList.add(hospital);
-  }
-
-  bool removeHospital(String id) {
-    for (int i = 0; i < this._hospitalList.length; i++) {
-      if (id == this._hospitalList[i].id) {
-        this._hospitalList.removeAt(i);
-        return true;
-      }
-    }
-    return false;
-  }
-
   // Method: Get all medicine overview item list
   List<MedicineOverviewData> getMedicineOverview() {
     final List<MedicineOverviewData> medicineOverviewDataList = List<MedicineOverviewData>();
@@ -353,12 +339,6 @@ class User {
     }
 
     // Logic: Calculate `medicineSchedule`
-    print(medicine.name);
-    print(firstTime.toString());
-    print('---');
-    print('OFFSET: ' + offset.toString());
-    durations.forEach((e) => print(e));
-
     firstDay = firstDay.add(firstTime);
     for (int i = 0;
         i < (medicine.totalAmount / medicine.doseAmount).ceil() + medicine.skippedTimes;
@@ -381,6 +361,51 @@ class User {
     }
 
     return medicineSchedule;
+  }
+
+  bool containsRemainingMedicine() {
+    for (int i = 0; i < this._medicineList.length; i++) {
+      if (this._medicineList[i].remainingAmount > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool containsEmptyMedicine() {
+    for (int i = 0; i < this._medicineList.length; i++) {
+      if (this._medicineList[i].remainingAmount == 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool containsComingAppointments() {
+    for (int i = 0; i < this._appointmentList.length; i++) {
+      if (this._appointmentList[i].status == 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool containsCompletedAppointments() {
+    for (int i = 0; i < this._appointmentList.length; i++) {
+      if (this._appointmentList[i].status == 1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool containsSkippedAppointments() {
+    for (int i = 0; i < this._appointmentList.length; i++) {
+      if (this._appointmentList[i].status == 2) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Map<String, dynamic> toMap() {

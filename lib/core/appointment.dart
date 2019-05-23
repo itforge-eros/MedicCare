@@ -13,6 +13,7 @@ class Appointment {
   Doctor _doctor;
   String _hospital;
   DateTime _dateTime;
+  int _status;
 
   Appointment({
     String id,
@@ -21,13 +22,25 @@ class Appointment {
     Doctor doctor,
     String hospital,
     DateTime dateTime,
+    int status = 0,
   }) {
     this._id = id;
     this._title = title;
     this._description = description;
     this._doctor = doctor;
-    this._hospital = hospital;
+
+    try {
+      if (this._hospital.trim().isEmpty) {
+        this._hospital = this._doctor.hospital;
+      } else {
+        this._hospital = hospital;
+      }
+    } catch (e) {
+      this._hospital = hospital;
+    }
+
     this._dateTime = dateTime;
+    this._status = status;
   }
 
   Appointment.fromMap(Map<String, dynamic> map) {
@@ -37,6 +50,7 @@ class Appointment {
     this._doctor = Doctor.fromMap(map['doctor']);
     this._hospital = map['hospital'];
     this._dateTime = DateTime.parse(map['dateTime']);
+    this._status = map['status'];
   }
 
   String get id => this._id;
@@ -57,6 +71,9 @@ class Appointment {
   DateTime get dateTime => this._dateTime;
   set dateTime(DateTime dateTime) => this._dateTime = dateTime;
 
+  int get status => this._status;
+  set status(int status) => this._status = status;
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': this._id,
@@ -65,6 +82,7 @@ class Appointment {
       'doctor': this._doctor.toMap(),
       'hospital': this._hospital,
       'dateTime': this._dateTime.toString(),
+      'status': this._status,
     };
   }
 }

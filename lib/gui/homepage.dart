@@ -90,7 +90,23 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  // Utility Method
+  // Utility Method: Returns section divider
+  Container getSectionDivider(String text) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 14,
+          fontFamily: 'Raleway',
+          color: Colors.blueGrey[400],
+        ),
+      ),
+    );
+  }
+
+  // Utility Method: Returns formatted date
   String getFormattedDate(DateTime dateTime) {
     String month;
 
@@ -135,7 +151,7 @@ class _HomepageState extends State<Homepage> {
     return dateTime.day.toString() + ' ' + month + ' ' + dateTime.year.toString();
   }
 
-  // |----------------------Medicine
+  // |---------------------- Medicine List
 
   // Data Method: Returns a list of medicine
   List<Widget> totalMedic() {
@@ -164,7 +180,7 @@ class _HomepageState extends State<Homepage> {
               context,
               MaterialPageRoute(
                 builder: (context) => MedicinePage(
-                      refreshState: this._refreshState,
+                      refreshState: this.refreshState,
                       user: this._user,
                       medicine: e,
                     ),
@@ -185,9 +201,9 @@ class _HomepageState extends State<Homepage> {
       children: totalMedic(),
     );
   }
-  // |----------------------end Medicine
+  // |---------------------- end Medicine List
 
-  // |----------------------Appointment
+  // |---------------------- Appointment List
 
   // Data Method: Returns a list of appointments
   List<Widget> totalAppoint() {
@@ -202,21 +218,60 @@ class _HomepageState extends State<Homepage> {
             hintText: 'Search',
             prefixIcon: Icon(Icons.search),
             // border: OutlineInputBorder(
-            //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
+            //   borderRadius: BorderRadius.all(Radius.circular(25.0)),
+            // ),
           ),
         ),
       ),
     ];
 
-    for (int i = 0; i < 4; i++) {
-      list.add(
-        cardCustom(
-          name: 'Appointment with Dr.Rawit',
-          subtitle: 'At Payathai Ht. afternoon',
-          icon: Icons.person_pin_circle,
-        ),
-      );
+    this._user.appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
+    if (this._user.containsComingAppointments()) {
+      list.add(getSectionDivider('Coming Appointments'));
+      this._user.appointmentList.forEach((e) {
+        if (e.status == 0) {
+          list.add(
+            cardCustom(
+              name: e.title,
+              subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
+              icon: Icons.local_hospital,
+            ),
+          );
+        }
+      });
     }
+
+    if (this._user.containsCompletedAppointments()) {
+      list.add(getSectionDivider('Completed Appointments'));
+      this._user.appointmentList.forEach((e) {
+        if (e.status == 1) {
+          list.add(
+            cardCustom(
+              name: e.title,
+              subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
+              icon: Icons.local_hospital,
+            ),
+          );
+        }
+      });
+    }
+
+    if (this._user.containsSkippedAppointments()) {
+      list.add(getSectionDivider('Skipped Appointments'));
+      this._user.appointmentList.forEach((e) {
+        if (e.status == 2) {
+          list.add(
+            cardCustom(
+              name: e.title,
+              subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
+              icon: Icons.local_hospital,
+            ),
+          );
+        }
+      });
+    }
+
     return list;
   }
 
@@ -228,79 +283,41 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  // |----------------------end Appointment
+  // |---------------------- end Appointment List
 
   // |-------------------------- Overview
 
   // Data Method: Returns list of coming appointments
   List<Widget> comingAppointment() {
-    List<Widget> list = [
-      Padding(
-        padding: const EdgeInsets.all(10),
-        child: textTitle(title: 'Coming Appointments'),
-      ),
-    ];
-    for (int i = 0; i < 2; i++) {
+    List<Widget> list = List<Widget>();
+
+    this._user.appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
+    if (this._user.containsComingAppointments()) {
       list.add(
-        cardCustom(
-          name: 'Appointment with Dr.Rawit',
-          subtitle: 'This Saturday afternoon',
-          icon: Icons.local_hospital,
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: textTitle(title: 'Coming Appointments'),
         ),
       );
-    }
-    return list;
-  }
 
-  // Data Method: Returns list of remaining indose
-  List<Widget> remainIndose() {
-    List<Widget> list = [
-      Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose'))
-    ];
-
-    List<DateTime> dateList = List<DateTime>();
-    this._user.getMedicineOverview().forEach((e) {
-      if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
-        dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
-      }
-    });
-
-    dateList.forEach((e) {
-      list.add(
-        Container(
-          padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-          alignment: Alignment.center,
-          child: Text(
-            (e.compareTo(DateTime(
-                      DateTime.now().year,
-                      DateTime.now().month,
-                      DateTime.now().day,
-                    )) !=
-                    0)
-                ? getFormattedDate(e)
-                : getFormattedDate(e) + ' (Today)',
-            style: TextStyle(
-              fontSize: 14,
-              fontFamily: 'Raleway',
-              color: Colors.blueGrey[400],
-            ),
-          ),
-        ),
-      );
-      this._user.getMedicineOverview().forEach((f) {
-        if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
+      this._user.appointmentList.forEach((e) {
+        if (e.status == 0) {
           list.add(
             cardCustom(
-              name: f.medicine.name,
-              subtitle: f.getSubtitle(),
-              icon: Icons.battery_full,
-              trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
+              name: e.title,
+              subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
+              icon: Icons.local_hospital,
+              trailing: (DateTime.now().compareTo(e.dateTime.subtract(Duration(hours: 2))) > 0 &&
                       DateTime(
-                            f.dateTime.year,
-                            f.dateTime.month,
-                            f.dateTime.day,
-                            f.dateTime.hour,
-                            f.dateTime.minute,
+                            e.dateTime.year,
+                            e.dateTime.month,
+                            e.dateTime.day,
+                            e.dateTime.hour,
+                            e.dateTime.minute,
+                            e.dateTime.second,
+                            e.dateTime.millisecond,
+                            e.dateTime.microsecond,
                           ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
                           0)
                   ? DropdownButtonHideUnderline(
@@ -311,14 +328,14 @@ class _HomepageState extends State<Homepage> {
                         ),
                         items: <DropdownMenuItem>[
                           DropdownMenuItem(
-                            value: 'take',
+                            value: 'check',
                             child: Row(
                               children: <Widget>[
                                 Icon(
                                   Icons.check,
                                   color: Colors.green,
                                 ),
-                                Text('  Take'),
+                                Text('  Check'),
                               ],
                             ),
                           ),
@@ -335,26 +352,123 @@ class _HomepageState extends State<Homepage> {
                             ),
                           ),
                         ],
-                        onChanged: (value) {
+                        onChanged: (dynamic value) {
                           setState(() {
-                            if (value == 'take') {
-                              f.medicine.takeMedicine();
+                            if (value == 'check') {
+                              e.status = 1;
                             } else if (value == 'skip') {
-                              f.medicine.skipMedicine();
+                              e.status = 2;
                             }
                           });
                         },
                       ),
                     )
-                  : Icon(
-                      Icons.edit,
-                      color: Colors.grey,
-                    ),
+                  : Icon(Icons.edit, color: Colors.grey),
             ),
           );
         }
       });
-    });
+    }
+
+    return list;
+  }
+
+  // Data Method: Returns list of remaining indose
+  List<Widget> remainIndose() {
+    List<Widget> list = List<Widget>();
+
+    if (this._user.containsRemainingMedicine()) {
+      list.add(
+        Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose')),
+      );
+
+      List<DateTime> dateList = List<DateTime>();
+      this._user.getMedicineOverview().forEach((e) {
+        if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
+          dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
+        }
+      });
+
+      dateList.sort((a, b) => a.compareTo(b));
+
+      dateList.forEach((e) {
+        list.add(
+          getSectionDivider((e.compareTo(DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                  )) !=
+                  0)
+              ? getFormattedDate(e)
+              : getFormattedDate(e) + ' (Today)'),
+        );
+
+        this._user.getMedicineOverview().forEach((f) {
+          if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
+            list.add(
+              cardCustom(
+                name: f.medicine.name,
+                subtitle: f.getSubtitle(),
+                icon: Icons.battery_full,
+                trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
+                        DateTime(
+                              f.dateTime.year,
+                              f.dateTime.month,
+                              f.dateTime.day,
+                              f.dateTime.hour,
+                              f.dateTime.minute,
+                            ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
+                            0)
+                    ? DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          items: <DropdownMenuItem>[
+                            DropdownMenuItem(
+                              value: 'take',
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.check,
+                                    color: Colors.green,
+                                  ),
+                                  Text('  Take'),
+                                ],
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'skip',
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                  ),
+                                  Text('  Skip'),
+                                ],
+                              ),
+                            ),
+                          ],
+                          onChanged: (dynamic value) {
+                            setState(() {
+                              if (value == 'take') {
+                                f.medicine.takeMedicine();
+                              } else if (value == 'skip') {
+                                f.medicine.skipMedicine();
+                              }
+                            });
+                          },
+                        ),
+                      )
+                    : Icon(Icons.edit, color: Colors.grey),
+              ),
+            );
+          }
+        });
+      });
+    }
 
     return list;
   }
@@ -411,8 +525,7 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  void _refreshState() {
-    // TODO: Implements method
+  void refreshState() {
     setState(() {});
   }
 
@@ -465,7 +578,19 @@ class _HomepageState extends State<Homepage> {
         ),
       ],
       appointmentList: List<Appointment>(),
-      doctorList: List<Doctor>(),
+      doctorList: <Doctor>[
+        Doctor(
+          id: '01',
+          prefix: 'Dr.',
+          firstName: 'Rawit',
+          lastName: 'Lohakachornphan',
+          ward: 'Dentist',
+          hospital: 'Rawitshie Personal Clinic',
+          phone: '081-XXX-XXXX',
+          notes: '',
+          image: null,
+        ),
+      ],
       hospitalList: List<Hospital>(),
       userSettings: UserSettings(
         notificationOn: true,
@@ -476,6 +601,26 @@ class _HomepageState extends State<Homepage> {
         sleepTime: Duration(hours: 23, minutes: 0),
       ),
     );
+    this._user.addAppointment(
+          Appointment(
+            title: 'Dentist Appointment',
+            description: 'Weekly check',
+            doctor: this._user.doctorList[0],
+            hospital: 'Rawitshie Personal Clinic',
+            dateTime: DateTime(2019, 5, 23, 11, 0),
+            status: 0,
+          ),
+        );
+    this._user.addAppointment(
+          Appointment(
+            title: 'Surgery Appointment',
+            description: 'Weekly check',
+            doctor: this._user.doctorList[0],
+            hospital: 'Rawitshie Personal Clinic',
+            dateTime: DateTime(2019, 5, 25, 10, 0),
+            status: 0,
+          ),
+        );
   }
 
   @override
@@ -494,7 +639,7 @@ class _HomepageState extends State<Homepage> {
               context,
               MaterialPageRoute(
                 builder: (context) => AddMedicinePage(
-                      refreshState: this._refreshState,
+                      refreshState: this.refreshState,
                       user: this._user,
                     ),
               ),
@@ -513,7 +658,12 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => AddAppointmentPage(_refreshState)),
+              MaterialPageRoute(
+                builder: (context) => AddAppointmentPage(
+                      refreshState: refreshState,
+                      user: this._user,
+                    ),
+              ),
             );
           },
         ),
@@ -551,7 +701,7 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => AddDoctorPage(_refreshState)),
+              MaterialPageRoute(builder: (context) => AddDoctorPage(refreshState)),
             );
           },
         ),
