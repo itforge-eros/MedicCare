@@ -792,7 +792,12 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => AddDoctorPage(refreshState)),
+              MaterialPageRoute(
+                builder: (context) => AddDoctorPage(
+                      refreshState: this.refreshState,
+                      user: this._user,
+                    ),
+              ),
             );
           },
         ),
