@@ -169,33 +169,65 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    this._user.medicineList.forEach((e) {
-      list.add(
-        cardCustom(
-          name: e.name,
-          subtitle: e.getSubtitle(),
-          icon: Icons.battery_full,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MedicinePage(
-                      refreshState: this.refreshState,
-                      user: this._user,
-                      medicine: e,
-                    ),
-              ),
-            );
-          },
-        ),
-      );
-    });
+    if (this._user.containsRemainingMedicine()) {
+      list.add(getSectionDivider('Remaining Medicines'));
+      this._user.medicineList.forEach((e) {
+        if (e.remainingAmount > 0) {
+          list.add(
+            cardCustom(
+              name: e.name,
+              subtitle: e.getSubtitle(),
+              icon: Icons.battery_full,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MedicinePage(
+                          refreshState: this.refreshState,
+                          user: this._user,
+                          medicine: e,
+                        ),
+                  ),
+                );
+              },
+            ),
+          );
+        }
+      });
+    }
+
+    if (this._user.containsEmptyMedicine()) {
+      list.add(getSectionDivider('Depleted Medicines'));
+      this._user.medicineList.forEach((e) {
+        if (e.remainingAmount == 0) {
+          list.add(
+            cardCustom(
+              name: e.name,
+              subtitle: e.getSubtitle(),
+              icon: Icons.battery_full,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MedicinePage(
+                          refreshState: this.refreshState,
+                          user: this._user,
+                          medicine: e,
+                        ),
+                  ),
+                );
+              },
+            ),
+          );
+        }
+      });
+    }
 
     return list;
   }
 
   // GUI Method: Returns GUI of medicine tab
-  ListView leftMedicine() {
+  ListView getMedicineListPage() {
     return ListView(
       shrinkWrap: true,
       children: totalMedic(),
@@ -234,8 +266,15 @@ class _HomepageState extends State<Homepage> {
           list.add(
             cardCustom(
               name: e.title,
-              subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
+              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
               icon: Icons.local_hospital,
+              onTap: () {
+                // TODO: Implements appointment page link
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => null),
+                );
+              },
             ),
           );
         }
@@ -249,8 +288,15 @@ class _HomepageState extends State<Homepage> {
           list.add(
             cardCustom(
               name: e.title,
-              subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
+              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
               icon: Icons.local_hospital,
+              onTap: () {
+                // TODO: Implements appointment page link
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => null),
+                );
+              },
             ),
           );
         }
@@ -264,8 +310,15 @@ class _HomepageState extends State<Homepage> {
           list.add(
             cardCustom(
               name: e.title,
-              subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
+              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
               icon: Icons.local_hospital,
+              onTap: () {
+                // TODO: Implements appointment page link
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => null),
+                );
+              },
             ),
           );
         }
@@ -276,7 +329,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   // GUI Method: Returns GUI of appointment tab
-  ListView leftAppointment() {
+  ListView getAppointmentListPage() {
     return ListView(
       shrinkWrap: true,
       children: totalAppoint(),
@@ -288,7 +341,7 @@ class _HomepageState extends State<Homepage> {
   // |-------------------------- Overview
 
   // Data Method: Returns list of coming appointments
-  List<Widget> comingAppointment() {
+  List<Widget> getComingAppointmentList() {
     List<Widget> list = List<Widget>();
 
     this._user.appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
@@ -308,18 +361,16 @@ class _HomepageState extends State<Homepage> {
               name: e.title,
               subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
               icon: Icons.local_hospital,
-              trailing: (DateTime.now().compareTo(e.dateTime.subtract(Duration(hours: 2))) > 0 &&
-                      DateTime(
-                            e.dateTime.year,
-                            e.dateTime.month,
-                            e.dateTime.day,
-                            e.dateTime.hour,
-                            e.dateTime.minute,
-                            e.dateTime.second,
-                            e.dateTime.millisecond,
-                            e.dateTime.microsecond,
-                          ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
-                          0)
+              trailing: (DateTime(
+                        DateTime.now().year,
+                        DateTime.now().month,
+                        DateTime.now().day,
+                      ).compareTo(DateTime(
+                        e.dateTime.year,
+                        e.dateTime.month,
+                        e.dateTime.day,
+                      )) >=
+                      0)
                   ? DropdownButtonHideUnderline(
                       child: DropdownButton(
                         icon: Icon(
@@ -327,6 +378,18 @@ class _HomepageState extends State<Homepage> {
                           color: Theme.of(context).primaryColor,
                         ),
                         items: <DropdownMenuItem>[
+                          DropdownMenuItem(
+                            value: 'view',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.calendar_today,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                Text('  View'),
+                              ],
+                            ),
+                          ),
                           DropdownMenuItem(
                             value: 'check',
                             child: Row(
@@ -353,13 +416,21 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ],
                         onChanged: (dynamic value) {
-                          setState(() {
-                            if (value == 'check') {
-                              e.status = 1;
-                            } else if (value == 'skip') {
-                              e.status = 2;
-                            }
-                          });
+                          setState(
+                            () {
+                              if (value == 'check') {
+                                e.status = 1;
+                              } else if (value == 'skip') {
+                                e.status = 2;
+                              } else if (value == 'view') {
+                                // TODO: Implements appointment page link
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => null),
+                                );
+                              }
+                            },
+                          );
                         },
                       ),
                     )
@@ -374,7 +445,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   // Data Method: Returns list of remaining indose
-  List<Widget> remainIndose() {
+  List<Widget> getRemainingIndoseList() {
     List<Widget> list = List<Widget>();
 
     if (this._user.containsRemainingMedicine()) {
@@ -474,10 +545,10 @@ class _HomepageState extends State<Homepage> {
   }
 
   // GUI Method: Returns GUI of overview tab
-  ListView overview() {
+  ListView getOverviewPage() {
     return ListView(
       shrinkWrap: true,
-      children: comingAppointment() + [SizedBox(height: 20.0)] + remainIndose(),
+      children: getComingAppointmentList() + [SizedBox(height: 20.0)] + getRemainingIndoseList(),
     );
   }
 
@@ -486,7 +557,7 @@ class _HomepageState extends State<Homepage> {
   // |----------------------Doctor
 
   // Data Method: Returns a list of doctors
-  List<Widget> allDoctor() {
+  List<Widget> getDoctorList() {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
@@ -504,24 +575,24 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    for (int i = 0; i < 4; i++) {
+    this._user.doctorList.forEach((e) {
       list.add(
         cardCustom(
-          name: 'Dr.Rawit',
-          subtitle: 'At Payathai Ht. afternoon',
+          name: e.prefix + ' ' + e.firstName + ' ' + e.lastName,
+          subtitle: ' ' + e.hospital,
           icon: Icons.person,
         ),
       );
-    }
+    });
 
     return list;
   }
 
   // GUI Method: Returns GUI of doctor tab
-  ListView rightDoctor() {
+  ListView getDoctorListPage() {
     return ListView(
       shrinkWrap: true,
-      children: allDoctor(),
+      children: getDoctorList(),
     );
   }
 
@@ -532,7 +603,8 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-    // Implements loading data from firebase
+    // TODO: Implements loading data from firebase
+    // NOTES: This is a mocked-up data used in testing.
     this._user = User(
       id: '',
       email: 'teerapat_saint@hotmail.com',
@@ -554,11 +626,11 @@ class _HomepageState extends State<Homepage> {
           doseAmount: 1,
           totalAmount: 10,
           medicineSchedule: MedicineSchedule(
-            time: [true, true, true, false],
+            time: [true, false, false, true],
             day: [true, true, true, true, true, true, true],
             isBeforeMeal: false,
           ),
-          dateAdded: DateTime(2019, 5, 20, 9, 0),
+          dateAdded: DateTime(2019, 5, 23, 9, 0),
         ),
         Medicine(
           id: '2',
@@ -574,18 +646,27 @@ class _HomepageState extends State<Homepage> {
             day: [true, false, true, false, true, false, true],
             isBeforeMeal: false,
           ),
-          dateAdded: DateTime(2019, 5, 21, 9, 0),
+          dateAdded: DateTime(2019, 5, 24, 9, 0),
         ),
       ],
       appointmentList: List<Appointment>(),
       doctorList: <Doctor>[
         Doctor(
-          id: '01',
           prefix: 'Dr.',
           firstName: 'Rawit',
           lastName: 'Lohakachornphan',
-          ward: 'Dentist',
+          ward: 'Dentistry',
           hospital: 'Rawitshie Personal Clinic',
+          phone: '081-XXX-XXXX',
+          notes: '',
+          image: null,
+        ),
+        Doctor(
+          prefix: 'Dr.',
+          firstName: 'Wiput',
+          lastName: 'Pootong',
+          ward: 'Sexual Organs',
+          hospital: 'Wiput\'s Personal Hospital',
           phone: '081-XXX-XXXX',
           notes: '',
           image: null,
@@ -618,6 +699,16 @@ class _HomepageState extends State<Homepage> {
             doctor: this._user.doctorList[0],
             hospital: 'Rawitshie Personal Clinic',
             dateTime: DateTime(2019, 5, 25, 10, 0),
+            status: 0,
+          ),
+        );
+    this._user.addAppointment(
+          Appointment(
+            title: 'Coughing Cure',
+            description: 'Weekly check',
+            doctor: this._user.doctorList[0],
+            hospital: 'Rawitshie Personal Clinic',
+            dateTime: DateTime(2019, 5, 27, 10, 0),
             status: 0,
           ),
         );
@@ -712,10 +803,10 @@ class _HomepageState extends State<Homepage> {
     ];
 
     List<Widget> pages = <Widget>[
-      leftMedicine(),
-      leftAppointment(),
-      overview(),
-      rightDoctor(),
+      getMedicineListPage(),
+      getAppointmentListPage(),
+      getOverviewPage(),
+      getDoctorListPage(),
       Center(child: Text('Waiting for map API implementation.')),
     ];
 
