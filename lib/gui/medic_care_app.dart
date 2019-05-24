@@ -4,6 +4,7 @@
 ///
 
 import 'package:flutter/material.dart';
+import 'package:mediccare/gui/init_account_page.dart';
 import 'package:mediccare/gui/intro_page.dart';
 import 'package:mediccare/gui/login_page.dart';
 import 'package:mediccare/gui/register_page.dart';
@@ -21,7 +22,7 @@ class MedicCareApp extends StatelessWidget {
       routes: {
         'LoginPage': (context) => LoginPage(),
         'RegisterPage': (context) => RegisterPage(),
-        'InitAccountPage': (context) => null, //TODO: Implements class
+        'InitAccountPage': (context) => InitAccountPage(), //TODO: Implements class
         'Homepage': (context) => Homepage(),
         'IntroPage': (context) => IntroPage(),
       },
