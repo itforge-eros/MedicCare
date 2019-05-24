@@ -84,11 +84,7 @@ class _HomepageState extends State<Homepage> {
           name: name,
           subtitle: subtitle,
           icon: icon,
-          trailing: Column(
-            children: <Widget>[
-              Expanded(child: trailing),
-            ],
-          ),
+          trailing: trailing,
           onTap: onTap,
         ),
       ),
