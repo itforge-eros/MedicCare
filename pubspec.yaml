@@ -24,6 +24,7 @@ dependencies:
   cloud_firestore: ^0.7.4
   image_picker: ^0.4.12+1
   intro_slider: ^2.0.1
+  equatable: ^0.2.0
   intl: ^0.15.0
 
 dev_dependencies:
