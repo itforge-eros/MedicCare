@@ -78,6 +78,8 @@ class Doctor {
   Image get image => this._image;
   set image(Image image) => this._image = image;
 
+  get fullName => this._prefix + ' ' + this._firstName + ' ' + this._lastName;
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': this._id,

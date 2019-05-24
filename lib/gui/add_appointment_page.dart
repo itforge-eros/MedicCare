@@ -167,10 +167,10 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                 decoration: (this._currentDoctor == null)
                     ? InputDecoration(
                         labelText: 'Hospital',
-                        helperText: 'Leave blank to use default hospital of the selected doctor.',
                       )
                     : InputDecoration(
                         labelText: 'Hospital',
+                        helperText: 'Leave blank to use default hospital of the selected doctor.',
                       ),
                 validator: (text) {
                   if (this._currentDoctor == null && text.trim().isEmpty) {
@@ -207,16 +207,27 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                 child: Text('Save'),
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
-                    widget._user.appointmentList.add(
-                      Appointment(
-                        title: _controllerTitle.text,
-                        description: _controllerDescription.text,
-                        doctor: this._currentDoctor,
-                        hospital: (_controllerHospital.text.trim().isNotEmpty)
-                            ? _controllerHospital.text
-                            : this._currentDoctor.hospital,
-                      ),
-                    );
+                    if (widget._appointment == null) {
+                      widget._user.appointmentList.add(
+                        Appointment(
+                          title: _controllerTitle.text,
+                          description: _controllerDescription.text,
+                          doctor: this._currentDoctor,
+                          hospital: (_controllerHospital.text.trim().isNotEmpty)
+                              ? _controllerHospital.text
+                              : this._currentDoctor.hospital,
+                          dateTime: this._currentDateTime,
+                        ),
+                      );
+                    } else {
+                      widget._appointment.title = _controllerTitle.text;
+                      widget._appointment.description = _controllerDescription.text;
+                      widget._appointment.doctor = this._currentDoctor;
+                      widget._appointment.hospital = (_controllerHospital.text.trim().isNotEmpty)
+                          ? _controllerHospital.text
+                          : this._currentDoctor.hospital;
+                      widget._appointment.dateTime = this._currentDateTime;
+                    }
                     widget._refreshState();
                     Navigator.pop(context);
                   }
