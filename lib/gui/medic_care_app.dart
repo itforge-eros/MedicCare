@@ -9,6 +9,7 @@ import 'package:mediccare/gui/login_page.dart';
 import 'package:mediccare/gui/register_page.dart';
 import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/gui/user_settings_page.dart';
+import 'doctor_page.dart';
 
 class MedicCareApp extends StatelessWidget {
   @override
@@ -17,7 +18,7 @@ class MedicCareApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Homepage(),
+      home: DoctorPage(),
       routes: {
         'LoginPage': (context) => LoginPage(),
         'RegisterPage': (context) => RegisterPage(),
