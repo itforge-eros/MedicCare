@@ -13,6 +13,7 @@ import 'package:mediccare/core/user.dart';
 import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
 import 'package:mediccare/gui/appointment_page.dart';
+import 'package:mediccare/gui/doctor_page.dart';
 import 'package:mediccare/gui/profile_page.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
 import 'package:mediccare/gui/medicine_page.dart';
@@ -400,7 +401,7 @@ class _HomepageState extends State<Homepage> {
                             e.dateTime.day,
                           )) >=
                           0 ||
-                      true) // TODO: Removes || true
+                      true) // TODO: Reconsider checkable condition and remove || true
                   ? DropdownButtonHideUnderline(
                       child: DropdownButton(
                         icon: Icon(
@@ -453,10 +454,15 @@ class _HomepageState extends State<Homepage> {
                               } else if (value == 'skip') {
                                 e.status = 2;
                               } else if (value == 'view') {
-                                // TODO: Implements appointment page link
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => null),
+                                  MaterialPageRoute(
+                                    builder: (context) => AppointmentPage(
+                                          refreshState: this.refreshState,
+                                          user: this._user,
+                                          appointment: e,
+                                        ),
+                                  ),
                                 );
                               }
                             },
@@ -617,6 +623,18 @@ class _HomepageState extends State<Homepage> {
           name: e.prefix + ' ' + e.firstName + ' ' + e.lastName,
           subtitle: ' ' + e.hospital,
           icon: CustomIcons.doctor_specialist,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DoctorPage(
+                      refreshState: this.refreshState,
+                      user: this._user,
+                      doctor: e,
+                    ),
+              ),
+            );
+          },
         ),
       );
     });
