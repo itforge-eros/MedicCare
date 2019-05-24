@@ -181,18 +181,29 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
-                    widget._user.doctorList.add(
-                      Doctor(
-                        prefix: _controllerPrefix.text,
-                        firstName: _controllerFirstName.text,
-                        lastName: _controllerLastName.text,
-                        ward: _controllerWard.text,
-                        hospital: _controllerHospital.text,
-                        phone: _controllerPhone.text,
-                        notes: _controllerNotes.text,
-                        image: null, // TODO: Implements image adding and loading
-                      ),
-                    );
+                    if (widget._doctor == null) {
+                      widget._user.doctorList.add(
+                        Doctor(
+                          prefix: _controllerPrefix.text,
+                          firstName: _controllerFirstName.text,
+                          lastName: _controllerLastName.text,
+                          ward: _controllerWard.text,
+                          hospital: _controllerHospital.text,
+                          phone: _controllerPhone.text,
+                          notes: _controllerNotes.text,
+                          image: null, // TODO: Implements image adding and loading
+                        ),
+                      );
+                    } else {
+                      widget._doctor.prefix = _controllerPrefix.text;
+                      widget._doctor.firstName = _controllerFirstName.text;
+                      widget._doctor.lastName = _controllerLastName.text;
+                      widget._doctor.ward = _controllerWard.text;
+                      widget._doctor.hospital = _controllerHospital.text;
+                      widget._doctor.phone = _controllerPhone.text;
+                      widget._doctor.notes = _controllerNotes.text;
+                      widget._doctor.image = null; // TODO: Implements image adding and loading
+                    }
                     widget._refreshState();
                     Navigator.pop(context);
                   }
