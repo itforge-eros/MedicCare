@@ -25,6 +25,9 @@ dependencies:
   image_picker: ^0.4.12+1
   intro_slider: ^2.0.1
   intl: ^0.15.0
+  google_maps_flutter: ^0.0.3
+  flutter_google_places: ^0.1.4
+  location: ^1.4.1
 
 dev_dependencies:
   flutter_test:
