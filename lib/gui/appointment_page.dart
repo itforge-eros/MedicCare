@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/user.dart';
-import 'add_appointment_page.dart';
+import 'package:mediccare/gui/add_appointment_page.dart';
 
 class AppointmentPage extends StatefulWidget {
+  Function _refreshState;
+  User _user;
+  Appointment _appointment;
+
+  AppointmentPage({Function refreshState, User user, Appointment appointment}) {
+    this._refreshState = refreshState;
+    this._user = user;
+    this._appointment = appointment;
+  }
+
   @override
   State<StatefulWidget> createState() {
     return AppointmentPageState();
@@ -11,6 +21,10 @@ class AppointmentPage extends StatefulWidget {
 }
 
 class AppointmentPageState extends State<AppointmentPage> {
+  void refreshState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -27,16 +41,16 @@ class AppointmentPageState extends State<AppointmentPage> {
           IconButton(
             icon: Icon(Icons.edit, color: Theme.of(context).primaryColor),
             onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => AddMedicinePage.editMode(
-              //           refreshState: widget._refreshState,
-              //           user: widget._user,
-              //           medicine: widget._medicine,
-              //         ),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddAppointmentPage.editMode(
+                    refreshState: this.refreshState,
+                    user: widget._user,
+                    appointment: widget._appointment,
+                  ),
+                ),
+              );
             },
           )
         ],
@@ -47,20 +61,14 @@ class AppointmentPageState extends State<AppointmentPage> {
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: Column(
               children: <Widget>[
-                Text(
-                  'Addiction psychiatrist.',
-                  style: TextStyle(
-                      fontSize: 17,
-                      color: Theme.of(context).primaryColorDark,
-                      fontWeight: FontWeight.bold),
-                ),
-                
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Container(
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.black12,
+                Container(
+                  child: Text(
+                    widget._appointment.title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
                     ),
                   ),
                 ),
@@ -68,11 +76,11 @@ class AppointmentPageState extends State<AppointmentPage> {
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+            padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
             child: Column(
               children: <Widget>[
                 Text(
-                  'Date Time',
+                  'Date and Time',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontSize: 17,
@@ -80,14 +88,13 @@ class AppointmentPageState extends State<AppointmentPage> {
                       fontWeight: FontWeight.bold),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                   child: Text(
-                    "20 May 2019 - 11.00 PM",
+                    widget._appointment.dateTime.toString().replaceAll(':00.000', ''),
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Colors.black45),
+                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
                   ),
                 ),
               ],
@@ -107,7 +114,7 @@ class AppointmentPageState extends State<AppointmentPage> {
             child: Column(
               children: <Widget>[
                 Text(
-                  'Appointment Description',
+                  'Description',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontSize: 17,
@@ -115,14 +122,13 @@ class AppointmentPageState extends State<AppointmentPage> {
                       fontWeight: FontWeight.bold),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                   child: Text(
-                    "You have to come to see me because you are going to die.",
+                    widget._appointment.description,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Colors.black45),
+                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
                   ),
                 ),
               ],
@@ -142,7 +148,7 @@ class AppointmentPageState extends State<AppointmentPage> {
             child: Column(
               children: <Widget>[
                 Text(
-                  'Place you need to go',
+                  'Hospital',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontSize: 17,
@@ -150,14 +156,13 @@ class AppointmentPageState extends State<AppointmentPage> {
                       fontWeight: FontWeight.bold),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                   child: Text(
-                    "Google map",
+                    widget._appointment.hospital,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Colors.black45),
+                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
                   ),
                 ),
               ],
@@ -180,28 +185,35 @@ class AppointmentPageState extends State<AppointmentPage> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      'Dr.Rawit',
+                      'Doctor',
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           fontSize: 17,
                           color: Theme.of(context).primaryColorDark,
                           fontWeight: FontWeight.bold),
                     ),
+                    SizedBox(height: 10.0),
                     Text(
-                      "Picture",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 50,
+                      widget._appointment.doctor.fullName,
+                      style: TextStyle(color: Colors.black45, fontSize: 15),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10, 30, 10, 30),
+                      child: Text(
+                        'Picture',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 50,
+                        ),
                       ),
                     ),
                     Text(
-                      'Profession in Gaming',
+                      widget._appointment.doctor.ward,
                       style: TextStyle(color: Colors.black45, fontSize: 15),
                     )
                   ],
                 ),
               ),
-              
             ],
           ),
         ],
