@@ -2,7 +2,7 @@
 /// `homepage.dart`
 /// Class for homepage GUI
 ///
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/doctor.dart';
@@ -58,7 +58,8 @@ class _HomepageState extends State<Homepage> {
           Text(subtitle, style: TextStyle(color: Colors.black54))
         ],
       ),
-      trailing: trailing ?? Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
+      trailing: trailing ??
+          Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
       onTap: onTap ?? () {},
     );
   }
@@ -83,7 +84,11 @@ class _HomepageState extends State<Homepage> {
           name: name,
           subtitle: subtitle,
           icon: icon,
-          trailing: trailing,
+          trailing: Column(
+            children: <Widget>[
+              Expanded(child: trailing),
+            ],
+          ),
           onTap: onTap,
         ),
       ),
@@ -163,7 +168,11 @@ class _HomepageState extends State<Homepage> {
         month = 'December';
         break;
     }
-    return dateTime.day.toString() + ' ' + month + ' ' + dateTime.year.toString();
+    return dateTime.day.toString() +
+        ' ' +
+        month +
+        ' ' +
+        dateTime.year.toString();
   }
 
   // |---------------------- Medicine List
@@ -373,7 +382,6 @@ class _HomepageState extends State<Homepage> {
   // Data Method: Returns list of coming appointments
   List<Widget> getComingAppointmentList() {
     List<Widget> list = List<Widget>();
-
     this._user.appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
     if (this._user.containsComingAppointments()) {
@@ -386,10 +394,13 @@ class _HomepageState extends State<Homepage> {
 
       this._user.appointmentList.forEach((e) {
         if (e.status == 0) {
+          String formattedDate = DateFormat('MMM dd | kk:mm').format(e.dateTime);
           list.add(
             getCustomCard(
               name: e.title,
-              subtitle: e.dateTime.toString().replaceAll(':00.000', ''),
+              subtitle: formattedDate,
+              // subtitle: e.dateTime.toString().replaceAll(':00.000', '').split(' ').join('\n'),
+              // subtitle: e.dateTime.toString(),
               icon: Icons.local_hospital,
               trailing: (DateTime(
                             DateTime.now().year,
@@ -486,13 +497,17 @@ class _HomepageState extends State<Homepage> {
 
     if (this._user.containsRemainingMedicine()) {
       list.add(
-        Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose')),
+        Padding(
+            padding: const EdgeInsets.all(10),
+            child: textTitle(title: 'Remaining Indose')),
       );
 
       List<DateTime> dateList = List<DateTime>();
       this._user.getMedicineOverview().forEach((e) {
-        if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
-          dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
+        if (!dateList.contains(
+            DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
+          dateList
+              .add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
         }
       });
 
@@ -511,20 +526,27 @@ class _HomepageState extends State<Homepage> {
         );
 
         this._user.getMedicineOverview().forEach((f) {
-          if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
+          if (e.year == f.dateTime.year &&
+              e.month == f.dateTime.month &&
+              e.day == f.dateTime.day) {
             list.add(
               getCustomCard(
                 name: f.medicine.name,
                 subtitle: f.getSubtitle(),
                 icon: CustomIcons.medicine,
-                trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
+                trailing: (DateTime.now().compareTo(
+                                    f.dateTime.subtract(Duration(hours: 1))) >
+                                0 &&
                             DateTime(
                                   f.dateTime.year,
                                   f.dateTime.month,
                                   f.dateTime.day,
                                   f.dateTime.hour,
                                   f.dateTime.minute,
-                                ).compareTo(this._user.getMedicineOverview()[0].dateTime) ==
+                                ).compareTo(this
+                                    ._user
+                                    .getMedicineOverview()[0]
+                                    .dateTime) ==
                                 0 ||
                         true) // TODO: Removes || true
                     ? DropdownButtonHideUnderline(
@@ -583,14 +605,17 @@ class _HomepageState extends State<Homepage> {
 
   // GUI Method: Returns GUI of overview tab
   Widget getOverviewPage() {
-    if (!this._user.containsComingAppointments() && !this._user.containsRemainingMedicine()) {
+    if (!this._user.containsComingAppointments() &&
+        !this._user.containsRemainingMedicine()) {
       return getSectionDivider(
           'Your overview feed is currently empty.\nAdding a medicine or an appointment will show them up here!');
     }
 
     return ListView(
       shrinkWrap: true,
-      children: getComingAppointmentList() + [SizedBox(height: 20.0)] + getRemainingIndoseList(),
+      children: getComingAppointmentList() +
+          [SizedBox(height: 20.0)] +
+          getRemainingIndoseList(),
     );
   }
 
