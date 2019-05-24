@@ -160,7 +160,6 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                 child: Text('Save'),
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
-                    // TODO: Implements add appointment
                     widget._refreshState();
                     Navigator.pop(context);
                   }
