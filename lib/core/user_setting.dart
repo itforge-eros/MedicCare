@@ -48,7 +48,7 @@ class UserSettings {
 
     for (int i = 0; i <= 3; i++) {
       List<dynamic> stringTime =
-          map['userTime'][i] != null ? map['userTime'][0].split(':') : null;
+          map['userTime'][i] != null ? map['userTime'][i].split(':') : null;
 
       this._userTime[i] = stringTime != null
           ? Duration(

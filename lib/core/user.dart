@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 ///
 /// `user.dart`
 /// Class contains data of user
@@ -13,7 +15,7 @@ import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/exceptions.dart';
 import 'package:mediccare/util/alert.dart';
 
-class User {
+class User extends Equatable {
   String _id;
   String _email;
   String _firstName;
