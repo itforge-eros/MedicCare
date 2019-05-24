@@ -26,6 +26,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   Future<User> _getUser;
+  User _user;
 
   Text titleText({String title}) {
     return Text(
@@ -77,7 +78,9 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => UserSettingsPage(),
+                  builder: (context) => UserSettingsPage(
+                        user: this._user,
+                      ),
                 ),
               );
             },
@@ -93,6 +96,8 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             } else if (user.connectionState == ConnectionState.done) {
               User userInstance = user.data;
+
+              this._user = userInstance;
 
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -202,7 +207,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EditProfilePage(),
+                                builder: (context) => EditProfilePage(
+                                      user: userInstance,
+                                    ),
                               ),
                             );
                           },
