@@ -77,8 +77,17 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    FirebaseUtils.getUser().then((user) {
-      if (user != null) {}
+    FirebaseUtils.isLogin().then((isLogin) async {
+      if (isLogin) {
+        bool exist = await FirebaseUtils.getUserExist();
+        if (exist) {
+          Navigator.pushReplacementNamed(context, 'Homepage');
+        } else {
+          Navigator.pushReplacementNamed(context, 'InitAccountPage');
+        }
+      } else {
+        return;
+      }
     });
   }
 

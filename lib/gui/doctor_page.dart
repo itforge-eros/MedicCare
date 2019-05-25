@@ -4,16 +4,14 @@ import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/gui/add_doctor_page.dart';
+import 'package:mediccare/gui/edit_doctor_page.dart';
 import 'package:mediccare/util/custom_icons.dart';
+import 'package:mediccare/util/firebase_utils.dart';
 
 class DoctorPage extends StatefulWidget {
-  Function _refreshState;
-  User _user;
   Doctor _doctor;
 
-  DoctorPage({Function refreshState, User user, Doctor doctor}) {
-    this._refreshState = refreshState;
-    this._user = user;
+  DoctorPage({Doctor doctor}) {
     this._doctor = doctor;
   }
 
@@ -47,11 +45,7 @@ class DoctorPageState extends State<DoctorPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddDoctorPage.editMode(
-                        refreshState: this.refreshState,
-                        user: widget._user,
-                        doctor: widget._doctor,
-                      ),
+                  builder: (context) => EditDoctorPage(doctor: widget._doctor),
                 ),
               );
             },
@@ -88,11 +82,6 @@ class DoctorPageState extends State<DoctorPage> {
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold),
               ),
-              // SizedBox(height: 4.0),
-              // Text(
-              //   'Bangkok, TH',
-              //   style: TextStyle(fontFamily: 'Montserrat', color: Colors.grey),
-              // ),
               Container(
                 padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
                 child: Column(
@@ -102,13 +91,15 @@ class DoctorPageState extends State<DoctorPage> {
                     ),
                     Row(
                       children: <Widget>[
-                        Icon(Icons.local_hospital, color: Theme.of(context).primaryColor),
+                        Icon(Icons.local_hospital,
+                            color: Theme.of(context).primaryColor),
                         SizedBox(
                           width: 10.0,
                         ),
                         Text(
                           widget._doctor.hospital,
-                          style: TextStyle(fontSize: 18.0, color: Colors.grey[800]),
+                          style: TextStyle(
+                              fontSize: 18.0, color: Colors.grey[800]),
                         )
                       ],
                     ),
@@ -117,13 +108,15 @@ class DoctorPageState extends State<DoctorPage> {
                     ),
                     Row(
                       children: <Widget>[
-                        Icon(CustomIcons.medical_kit, color: Theme.of(context).primaryColor),
+                        Icon(CustomIcons.medical_kit,
+                            color: Theme.of(context).primaryColor),
                         SizedBox(
                           width: 10.0,
                         ),
                         Text(
                           widget._doctor.ward,
-                          style: TextStyle(fontSize: 18.0, color: Colors.grey[800]),
+                          style: TextStyle(
+                              fontSize: 18.0, color: Colors.grey[800]),
                         ),
                       ],
                     ),
@@ -132,13 +125,15 @@ class DoctorPageState extends State<DoctorPage> {
                     ),
                     Row(
                       children: <Widget>[
-                        Icon(Icons.phone, color: Theme.of(context).primaryColor),
+                        Icon(Icons.phone,
+                            color: Theme.of(context).primaryColor),
                         SizedBox(
                           width: 10.0,
                         ),
                         Text(
                           widget._doctor.phone,
-                          style: TextStyle(fontSize: 18.0, color: Colors.grey[800]),
+                          style: TextStyle(
+                              fontSize: 18.0, color: Colors.grey[800]),
                         )
                       ],
                     ),
@@ -147,20 +142,6 @@ class DoctorPageState extends State<DoctorPage> {
                     ),
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Container(
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: Colors.black12,
-                  ),
-                ),
-              ),
-              Container(
-                // TODO: Implements map
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: Text('Map'),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -193,7 +174,8 @@ class DoctorPageState extends State<DoctorPage> {
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
-                        style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, color: Colors.black45),
                       ),
                     ),
                   ],

@@ -8,19 +8,24 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mediccare/core/doctor.dart';
-import 'package:mediccare/core/user.dart';
 import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
-class AddDoctorPage extends StatefulWidget {
+class EditDoctorPage extends StatefulWidget {
+  Doctor _doctor;
+
+  EditDoctorPage({Doctor doctor}) {
+    this._doctor = doctor;
+  }
+
   @override
   State<StatefulWidget> createState() {
-    return _AddDoctorPageState();
+    return _EditDoctorPageState();
   }
 }
 
-class _AddDoctorPageState extends State<AddDoctorPage> {
+class _EditDoctorPageState extends State<EditDoctorPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   static final TextEditingController _controllerPrefix =
       TextEditingController();
@@ -52,24 +57,63 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
     _controllerNotes.text = '';
   }
 
+  void loadFields() {
+    if (widget._doctor != null) {
+      _controllerPrefix.text = widget._doctor.prefix;
+      _controllerFirstName.text = widget._doctor.firstName;
+      _controllerLastName.text = widget._doctor.lastName;
+      _controllerWard.text = widget._doctor.ward;
+      _controllerHospital.text = widget._doctor.hospital;
+      _controllerPhone.text = widget._doctor.phone;
+      _controllerNotes.text = widget._doctor.notes;
+      _image = null; // TODO: Implements image adding and loading
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     this.clearFields();
+    this.loadFields();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
-          title: Text(
-            'Add Doctor',
-            style: TextStyle(color: Colors.blueGrey),
+        iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
+        title: Text(
+          'Edit Doctor',
+          style: TextStyle(color: Colors.blueGrey),
+        ),
+        backgroundColor: Colors.white.withOpacity(0.9),
+        elevation: 0.1,
+        actions: <Widget>[
+          IconButton(
+            color: Colors.red,
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              Alert.displayConfirmDelete(
+                context,
+                title: 'Delete Doctor?',
+                content:
+                    'Deleting this doctor will permanently remove it from your doctor list.',
+                onPressedConfirm: () {
+                  FirebaseUtils.deleteDoctor(widget._doctor);
+
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Homepage(
+                                initialIndex: 3,
+                              )),
+                      ModalRoute.withName('LoginPage'));
+                },
+              );
+            },
           ),
-          backgroundColor: Colors.white.withOpacity(0.9),
-          elevation: 0.1,
-          actions: <Widget>[]),
+        ],
+      ),
       body: Form(
         key: this._formKey,
         child: Center(
@@ -137,25 +181,18 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
-                    Doctor newDoctor = Doctor(
-                      prefix: _controllerPrefix.text,
-                      firstName: _controllerFirstName.text,
-                      lastName: _controllerLastName.text,
-                      ward: _controllerWard.text,
-                      hospital: _controllerHospital.text,
-                      phone: _controllerPhone.text,
-                      notes: _controllerNotes.text,
-                      image: null, // TODO: Implements image adding and loading
-                    );
-                    FirebaseUtils.addDoctor(newDoctor);
+                    widget._doctor.prefix = _controllerPrefix.text;
+                    widget._doctor.firstName = _controllerFirstName.text;
+                    widget._doctor.lastName = _controllerLastName.text;
+                    widget._doctor.ward = _controllerWard.text;
+                    widget._doctor.hospital = _controllerHospital.text;
+                    widget._doctor.phone = _controllerPhone.text;
+                    widget._doctor.notes = _controllerNotes.text;
+                    // TODO: Implements image adding and loading
 
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Homepage(
-                                  initialIndex: 3,
-                                )),
-                        ModalRoute.withName('LoginPage'));
+                    FirebaseUtils.updateDoctor(widget._doctor);
+                    widget._doctor.image = null;
+                    Navigator.pop(context);
                   }
                 },
               ),

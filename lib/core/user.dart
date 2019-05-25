@@ -82,9 +82,9 @@ class User extends Equatable {
     this._appointmentList =
         map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ??
             List<Appointment>();
-    this._doctorList =
-        map['doctorList'].map((e) => Doctor.fromMap(e)).toList() ??
-            List<Doctor>();
+    // this._doctorList =
+    //     map['doctorList'].map((e) => Doctor.fromMap(e)).toList() ??
+    //         List<Doctor>();
     this._hospitalList =
         map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ??
             List<Hospital>();
@@ -449,7 +449,7 @@ class User extends Equatable {
       'image': this._image, //TODO: Check Image property
       'medicineList': this._medicineList.map((e) => e.toMap()).toList(),
       'appointment': this._appointmentList.map((e) => e.toMap()).toList(),
-      'doctorList': this._doctorList.map((e) => e.toMap()).toList(),
+      // 'doctorList': this._doctorList.map((e) => e.toMap()).toList(),
       'hospitalList': this._hospitalList.map((e) => e.toMap()).toList(),
       'userSettings': this._userSettings.toMap(),
     };

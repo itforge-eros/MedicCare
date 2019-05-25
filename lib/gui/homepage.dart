@@ -20,8 +20,17 @@ import 'package:mediccare/gui/add_appointment_page.dart';
 import 'package:mediccare/gui/medicine_page.dart';
 import 'package:mediccare/gui/add_doctor_page.dart';
 import 'package:mediccare/util/custom_icons.dart';
+import 'package:mediccare/util/firebase_utils.dart';
 
 class Homepage extends StatefulWidget {
+  int initialIndex;
+
+  Homepage({Key key, this.initialIndex = 2}) : super(key: key);
+
+  // Homepage({int initialIndex}) {
+  //   _initialIndex = initialIndex;
+  // }
+
   @override
   State<StatefulWidget> createState() {
     return _HomepageState();
@@ -31,6 +40,8 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   User _user;
   int _currentIndex = 2;
+
+  Future<List<Doctor>> _getDoctors;
 
   // Utility Method: Returns Custom List Tile
   ListTile getCustomListTile({
@@ -622,7 +633,7 @@ class _HomepageState extends State<Homepage> {
   // |----------------------Doctor
 
   // Data Method: Returns a list of doctors
-  List<Widget> getDoctorList() {
+  List<Widget> getDoctorList(List<Doctor> doctors) {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
@@ -633,14 +644,12 @@ class _HomepageState extends State<Homepage> {
             labelText: 'Search',
             hintText: 'Search',
             prefixIcon: Icon(Icons.search),
-            // border: OutlineInputBorder(
-            //     borderRadius: BorderRadius.all(Radius.circular(25.0)))
           ),
         ),
       ),
     ];
 
-    this._user.doctorList.forEach((e) {
+    doctors.forEach((e) {
       list.add(
         getCustomCard(
           name: e.prefix + ' ' + e.firstName + ' ' + e.lastName,
@@ -651,8 +660,6 @@ class _HomepageState extends State<Homepage> {
               context,
               MaterialPageRoute(
                 builder: (context) => DoctorPage(
-                      refreshState: this.refreshState,
-                      user: this._user,
                       doctor: e,
                     ),
               ),
@@ -666,10 +673,23 @@ class _HomepageState extends State<Homepage> {
   }
 
   // GUI Method: Returns GUI of doctor tab
-  ListView getDoctorListPage() {
-    return ListView(
-      shrinkWrap: true,
-      children: getDoctorList(),
+  Container getDoctorListPage() {
+    return Container(
+      child: FutureBuilder(
+        future: _getDoctors,
+        builder: (_, doctors) {
+          if (doctors.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Text('Loading...'),
+            );
+          } else if (doctors.connectionState == ConnectionState.done) {
+            return ListView(
+              shrinkWrap: true,
+              children: getDoctorList(doctors.data),
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -681,6 +701,10 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     super.initState();
     // TODO: Implements loading data from firebase
+    _getDoctors = FirebaseUtils.getDoctors();
+
+    this._currentIndex = widget.initialIndex;
+
     // NOTES: This is a mocked-up data used in testing.
     this._user = User(
       id: '',
@@ -870,10 +894,7 @@ class _HomepageState extends State<Homepage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddDoctorPage(
-                      refreshState: this.refreshState,
-                      user: this._user,
-                    ),
+                builder: (context) => AddDoctorPage(),
               ),
             );
           },
