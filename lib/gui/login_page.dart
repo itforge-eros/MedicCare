@@ -3,10 +3,8 @@
 /// Class for login page GUI
 ///
 
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 import 'package:mediccare/util/validator.dart';
@@ -40,9 +38,9 @@ class _LoginPageState extends State<LoginPage> {
       if (user != null) {
         bool exist = await FirebaseUtils.getUserExist();
         if (exist) {
-          Navigator.pushNamed(context, 'Homepage');
+          Navigator.pushReplacementNamed(context, 'Homepage');
         } else {
-          Navigator.pushNamed(context, 'InitAccountPage');
+          Navigator.pushReplacementNamed(context, 'InitAccountPage');
         }
         this.clearFields();
       } else {
@@ -77,9 +75,9 @@ class _LoginPageState extends State<LoginPage> {
       bool exist = await FirebaseUtils.getUserExist();
       if (isLogin) {
         if (exist) {
-          return Navigator.pushNamed(context, 'Homepage');
+          return Navigator.pushReplacementNamed(context, 'Homepage');
         }
-        return Navigator.pushNamed(context, 'InitAccountPage');
+        return Navigator.pushReplacementNamed(context, 'InitAccountPage');
       }
     });
   }
