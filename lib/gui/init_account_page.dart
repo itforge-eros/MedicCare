@@ -1,33 +1,39 @@
-import 'dart:async';
+///
+/// `init_account_page.dart`
+/// Class for medicine addition page GUI
+///
+
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mediccare/core/user.dart';
+import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
-class EditProfilePage extends StatefulWidget {
-  User _user;
-
-  EditProfilePage({User user}) {
-    this._user = user;
-  }
-
+class InitAccountPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _EditProfilePageState();
+    return _InitAccountPageState();
   }
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
-  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _controllerFirstName = TextEditingController();
-  final TextEditingController _controllerLastName = TextEditingController();
-  final TextEditingController _controllerHeight = TextEditingController();
-  final TextEditingController _controllerWeight = TextEditingController();
+class _InitAccountPageState extends State<InitAccountPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  static final TextEditingController _controllerFirstName =
+      TextEditingController();
+  static final TextEditingController _controllerLastName =
+      TextEditingController();
+  static final TextEditingController _controllerHeight =
+      TextEditingController();
+  static final TextEditingController _controllerWeight =
+      TextEditingController();
+  String _currentGender;
+  DateTime _currentBirthDate;
+  String _currentBloodGroup;
   File _image;
 
   Future getImage() async {
@@ -37,51 +43,62 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
+  void clearFields() {
+    _controllerFirstName.text = '';
+    _controllerLastName.text = '';
+  }
+
   @override
   void initState() {
     super.initState();
+    this.clearFields();
+  }
+
+  void doInitiation() async {
+    FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
+
+    User user = User(
+      email: firebaseUser.email,
+      id: firebaseUser.uid,
+      bloodGroup: this._currentBloodGroup,
+      birthDate: this._currentBirthDate,
+      gender: _currentGender,
+      height: double.parse(_controllerHeight.text),
+      weight: double.parse(_controllerWeight.text),
+      firstName: _controllerFirstName.text,
+      lastName: _controllerLastName.text,
+    );
+
+    FirebaseUtils.updateUserData(user);
   }
 
   @override
   Widget build(BuildContext context) {
-    _controllerFirstName.text = widget._user.firstName;
-    _controllerLastName.text = widget._user.lastName;
-    _controllerHeight.text = widget._user.height.toString();
-    _controllerWeight.text = widget._user.weight.toString();
-
-    User userInstance = widget._user;
-
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         title: Text(
-          'Edit Profile',
+          'Account Initiation',
           style: TextStyle(color: Colors.blueGrey),
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
         elevation: 0.1,
       ),
       body: Form(
-        key: _formKey,
+        key: this._formKey,
         child: Center(
           child: ListView(
             padding: EdgeInsets.only(
-              left: 30.0,
-              top: 15.0,
-              right: 30.0,
-              bottom: 15.0,
-            ),
+                left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
             children: <Widget>[
               FloatingActionButton(
                 onPressed: getImage,
-                tooltip: 'Change Image',
+                tooltip: 'Pick Image',
                 child: Icon(Icons.add_a_photo),
               ),
               TextFormField(
                 controller: _controllerFirstName,
-                decoration: InputDecoration(
-                    labelText: 'First Name', prefixIcon: Icon(Icons.person)),
-                keyboardType: TextInputType.text,
+                decoration: InputDecoration(labelText: 'First name'),
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill first name';
@@ -90,20 +107,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               TextFormField(
                 controller: _controllerLastName,
-                decoration: InputDecoration(
-                    labelText: 'Last Name', prefixIcon: Icon(Icons.person)),
-                keyboardType: TextInputType.text,
+                decoration: InputDecoration(labelText: 'Last name'),
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill last name';
                   }
                 },
               ),
-              SizedBox(height: 10.0),
               DropdownButton(
                 isExpanded: true,
                 hint: Text('Gender'),
-                value: userInstance.gender,
+                value: this._currentGender,
                 items: <DropdownMenuItem<String>>[
                   DropdownMenuItem(
                     value: 'male',
@@ -120,13 +134,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ],
                 onChanged: (String value) {
                   setState(() {
-                    userInstance.gender = value;
+                    this._currentGender = value;
                   });
                 },
               ),
               DateTimePickerFormField(
+                initialValue: DateTime.now(),
+                initialDate: DateTime.now(),
                 format: DateFormat('yyyy-MM-dd'),
-                initialValue: userInstance.birthDate,
                 inputType: InputType.date,
                 editable: true,
                 decoration: InputDecoration(
@@ -134,7 +149,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   prefixIcon: Icon(Icons.cake),
                 ),
                 onChanged: (DateTime date) {
-                  userInstance.birthDate = date;
+                  _currentBirthDate = date;
                 },
                 validator: (DateTime time) {
                   if (time == null) {
@@ -148,7 +163,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 controller: _controllerHeight,
                 decoration: InputDecoration(
                   hintText: 'Height',
-                  labelText: 'Height',
                   prefixIcon: Icon(Icons.assessment),
                   suffixText: 'cm',
                 ),
@@ -170,7 +184,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 controller: _controllerWeight,
                 decoration: InputDecoration(
                   hintText: 'Weight',
-                  labelText: 'Weight',
                   prefixIcon: Icon(Icons.assessment),
                   suffixText: 'kg',
                 ),
@@ -188,11 +201,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   }
                 },
               ),
-              SizedBox(height: 20.0),
               DropdownButton(
                 isExpanded: true,
                 hint: Text('Blood Group'),
-                value: userInstance.bloodGroup,
+                value: this._currentBloodGroup,
                 items: <DropdownMenuItem<String>>[
                   DropdownMenuItem(
                     value: 'O+',
@@ -229,27 +241,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ],
                 onChanged: (String value) {
                   setState(() {
-                    userInstance.bloodGroup = value;
+                    this._currentBloodGroup = value;
                   });
                 },
               ),
               SizedBox(height: 20.0),
               RaisedButton(
+                child: Text('Start using MedicCare'),
                 color: Theme.of(context).primaryColor,
-                child: Text('Save'),
                 onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    userInstance.firstName = _controllerFirstName.text;
-                    userInstance.lastName = _controllerLastName.text;
-                    userInstance.height = double.parse(_controllerHeight.text);
-                    userInstance.weight = double.parse(_controllerWeight.text);
+                  if (this._formKey.currentState.validate()) {
+                    if (this._currentGender == null) {
+                      Alert.displayAlert(
+                        context,
+                        title: 'Missing Information',
+                        content: 'Please select gender.',
+                      );
+                    } else if (this._currentBloodGroup == null) {
+                      Alert.displayAlert(
+                        context,
+                        title: 'Missing Information',
+                        content: 'Please select blood group.',
+                      );
+                    } else {
+                      doInitiation();
 
-                    widget._user = userInstance;
-
-                    FirebaseUtils.updateUserData(userInstance);
-
-                    // Navigator.pop(context);
-                    Navigator.of(context).pop(true);
+                      Navigator.pushReplacementNamed(context, 'Homepage');
+                    }
                   }
                 },
               ),

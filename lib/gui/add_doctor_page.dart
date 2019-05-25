@@ -8,18 +8,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/core/user.dart';
 import 'package:mediccare/util/alert.dart';
 
 class AddDoctorPage extends StatefulWidget {
   Function _refreshState;
+  User _user;
   Doctor _doctor;
 
-  AddDoctorPage(Function refreshState) {
+  AddDoctorPage({Function refreshState, User user}) {
     this._refreshState = refreshState;
+    this._user = user;
   }
 
-  AddDoctorPage.editMode(Function refreshState, Doctor doctor) {
+  AddDoctorPage.editMode({Function refreshState, User user, Doctor doctor}) {
     this._refreshState = refreshState;
+    this._user = user;
     this._doctor = doctor;
   }
 
@@ -42,7 +46,6 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
-
     setState(() {
       _image = image;
     });
@@ -67,6 +70,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
       _controllerHospital.text = widget._doctor.hospital;
       _controllerPhone.text = widget._doctor.phone;
       _controllerNotes.text = widget._doctor.notes;
+      _image = null; // TODO: Implements image adding and loading
     }
   }
 
@@ -98,9 +102,10 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                     Alert.displayConfirmDelete(
                       context,
                       title: 'Delete Doctor?',
-                      content: 'Deleting this doctor will permanently remove it from your doctor list.',
+                      content:
+                          'Deleting this doctor will permanently remove it from your doctor list.',
                       onPressedConfirm: () {
-                        // TODO: Implements doctor deletion
+                        widget._user.doctorList.remove(widget._doctor);
                         Navigator.of(context).pop();
                         Navigator.pop(context);
                         widget._refreshState();
@@ -176,6 +181,29 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
+                    if (widget._doctor == null) {
+                      widget._user.doctorList.add(
+                        Doctor(
+                          prefix: _controllerPrefix.text,
+                          firstName: _controllerFirstName.text,
+                          lastName: _controllerLastName.text,
+                          ward: _controllerWard.text,
+                          hospital: _controllerHospital.text,
+                          phone: _controllerPhone.text,
+                          notes: _controllerNotes.text,
+                          image: null, // TODO: Implements image adding and loading
+                        ),
+                      );
+                    } else {
+                      widget._doctor.prefix = _controllerPrefix.text;
+                      widget._doctor.firstName = _controllerFirstName.text;
+                      widget._doctor.lastName = _controllerLastName.text;
+                      widget._doctor.ward = _controllerWard.text;
+                      widget._doctor.hospital = _controllerHospital.text;
+                      widget._doctor.phone = _controllerPhone.text;
+                      widget._doctor.notes = _controllerNotes.text;
+                      widget._doctor.image = null; // TODO: Implements image adding and loading
+                    }
                     widget._refreshState();
                     Navigator.pop(context);
                   }

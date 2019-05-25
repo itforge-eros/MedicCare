@@ -21,8 +21,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   static final TextEditingController _controllerEmail = TextEditingController();
-  static final TextEditingController _controllerPassword = TextEditingController();
-  static final TextEditingController _controllerPasswordConfirm = TextEditingController();
+  static final TextEditingController _controllerPassword =
+      TextEditingController();
+  static final TextEditingController _controllerPasswordConfirm =
+      TextEditingController();
 
   void signUpWithEmail() async {
     FirebaseUser user;
@@ -40,7 +42,8 @@ class _RegisterPageState extends State<RegisterPage> {
         Alert.displayAlert(
           context,
           title: 'Registration Success',
-          content: 'New account created, you are now able to use this new account to login.',
+          content:
+              'New account created, you are now able to use this new account to login.',
           onPressed: () {
             Navigator.of(context).pop();
             Navigator.pop(context);
@@ -67,16 +70,15 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _trimEmailField() {
-    _RegisterPageState._controllerEmail.text = _RegisterPageState._controllerEmail.text.trim();
+    _RegisterPageState._controllerEmail.text =
+        _RegisterPageState._controllerEmail.text.trim();
   }
 
   @override
   void initState() {
     super.initState();
     FirebaseUtils.getUser().then((user) {
-      if (user != null) {
-        print(user);
-      }
+      if (user != null) {}
     });
   }
 
@@ -145,7 +147,8 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         body: Center(
           child: ListView(
-            padding: EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
+            padding: EdgeInsets.only(
+                left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
             children: <Widget>[
               textFormFieldEmail,
               SizedBox(height: 10.0),

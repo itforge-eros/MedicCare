@@ -22,7 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   static final TextEditingController _controllerEmail = TextEditingController();
-  static final TextEditingController _controllerPassword = TextEditingController();
+  static final TextEditingController _controllerPassword =
+      TextEditingController();
 
   void signInWithEmail() async {
     FirebaseUser user;
@@ -37,7 +38,12 @@ class _LoginPageState extends State<LoginPage> {
       print(e.toString());
     } finally {
       if (user != null) {
-        Navigator.pushReplacementNamed(context, 'Homepage');
+        bool exist = await FirebaseUtils.getUserExist();
+        if (exist) {
+          Navigator.pushNamed(context, 'Homepage');
+        } else {
+          Navigator.pushNamed(context, 'InitAccountPage');
+        }
         this.clearFields();
       } else {
         Alert.displayAlert(
@@ -60,15 +66,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void trimEmailField() {
-    _LoginPageState._controllerEmail.text = _LoginPageState._controllerEmail.text.trim();
+    _LoginPageState._controllerEmail.text =
+        _LoginPageState._controllerEmail.text.trim();
   }
 
   @override
   void initState() {
     super.initState();
-    FirebaseUtils.getUser().then((user) {
-      if (user != null) {
-        Navigator.pushNamed(context, 'Homepage');
+    FirebaseUtils.isLogin().then((isLogin) async {
+      bool exist = await FirebaseUtils.getUserExist();
+      if (isLogin) {
+        if (exist) {
+          return Navigator.pushNamed(context, 'Homepage');
+        }
+        return Navigator.pushNamed(context, 'InitAccountPage');
       }
     });
   }
