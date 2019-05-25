@@ -72,12 +72,15 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     FirebaseUtils.isLogin().then((isLogin) async {
-      bool exist = await FirebaseUtils.getUserExist();
       if (isLogin) {
+        bool exist = await FirebaseUtils.getUserExist();
         if (exist) {
-          return Navigator.pushReplacementNamed(context, 'Homepage');
+          Navigator.pushReplacementNamed(context, 'Homepage');
+        } else {
+          Navigator.pushReplacementNamed(context, 'InitAccountPage');
         }
-        return Navigator.pushReplacementNamed(context, 'InitAccountPage');
+      } else {
+        return;
       }
     });
   }

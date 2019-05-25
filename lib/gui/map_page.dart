@@ -94,30 +94,37 @@ class MapPageState extends State<MapPage> {
 
     final location = Location(center.latitude, center.longitude);
     final result = await _places.searchNearbyWithRadius(location, 2000);
-    var list = ["pharmacy","health","dentist","doctor","hospital","physiotherapist","spa"];
+    var list = [
+      "pharmacy",
+      "health",
+      "dentist",
+      "doctor",
+      "hospital",
+      "physiotherapist",
+      "spa"
+    ];
     setState(() {
       this.isLoading = false;
       if (result.status == "OK") {
         // this.places = result.results;
         result.results.forEach((f) {
-          for(var a in f.types){
-            if (list.contains(a)){
+          for (var a in f.types) {
+            if (list.contains(a)) {
               this.places.add(f);
-                final markerOptions = MarkerOptions(
-                position:
-                    LatLng(f.geometry.location.lat, f.geometry.location.lng),
-                infoWindowText:
-                    InfoWindowText("${f.name}", "${f.types?.first}"));
-                mapController.addMarker(markerOptions);
-            } 
-            break;
+              final markerOptions = MarkerOptions(
+                  position:
+                      LatLng(f.geometry.location.lat, f.geometry.location.lng),
+                  infoWindowText:
+                      InfoWindowText("${f.name}", "${f.types?.first}"));
+              mapController.addMarker(markerOptions);
             }
+            break;
+          }
         });
       } else {
         this.errorMessage = result.errorMessage;
       }
     });
-    
   }
 
   void onError(PlacesAutocompleteResponse response) {
