@@ -164,67 +164,61 @@ class MapPageState extends State<MapPage> {
   }
 
   ListView buildPlacesList() {
-    final placesWidget = places.map((f) {
-      List<Widget> list = [
-        Padding(
-          padding: EdgeInsets.only(bottom: 4.0),
-          child: Text(
-            f.name,
-            style: Theme.of(context).textTheme.subtitle,
-          ),
-        )
-      ];
-      if (f.formattedAddress != null) {
-        list.add(Padding(
-          padding: EdgeInsets.only(bottom: 2.0),
-          child: Text(
-            f.formattedAddress,
-            style: Theme.of(context).textTheme.subtitle,
-          ),
-        ));
-      }
+    List<Widget> list = [];
+    this.places.forEach((f) {
+      list.add(Card(
+          elevation: 8.0,
+          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          child: Container(
+              decoration: BoxDecoration(color: Colors.white),
+              child: ListTile(
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                leading: Container(
+                  padding: EdgeInsets.only(right: 12.0),
+                  decoration: new BoxDecoration(
+                      border: new Border(
+                          right: new BorderSide(
+                              width: 1.0, color:  Colors.blue[300]))),
+                  child: Icon(Icons.location_on, color: Colors.blue[300]),
+                ),
+                title: Text(
+                  f.name,
+                  style: TextStyle(
+                      color: Colors.blue[300], fontWeight: FontWeight.bold),
+                ),
+                trailing: Icon(Icons.keyboard_arrow_right,
+                    color: Colors.blue[300], size: 30.0),
+                onTap: () {
+                  showDetailPlace(f.placeId);
+                },
+              )
+          )
+      )
+    );
+    });
 
-      if (f.vicinity != null) {
-        list.add(Padding(
-          padding: EdgeInsets.only(bottom: 2.0),
-          child: Text(
-            f.vicinity,
-            style: Theme.of(context).textTheme.body1,
-          ),
-        ));
-      }
-
-      if (f.types?.first != null) {
-        list.add(Padding(
-          padding: EdgeInsets.only(bottom: 2.0),
-          child: Text(
-            f.types.first,
-            style: Theme.of(context).textTheme.caption,
-          ),
-        ));
-      }
-
-      return Padding(
-        padding: EdgeInsets.only(top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
-        child: Card(
-          child: InkWell(
-            onTap: () {
-              showDetailPlace(f.placeId);
-            },
-            highlightColor: Colors.lightBlueAccent,
-            splashColor: Colors.red,
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: list,
-              ),
-            ),
-          ),
-        ),
-      );
-    }).toList();
-    return ListView(shrinkWrap: true, children: placesWidget);
+    //   return Padding(
+    //     padding: EdgeInsets.only(top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+    //     child: Card(
+    //       child: InkWell(
+    //         onTap: () {
+    //           showDetailPlace(f.placeId);
+    //         },
+    //         highlightColor: Colors.lightBlueAccent,
+    //         splashColor: Colors.red,
+    //         child: Padding(
+    //           padding: EdgeInsets.all(8.0),
+    //           child: Column(
+    //             mainAxisAlignment: MainAxisAlignment.start,
+    //             crossAxisAlignment: CrossAxisAlignment.start,
+    //             children: list,
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // }).toList();
+    return ListView(shrinkWrap: true, children: list);
   }
 }

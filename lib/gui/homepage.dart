@@ -12,9 +12,15 @@ import 'package:mediccare/core/medicine_schedule.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
+<<<<<<< HEAD
 import 'package:mediccare/gui/appointment_page.dart';
 import 'package:mediccare/gui/doctor_page.dart';
 import 'package:mediccare/gui/map_page.dart';
+=======
+import 'package:mediccare/gui/map_page.dart';
+import 'package:mediccare/gui/appointment_page.dart';
+import 'package:mediccare/gui/doctor_page.dart';
+>>>>>>> doctor-page
 import 'package:mediccare/gui/profile_page.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
 import 'package:mediccare/gui/medicine_page.dart';
