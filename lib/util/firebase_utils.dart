@@ -11,18 +11,18 @@ import 'package:mediccare/core/user_setting.dart';
 
 class FirebaseUtils {
   static Future<User> getUser() async {
-    FirebaseUser firebaseUSer = await FirebaseAuth.instance.currentUser();
+    FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
 
     var firestore = Firestore.instance;
 
     DocumentSnapshot userProfile =
-        await firestore.collection('users').document(firebaseUSer.uid).get();
+        await firestore.collection('users').document(firebaseUser.uid).get();
 
     UserSettings userSetting =
         UserSettings.fromMap(userProfile['userSettings']);
 
     User user = User(
-      email: firebaseUSer.email,
+      email: firebaseUser.email,
       firstName: userProfile['firstName'],
       lastName: userProfile['lastName'],
       birthDate: userProfile['birthDate'],
@@ -31,10 +31,27 @@ class FirebaseUtils {
       height: userProfile['height'].toDouble(),
       weight: userProfile['weight'].toDouble(),
       userSettings: userSetting,
-      id: firebaseUSer.uid,
+      id: firebaseUser.uid,
     );
 
     return user;
+  }
+
+  static Future<bool> getUserExist() async {
+    FirebaseUser firebaseUSer = await FirebaseAuth.instance.currentUser();
+
+    var firestore = Firestore.instance;
+
+    DocumentSnapshot userProfile =
+        await firestore.collection('users').document(firebaseUSer.uid).get();
+
+    return userProfile.exists;
+  }
+
+  static Future<bool> isLogin() async {
+    FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
+
+    return firebaseUser != null;
   }
 
   static void updateUserData(User user) {

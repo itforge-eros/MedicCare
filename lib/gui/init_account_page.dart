@@ -5,11 +5,14 @@
 
 import 'dart:io';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mediccare/core/user.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
+import 'package:mediccare/util/firebase_utils.dart';
 
 class InitAccountPage extends StatefulWidget {
   @override
@@ -20,10 +23,14 @@ class InitAccountPage extends StatefulWidget {
 
 class _InitAccountPageState extends State<InitAccountPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  static final TextEditingController _controllerFirstName = TextEditingController();
-  static final TextEditingController _controllerLastName = TextEditingController();
-  static final TextEditingController _controllerHeight = TextEditingController();
-  static final TextEditingController _controllerWeight = TextEditingController();
+  static final TextEditingController _controllerFirstName =
+      TextEditingController();
+  static final TextEditingController _controllerLastName =
+      TextEditingController();
+  static final TextEditingController _controllerHeight =
+      TextEditingController();
+  static final TextEditingController _controllerWeight =
+      TextEditingController();
   String _currentGender;
   DateTime _currentBirthDate;
   String _currentBloodGroup;
@@ -47,6 +54,24 @@ class _InitAccountPageState extends State<InitAccountPage> {
     this.clearFields();
   }
 
+  void doInitiation() async {
+    FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
+
+    User user = User(
+      email: firebaseUser.email,
+      id: firebaseUser.uid,
+      bloodGroup: this._currentBloodGroup,
+      birthDate: this._currentBirthDate,
+      gender: _currentGender,
+      height: double.parse(_controllerHeight.text),
+      weight: double.parse(_controllerWeight.text),
+      firstName: _controllerFirstName.text,
+      lastName: _controllerLastName.text,
+    );
+
+    FirebaseUtils.updateUserData(user);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +88,8 @@ class _InitAccountPageState extends State<InitAccountPage> {
         key: this._formKey,
         child: Center(
           child: ListView(
-            padding: EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
+            padding: EdgeInsets.only(
+                left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
             children: <Widget>[
               FloatingActionButton(
                 onPressed: getImage,
@@ -225,7 +251,6 @@ class _InitAccountPageState extends State<InitAccountPage> {
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
-                    // TODO: Implements account initiation
                     if (this._currentGender == null) {
                       Alert.displayAlert(
                         context,
@@ -239,6 +264,8 @@ class _InitAccountPageState extends State<InitAccountPage> {
                         content: 'Please select blood group.',
                       );
                     } else {
+                      doInitiation();
+
                       Navigator.pushReplacementNamed(context, 'Homepage');
                     }
                   }
