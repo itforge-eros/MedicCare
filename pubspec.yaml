@@ -26,6 +26,9 @@ dependencies:
   intro_slider: ^2.0.1
   equatable: ^0.2.0
   intl: ^0.15.0
+  google_maps_flutter: ^0.0.3
+  flutter_google_places: ^0.1.4
+  location: ^1.4.1
 
 dev_dependencies:
   flutter_test:

@@ -10,6 +10,8 @@ import 'package:mediccare/gui/login_page.dart';
 import 'package:mediccare/gui/register_page.dart';
 import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/gui/welcome_page.dart';
+import 'package:mediccare/gui/map_page.dart';
+import 'package:mediccare/gui/user_settings_page.dart';
 
 class MedicCareApp extends StatelessWidget {
   @override
