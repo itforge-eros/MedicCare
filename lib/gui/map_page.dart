@@ -94,30 +94,37 @@ class MapPageState extends State<MapPage> {
 
     final location = Location(center.latitude, center.longitude);
     final result = await _places.searchNearbyWithRadius(location, 2000);
-    var list = ["pharmacy","health","dentist","doctor","hospital","physiotherapist","spa"];
+    var list = [
+      "pharmacy",
+      "health",
+      "dentist",
+      "doctor",
+      "hospital",
+      "physiotherapist",
+      "spa"
+    ];
     setState(() {
       this.isLoading = false;
       if (result.status == "OK") {
         // this.places = result.results;
         result.results.forEach((f) {
-          for(var a in f.types){
-            if (list.contains(a)){
+          for (var a in f.types) {
+            if (list.contains(a)) {
               this.places.add(f);
-                final markerOptions = MarkerOptions(
-                position:
-                    LatLng(f.geometry.location.lat, f.geometry.location.lng),
-                infoWindowText:
-                    InfoWindowText("${f.name}", "${f.types?.first}"));
-                mapController.addMarker(markerOptions);
-            } 
-            break;
+              final markerOptions = MarkerOptions(
+                  position:
+                      LatLng(f.geometry.location.lat, f.geometry.location.lng),
+                  infoWindowText:
+                      InfoWindowText("${f.name}", "${f.types?.first}"));
+              mapController.addMarker(markerOptions);
             }
+            break;
+          }
         });
       } else {
         this.errorMessage = result.errorMessage;
       }
     });
-    
   }
 
   void onError(PlacesAutocompleteResponse response) {
@@ -157,67 +164,61 @@ class MapPageState extends State<MapPage> {
   }
 
   ListView buildPlacesList() {
-    final placesWidget = places.map((f) {
-      List<Widget> list = [
-        Padding(
-          padding: EdgeInsets.only(bottom: 4.0),
-          child: Text(
-            f.name,
-            style: Theme.of(context).textTheme.subtitle,
-          ),
-        )
-      ];
-      if (f.formattedAddress != null) {
-        list.add(Padding(
-          padding: EdgeInsets.only(bottom: 2.0),
-          child: Text(
-            f.formattedAddress,
-            style: Theme.of(context).textTheme.subtitle,
-          ),
-        ));
-      }
+    List<Widget> list = [];
+    this.places.forEach((f) {
+      list.add(Card(
+          elevation: 8.0,
+          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          child: Container(
+              decoration: BoxDecoration(color: Colors.white),
+              child: ListTile(
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                leading: Container(
+                  padding: EdgeInsets.only(right: 12.0),
+                  decoration: new BoxDecoration(
+                      border: new Border(
+                          right: new BorderSide(
+                              width: 1.0, color:  Colors.blue[300]))),
+                  child: Icon(Icons.location_on, color: Colors.blue[300]),
+                ),
+                title: Text(
+                  f.name,
+                  style: TextStyle(
+                      color: Colors.blue[300], fontWeight: FontWeight.bold),
+                ),
+                trailing: Icon(Icons.keyboard_arrow_right,
+                    color: Colors.blue[300], size: 30.0),
+                onTap: () {
+                  showDetailPlace(f.placeId);
+                },
+              )
+          )
+      )
+    );
+    });
 
-      if (f.vicinity != null) {
-        list.add(Padding(
-          padding: EdgeInsets.only(bottom: 2.0),
-          child: Text(
-            f.vicinity,
-            style: Theme.of(context).textTheme.body1,
-          ),
-        ));
-      }
-
-      if (f.types?.first != null) {
-        list.add(Padding(
-          padding: EdgeInsets.only(bottom: 2.0),
-          child: Text(
-            f.types.first,
-            style: Theme.of(context).textTheme.caption,
-          ),
-        ));
-      }
-
-      return Padding(
-        padding: EdgeInsets.only(top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
-        child: Card(
-          child: InkWell(
-            onTap: () {
-              showDetailPlace(f.placeId);
-            },
-            highlightColor: Colors.lightBlueAccent,
-            splashColor: Colors.red,
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: list,
-              ),
-            ),
-          ),
-        ),
-      );
-    }).toList();
-    return ListView(shrinkWrap: true, children: placesWidget);
+    //   return Padding(
+    //     padding: EdgeInsets.only(top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+    //     child: Card(
+    //       child: InkWell(
+    //         onTap: () {
+    //           showDetailPlace(f.placeId);
+    //         },
+    //         highlightColor: Colors.lightBlueAccent,
+    //         splashColor: Colors.red,
+    //         child: Padding(
+    //           padding: EdgeInsets.all(8.0),
+    //           child: Column(
+    //             mainAxisAlignment: MainAxisAlignment.start,
+    //             crossAxisAlignment: CrossAxisAlignment.start,
+    //             children: list,
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // }).toList();
+    return ListView(shrinkWrap: true, children: list);
   }
 }

@@ -77,7 +77,9 @@ class PlaceDetailState extends State<PlaceDetailWidget> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: Text(title, style: TextStyle(color: Colors.blueGrey),),
+          iconTheme: IconThemeData(color: Colors.blueGrey),
+          backgroundColor: Colors.white.withOpacity(0.9),
         ),
         body: bodyChild);
   }
