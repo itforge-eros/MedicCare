@@ -664,26 +664,47 @@ class _HomepageState extends State<Homepage> {
         ),
       ),
     ];
-
-    doctors.forEach((e) {
-      list.add(
-        getCustomCard(
-          name: e.prefix + ' ' + e.firstName + ' ' + e.lastName,
-          subtitle: ' ' + e.hospital,
-          icon: CustomIcons.doctor_specialist,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DoctorPage(
-                      doctor: e,
-                    ),
+    if (doctors.length != 0) {
+      doctors.forEach((e) {
+        list.add(
+          getCustomCard(
+            name: e.prefix + ' ' + e.firstName + ' ' + e.lastName,
+            subtitle: ' ' + e.hospital,
+            icon: CustomIcons.doctor_specialist,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DoctorPage(
+                        doctor: e,
+                      ),
+                ),
+              );
+            },
+          ),
+        );
+      });
+    } else {
+      list.add(Center(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Image.asset(
+                'assets/images/doctor-grey.png',
+                height: 200,
               ),
-            );
-          },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              child: Text("Add your personal doctors now!",
+                  style:
+                      TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
+            )
+          ],
         ),
-      );
-    });
+      ));
+    }
 
     return list;
   }
