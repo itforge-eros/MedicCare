@@ -49,7 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Navigator.pop(context);
           },
         );
-        FirebaseUtils.createUserData(user.uid, _controllerEmail.text);
+        // FirebaseUtils.createUserData(user.uid, _controllerEmail.text);
       } else {
         // Event: Sign up failed
         Alert.displayAlert(
