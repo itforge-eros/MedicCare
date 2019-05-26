@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 class Hospital {
   String _id;
   String _name;
+  String _placeId;
   String _address;
   String _notes;
   Image _image;
@@ -15,6 +16,7 @@ class Hospital {
   Hospital({
     String id,
     String name,
+    String placeId,
     String address,
     String notes,
     Image image,
@@ -24,11 +26,13 @@ class Hospital {
     this._address = address;
     this._notes = notes;
     this._image = image;
+    this._placeId = placeId;
   }
 
   Hospital.fromMap(Map<String, dynamic> map) {
     this._id = map['id'];
     this._name = map['name'];
+    this._placeId = map['placeId'];
     this._address = map['address'];
     this._notes = map['notes'];
     this._image = map['image']; //TODO: Check Image properties
@@ -39,6 +43,9 @@ class Hospital {
 
   String get name => this._name;
   set name(String name) => this._name = name;
+
+  String get placeId => this._placeId;
+  set placeId(String placeId) => this._placeId = placeId;
 
   String get address => this._address;
   set address(String address) => this._address = address;
