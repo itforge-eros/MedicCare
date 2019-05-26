@@ -29,6 +29,8 @@ dependencies:
   google_maps_flutter: ^0.0.3
   flutter_google_places: ^0.1.4
   location: ^1.4.1
+  path_provider: ^1.1.0
+  shared_preferences: ^0.5.2+1
 
 dev_dependencies:
   flutter_test:
