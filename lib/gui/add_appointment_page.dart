@@ -110,7 +110,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                         ),
                       ));
 
-                      doctors.data.map((e) {
+                      doctors.data.forEach((e) {
                         items.add(DropdownMenuItem(
                           value: e,
                           child: Row(
