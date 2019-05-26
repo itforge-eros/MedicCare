@@ -23,6 +23,15 @@ import 'package:mediccare/gui/add_doctor_page.dart';
 import 'package:mediccare/util/custom_icons.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart' as LocationManager;
+import 'location.dart';
+import 'dart:async';
+import 'package:google_maps_webservice/places.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+
+const kGoogleApiKey = "AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E";
+
 class Homepage extends StatefulWidget {
   int initialIndex;
 
@@ -41,6 +50,7 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   User _user;
   int _currentIndex = 2;
+  final homeScaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<List<Doctor>> _getDoctors;
   Future<List<Medicine>> _getMedicines;
@@ -185,6 +195,60 @@ class _HomepageState extends State<Homepage> {
         ' ' +
         dateTime.year.toString();
   }
+
+  //Map Search Area
+
+  void onError(PlacesAutocompleteResponse response) {
+    homeScaffoldKey.currentState.showSnackBar(
+      SnackBar(content: Text(response.errorMessage)),
+    );
+  }
+
+  Future<LatLng> getUserLocation() async {
+    var currentLocation = <String, double>{};
+    final location = LocationManager.Location();
+    try {
+      currentLocation = await location.getLocation();
+      final lat = currentLocation["latitude"];
+      final lng = currentLocation["longitude"];
+      final center = LatLng(lat, lng);
+      return center;
+    } on Exception {
+      currentLocation = null;
+      return null;
+    }
+  }
+
+  Future<Null> showDetailPlace(String placeId) async {
+    if (placeId != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PlaceDetailWidget(placeId)),
+      );
+    }
+  }
+
+  Future<void> _handlePressButton() async {
+    try {
+      final center = await getUserLocation();
+      Prediction p = await PlacesAutocomplete.show(
+          context: context,
+          strictbounds: center == null ? false : true,
+          apiKey: kGoogleApiKey,
+          onError: onError,
+          mode: Mode.overlay,
+          language: "en",
+          location: center == null
+              ? null
+              : Location(center.latitude, center.longitude),
+          radius: center == null ? null : 10000);
+
+      showDetailPlace(p.placeId);
+    } catch (e) {
+      return;
+    }
+  }
+  //End map search Area
 
   // |---------------------- Medicine List
 
@@ -895,7 +959,15 @@ class _HomepageState extends State<Homepage> {
       ],
 
       // Index 4 : Hospital
-      <IconButton>[],
+      <IconButton>[
+        IconButton(
+          icon: Icon(Icons.search),
+          color: color,
+          onPressed: () {
+            _handlePressButton();
+          },
+        ),
+      ],
     ];
 
     List<Widget> pages = <Widget>[
