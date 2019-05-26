@@ -140,16 +140,6 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                   }
                 },
               ),
-              TextFormField(
-                controller: _controllerDescription,
-                maxLines: 4,
-                decoration: InputDecoration(labelText: 'Description'),
-                validator: (String text) {
-                  if (text.isEmpty) {
-                    return 'Please fill description';
-                  }
-                },
-              ),
               DropdownButton(
                 isExpanded: true,
                 value: this._currentMedicineType,
