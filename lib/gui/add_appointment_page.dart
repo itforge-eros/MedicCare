@@ -30,8 +30,10 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
       TextEditingController();
   static final TextEditingController _controllerHospital =
       TextEditingController();
-  Doctor _currentDoctor;
+  String _currentDoctor;
   DateTime _currentDateTime;
+
+  Future<List<Doctor>> _getDoctors;
 
   void clearFields() {
     _controllerTitle.text = '';
@@ -45,6 +47,8 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
   void initState() {
     super.initState();
     this.clearFields();
+
+    this._getDoctors = FirebaseUtils.getDoctors();
   }
 
   @override
@@ -80,53 +84,67 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                 maxLines: 4,
                 decoration: InputDecoration(labelText: 'Description'),
               ),
-              DropdownButton(
-                isExpanded: true,
-                value: this._currentDoctor,
-                items:
-                    // widget._user.doctorList
-                    //         .map(
-                    //           (e) => DropdownMenuItem(
-                    //                 value: e,
-                    //                 child: Row(
-                    //                   children: <Widget>[
-                    //                     Icon(
-                    //                       Icons.person,
-                    //                       color: Theme.of(context).primaryColor,
-                    //                     ),
-                    //                     Text(' ' + e.prefix + ' ' + e.firstName + ' ' + e.lastName),
-                    //                   ],
-                    //                 ),
-                    //               ),
-                    //         )
-                    //         .toList() +
-                    [
-                  DropdownMenuItem(
-                    value: null,
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.person_outline,
-                          color: Colors.grey,
-                        ),
-                        Text(' Unspecified'),
-                      ],
-                    ),
-                  ),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    this._currentDoctor = value;
-                  });
-                },
-              ),
+              FutureBuilder(
+                  future: _getDoctors,
+                  builder: (_, doctors) {
+                    if (doctors.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: Text('Loading...'),
+                      );
+                    } else if (doctors.connectionState ==
+                        ConnectionState.done) {
+                      return DropdownButton(
+                        isExpanded: true,
+                        value: null,
+                        items: List<DropdownMenuItem>.from(doctors.data.map(
+                              (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.person,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        Text(' ' +
+                                            e.prefix +
+                                            ' ' +
+                                            e.firstName +
+                                            ' ' +
+                                            e.lastName),
+                                      ],
+                                    ),
+                                  ),
+                            )) +
+                            [
+                              DropdownMenuItem(
+                                value: null,
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.person_outline,
+                                      color: Colors.grey,
+                                    ),
+                                    Text(' Unspecified'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                        onChanged: (value) {
+                          setState(() {
+                            this._currentDoctor = value.id;
+                            _controllerHospital.text = value.hospital;
+                          });
+                        },
+                      );
+                    }
+                  }),
               TextFormField(
                 controller: _controllerHospital,
                 decoration: InputDecoration(
                   labelText: 'Hospital',
                 ),
                 validator: (text) {
-                  if (this._currentDoctor == null && text.trim().isEmpty) {
+                  if (text.trim().isEmpty) {
                     return 'Please fill hospital';
                   }
                 },
@@ -164,9 +182,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                       title: _controllerTitle.text,
                       description: _controllerDescription.text,
                       doctor: this._currentDoctor,
-                      hospital: (_controllerHospital.text.trim().isNotEmpty)
-                          ? _controllerHospital.text
-                          : this._currentDoctor.hospital,
+                      hospital: _controllerHospital.text,
                       dateTime: this._currentDateTime,
                     );
 

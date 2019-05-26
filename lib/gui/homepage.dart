@@ -311,12 +311,21 @@ class _HomepageState extends State<Homepage> {
 
     List<Appointment> comingAppointments = List();
     List<Appointment> completedAppointments = List();
+    List<Appointment> skipAppointments = List();
 
     appointments.forEach((a) {
-      if (a.status == 0) {
-        comingAppointments.add(a);
-      } else {
-        completedAppointments.add(a);
+      switch (a.status) {
+        case 0:
+          comingAppointments.add(a);
+
+          break;
+        case 1:
+          completedAppointments.add(a);
+
+          break;
+        case 2:
+          skipAppointments.add(a);
+          break;
       }
     });
 
@@ -366,28 +375,26 @@ class _HomepageState extends State<Homepage> {
       });
     }
 
-    if (this._user.containsSkippedAppointments()) {
+    if (skipAppointments.length > 0) {
       list.add(getSectionDivider('Skipped Appointments'));
-      this._user.appointmentList.forEach((e) {
-        if (e.status == 2) {
-          list.add(
-            getCustomCard(
-              name: e.title,
-              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-              icon: Icons.local_hospital,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AppointmentPage(
-                          appointment: e,
-                        ),
-                  ),
-                );
-              },
-            ),
-          );
-        }
+      skipAppointments.forEach((e) {
+        list.add(
+          getCustomCard(
+            name: e.title,
+            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+            icon: Icons.local_hospital,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AppointmentPage(
+                        appointment: e,
+                      ),
+                ),
+              );
+            },
+          ),
+        );
       });
     }
 
@@ -397,20 +404,22 @@ class _HomepageState extends State<Homepage> {
   // GUI Method: Returns GUI of appointment tab
   Container getAppointmentListPage() {
     return Container(
-        child: FutureBuilder(
-            future: _getAppointments,
-            builder: (_, appointments) {
-              if (appointments.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: Text('Loading...'),
-                );
-              } else if (appointments.connectionState == ConnectionState.done) {
-                return ListView(
-                  shrinkWrap: true,
-                  children: totalAppoint(appointments.data),
-                );
-              }
-            }));
+      child: FutureBuilder(
+        future: _getAppointments,
+        builder: (_, appointments) {
+          if (appointments.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Text('Loading...'),
+            );
+          } else if (appointments.connectionState == ConnectionState.done) {
+            return ListView(
+              shrinkWrap: true,
+              children: totalAppoint(appointments.data),
+            );
+          }
+        },
+      ),
+    );
   }
 
   // |---------------------- end Appointment List
@@ -418,119 +427,189 @@ class _HomepageState extends State<Homepage> {
   // |-------------------------- Overview
 
   // Data Method: Returns list of coming appointments
-  List<Widget> getComingAppointmentList() {
-    List<Widget> list = List<Widget>();
-    this._user.appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
-    if (this._user.containsComingAppointments()) {
-      list.add(
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: textTitle(title: 'Coming Appointments'),
-        ),
-      );
+  List<Widget> getComingAppointment(List<Appointment> appointments) {
+    List<Widget> list = [];
 
-      this._user.appointmentList.forEach((e) {
-        if (e.status == 0) {
-          String formattedDate =
-              DateFormat('MMM dd | kk:mm').format(e.dateTime);
-          list.add(
-            getCustomCard(
-              name: e.title,
-              subtitle: formattedDate,
-              // subtitle: e.dateTime.toString().replaceAll(':00.000', '').split(' ').join('\n'),
-              // subtitle: e.dateTime.toString(),
-              icon: Icons.local_hospital,
-              trailing: (DateTime(
-                            DateTime.now().year,
-                            DateTime.now().month,
-                            DateTime.now().day,
-                          ).compareTo(DateTime(
-                            e.dateTime.year,
-                            e.dateTime.month,
-                            e.dateTime.day,
-                          )) >=
-                          0 ||
-                      true) // TODO: Reconsider checkable condition and remove || true
-                  ? DropdownButtonHideUnderline(
-                      child: DropdownButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        items: <DropdownMenuItem>[
-                          DropdownMenuItem(
-                            value: 'view',
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.calendar_today,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                Text('  View'),
-                              ],
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: 'check',
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.check,
-                                  color: Colors.green,
-                                ),
-                                Text('  Check'),
-                              ],
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: 'skip',
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.cancel,
-                                  color: Colors.red,
-                                ),
-                                Text('  Skip'),
-                              ],
-                            ),
-                          ),
-                        ],
-                        onChanged: (dynamic value) {
-                          setState(
-                            () {
-                              if (value == 'check') {
-                                e.status = 1;
-                              } else if (value == 'skip') {
-                                e.status = 2;
-                              } else if (value == 'view') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AppointmentPage(
-                                          appointment: e,
-                                        ),
-                                  ),
-                                );
-                              }
-                            },
-                          );
-                        },
+    appointments.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
+    List<Appointment> comingAppointments = List();
+
+    appointments.forEach((a) {
+      switch (a.status) {
+        case 0:
+          comingAppointments.add(a);
+          break;
+      }
+    });
+
+    if (comingAppointments.length > 0) {
+      list.add(getSectionDivider('Coming Appointments'));
+      comingAppointments.forEach((e) {
+        String formattedDate = DateFormat('MMM dd | kk:mm').format(e.dateTime);
+        list.add(
+          getCustomCard(
+            name: e.title,
+            subtitle: formattedDate,
+            // subtitle: e.dateTime.toString().replaceAll(':00.000', '').split(' ').join('\n'),
+            // subtitle: e.dateTime.toString(),
+            icon: Icons.local_hospital,
+            trailing: (DateTime(
+                          DateTime.now().year,
+                          DateTime.now().month,
+                          DateTime.now().day,
+                        ).compareTo(DateTime(
+                          e.dateTime.year,
+                          e.dateTime.month,
+                          e.dateTime.day,
+                        )) >=
+                        0 ||
+                    true) // TODO: Reconsider checkable condition and remove || true
+                ? DropdownButtonHideUnderline(
+                    child: DropdownButton(
+                      icon: Icon(
+                        Icons.edit,
+                        color: Theme.of(context).primaryColor,
                       ),
-                    )
-                  : Icon(Icons.edit, color: Colors.grey),
-            ),
-          );
-        }
+                      items: <DropdownMenuItem>[
+                        DropdownMenuItem(
+                          value: 'view',
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.calendar_today,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Text('  View'),
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'check',
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.check,
+                                color: Colors.green,
+                              ),
+                              Text('  Check'),
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'skip',
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.cancel,
+                                color: Colors.red,
+                              ),
+                              Text('  Skip'),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onChanged: (dynamic value) {
+                        setState(
+                          () {
+                            if (value == 'check') {
+                              e.status = 1;
+                            } else if (value == 'skip') {
+                              e.status = 2;
+                            } else if (value == 'view') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AppointmentPage(
+                                        appointment: e,
+                                      ),
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  )
+                : Icon(Icons.edit, color: Colors.grey),
+          ),
+        );
       });
     }
 
     return list;
   }
 
+  Container getComingAppointmentList() {
+    return Container(
+      child: FutureBuilder(
+        future: _getAppointments,
+        builder: (_, appointments) {
+          if (appointments.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Text('Loading...'),
+            );
+          } else if (appointments.connectionState == ConnectionState.done) {
+            return ListView(
+              shrinkWrap: true,
+              children: getComingAppointment(appointments.data),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  List<Widget> getRemainingMedicine(List<Medicine> medicines) {
+    List<Widget> list = [
+      Padding(
+        padding: const EdgeInsets.all(20),
+        child: TextField(
+          onChanged: (value) {},
+          decoration: InputDecoration(
+            labelText: 'Search',
+            hintText: 'Search',
+            prefixIcon: Icon(Icons.search),
+          ),
+        ),
+      ),
+    ];
+
+    List<Medicine> remainingMedicine = List();
+
+    medicines.forEach((m) {
+      if (m.remainingAmount > 0) {
+        remainingMedicine.add(m);
+      }
+    });
+
+    if (remainingMedicine.length > 0) {
+      // TODO: Refactor Overview Remaining Dose
+    }
+
+    return list;
+  }
+
   // Data Method: Returns list of remaining indose
-  List<Widget> getRemainingIndoseList() {
+  Container getRemainingIndoseList() {
     List<Widget> list = List<Widget>();
+
+    return Container(
+      child: FutureBuilder(
+          future: _getMedicines,
+          builder: (_, medicines) {
+            if (medicines.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: Text('Loading...'),
+              );
+            } else if (medicines.connectionState == ConnectionState.done) {
+              return ListView(
+                shrinkWrap: true,
+                children: getRemainingMedicine(medicines.data),
+              );
+            }
+          }),
+    );
 
     if (this._user.containsRemainingMedicine()) {
       list.add(
@@ -637,23 +716,22 @@ class _HomepageState extends State<Homepage> {
       });
     }
 
-    return list;
+    // return list;
   }
 
   // GUI Method: Returns GUI of overview tab
   Widget getOverviewPage() {
-    if (!this._user.containsComingAppointments() &&
-        !this._user.containsRemainingMedicine()) {
-      return getSectionDivider(
-          'Your overview feed is currently empty.\nAdding a medicine or an appointment will show them up here!');
-    }
+    // if (!this._user.containsComingAppointments() &&
+    //     !this._user.containsRemainingMedicine()) {
+    //   return getSectionDivider(
+    //       'Your overview feed is currently empty.\nAdding a medicine or an appointment will show them up here!');
+    // }
 
-    return ListView(
-      shrinkWrap: true,
-      children: getComingAppointmentList() +
-          [SizedBox(height: 20.0)] +
-          getRemainingIndoseList(),
-    );
+    return ListView(shrinkWrap: true, children: <Widget>[
+      getComingAppointmentList(),
+      SizedBox(height: 20.0),
+      // getRemainingIndoseList()
+    ]);
   }
 
   // |----------------------end Overview
@@ -734,115 +812,6 @@ class _HomepageState extends State<Homepage> {
     _getAppointments = FirebaseUtils.getAppointments();
 
     this._currentIndex = widget.initialIndex;
-
-    // NOTES: This is a mocked-up data used in testing.
-    this._user = User(
-      id: '',
-      email: 'teerapat_saint@hotmail.com',
-      firstName: 'Teerapat',
-      lastName: 'Kraisrisirikul',
-      gender: 'male',
-      bloodGroup: 'O+',
-      birthDate: DateTime(1999, 6, 15),
-      height: 172.0,
-      weight: 53.0,
-      image: null,
-      medicineList: <Medicine>[
-        Medicine(
-          id: '1',
-          name: 'Dibendryl',
-          description: 'Cures coughing.',
-          type: 'tablet',
-          image: null,
-          doseAmount: 1,
-          totalAmount: 10,
-          medicineSchedule: MedicineSchedule(
-            time: [true, false, false, true],
-            day: [true, true, true, true, true, true, true],
-            isBeforeMeal: false,
-          ),
-          dateAdded: DateTime(2019, 5, 23, 9, 0),
-        ),
-        Medicine(
-          id: '2',
-          name: 'Isotetronoine',
-          description:
-              'Cures pimples. Do not take this medicine during or within 1 month before pregnancy.',
-          type: 'tablet',
-          image: null,
-          doseAmount: 1,
-          totalAmount: 10,
-          medicineSchedule: MedicineSchedule(
-            time: [false, false, true, false],
-            day: [true, false, true, false, true, false, true],
-            isBeforeMeal: false,
-          ),
-          dateAdded: DateTime(2019, 5, 24, 9, 0),
-        ),
-      ],
-      appointmentList: List<Appointment>(),
-      doctorList: <Doctor>[
-        Doctor(
-          prefix: 'Dr.',
-          firstName: 'Rawit',
-          lastName: 'Lohakachornphan',
-          ward: 'Dentistry',
-          hospital: 'Rawitshie Personal Clinic',
-          phone: '081-XXX-XXXX',
-          notes: '',
-          image: null,
-        ),
-        Doctor(
-          prefix: 'Dr.',
-          firstName: 'Wiput',
-          lastName: 'Pootong',
-          ward: 'Sexual Organs',
-          hospital: 'Wiput\'s Personal Hospital',
-          phone: '081-XXX-XXXX',
-          notes: '',
-          image: null,
-        ),
-      ],
-      hospitalList: List<Hospital>(),
-      userSettings: UserSettings(
-        notificationOn: true,
-        notifyAheadDuration: Duration(minutes: 30),
-        breakfastTime: Duration(hours: 7, minutes: 15),
-        lunchTime: Duration(hours: 12, minutes: 0),
-        dinnerTime: Duration(hours: 19, minutes: 0),
-        sleepTime: Duration(hours: 23, minutes: 0),
-      ),
-    );
-    this._user.addAppointment(
-          Appointment(
-            title: 'Dentist Appointment',
-            description: 'Weekly check',
-            doctor: this._user.doctorList[0],
-            hospital: 'Rawitshie Personal Clinic',
-            dateTime: DateTime(2019, 5, 23, 11, 0),
-            status: 0,
-          ),
-        );
-    this._user.addAppointment(
-          Appointment(
-            title: 'Surgery Appointment',
-            description: 'Weekly check',
-            doctor: this._user.doctorList[0],
-            hospital: 'Rawitshie Personal Clinic',
-            dateTime: DateTime(2019, 5, 25, 10, 0),
-            status: 0,
-          ),
-        );
-    this._user.addAppointment(
-          Appointment(
-            title: 'Coughing Cure',
-            description: 'Weekly check',
-            doctor: this._user.doctorList[0],
-            hospital: 'Rawitshie Personal Clinic',
-            dateTime: DateTime(2019, 5, 27, 10, 0),
-            status: 0,
-          ),
-        );
   }
 
   @override

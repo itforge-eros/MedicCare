@@ -34,8 +34,10 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
       TextEditingController();
   static final TextEditingController _controllerHospital =
       TextEditingController();
-  Doctor _currentDoctor;
+  String _currentDoctor;
   DateTime _currentDateTime;
+
+  Future<List<Doctor>> _getDoctors;
 
   void clearFields() {
     _controllerTitle.text = '';
@@ -60,6 +62,8 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
     super.initState();
     this.clearFields();
     this.loadFields();
+
+    this._getDoctors = FirebaseUtils.getDoctors();
   }
 
   @override
@@ -114,46 +118,60 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
                 maxLines: 4,
                 decoration: InputDecoration(labelText: 'Description'),
               ),
-              DropdownButton(
-                isExpanded: true,
-                value: this._currentDoctor,
-                items:
-                    //  widget._user.doctorList
-                    //         .map(
-                    //           (e) => DropdownMenuItem(
-                    //                 value: e,
-                    //                 child: Row(
-                    //                   children: <Widget>[
-                    //                     Icon(
-                    //                       Icons.person,
-                    //                       color: Theme.of(context).primaryColor,
-                    //                     ),
-                    //                     Text(' ' + e.prefix + ' ' + e.firstName + ' ' + e.lastName),
-                    //                   ],
-                    //                 ),
-                    //               ),
-                    //         )
-                    //         .toList() +
-                    [
-                  DropdownMenuItem(
-                    value: null,
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.person_outline,
-                          color: Colors.grey,
-                        ),
-                        Text(' Unspecified'),
-                      ],
-                    ),
-                  ),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    this._currentDoctor = value;
-                  });
-                },
-              ),
+              FutureBuilder(
+                  future: _getDoctors,
+                  builder: (_, doctors) {
+                    if (doctors.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: Text('Loading...'),
+                      );
+                    } else if (doctors.connectionState ==
+                        ConnectionState.done) {
+                      return DropdownButton(
+                        isExpanded: true,
+                        value: null,
+                        items: List<DropdownMenuItem>.from(doctors.data.map(
+                              (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.person,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        Text(' ' +
+                                            e.prefix +
+                                            ' ' +
+                                            e.firstName +
+                                            ' ' +
+                                            e.lastName),
+                                      ],
+                                    ),
+                                  ),
+                            )) +
+                            [
+                              DropdownMenuItem(
+                                value: null,
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.person_outline,
+                                      color: Colors.grey,
+                                    ),
+                                    Text(' Unspecified'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                        onChanged: (value) {
+                          setState(() {
+                            this._currentDoctor = value.id;
+                            _controllerHospital.text = value.hospital;
+                          });
+                        },
+                      );
+                    }
+                  }),
               TextFormField(
                 controller: _controllerHospital,
                 decoration: (this._currentDoctor == null)
@@ -204,10 +222,7 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
                     widget._appointment.description =
                         _controllerDescription.text;
                     widget._appointment.doctor = this._currentDoctor;
-                    widget._appointment.hospital =
-                        (_controllerHospital.text.trim().isNotEmpty)
-                            ? _controllerHospital.text
-                            : this._currentDoctor.hospital;
+                    widget._appointment.hospital = _controllerHospital.text;
                     widget._appointment.dateTime = this._currentDateTime;
 
                     FirebaseUtils.updateAppointment(widget._appointment);
