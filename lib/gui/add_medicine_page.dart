@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
 import 'package:mediccare/core/user.dart';
+import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
 import 'package:mediccare/util/firebase_utils.dart';
@@ -487,7 +488,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
 
                       FirebaseUtils.addMedicine(medicine);
 
-                      Navigator.pop(context);
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Homepage(
+                                    initialIndex: 0,
+                                  )),
+                          ModalRoute.withName('LoginPage'));
                     }
                   }
                 },
