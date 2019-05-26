@@ -55,7 +55,10 @@ class Medicine {
     this._remainingAmount = map['totalAmount'];
     this._skippedTimes = map['skippedTimes'];
 
-    this._medicineSchedule = MedicineSchedule.fromMap(map['medicineSchedule']);
+    Map<String, dynamic> medicineSchedule =
+        new Map<String, dynamic>.from(map['medicineSchedule']);
+
+    this._medicineSchedule = MedicineSchedule.fromMap(medicineSchedule);
   }
 
   String get id => this._id;

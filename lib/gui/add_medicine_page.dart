@@ -6,18 +6,18 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
-import 'package:mediccare/core/user.dart';
+import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
+import 'package:mediccare/util/api_util.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
 class AddMedicinePage extends StatefulWidget {
-  AddMedicinePage();
-
   @override
   State<StatefulWidget> createState() {
     return _AddMedicinePageState();
@@ -105,12 +105,38 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 tooltip: 'Pick Image',
                 child: Icon(Icons.add_a_photo),
               ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Medicine Name'),
-                controller: _controllerMedicineName,
+              TypeAheadFormField(
+                textFieldConfiguration: TextFieldConfiguration(
+                  controller: _controllerMedicineName,
+                  decoration: InputDecoration(labelText: 'Medicine Name'),
+                ),
+                suggestionsCallback: (String pattern) async {
+                  return await APIUtil.getMedicineNameList(pattern: pattern);
+                },
+                itemBuilder: (context, suggestion) {
+                  return ListTile(
+                    title: Text(suggestion),
+                  );
+                },
+                transitionBuilder: (context, suggestionsBox, controller) {
+                  return suggestionsBox;
+                },
+                onSuggestionSelected: (suggestion) {
+                  _controllerMedicineName.text = suggestion;
+                },
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill medicine name';
+                  }
+                },
+              ),
+              TextFormField(
+                controller: _controllerDescription,
+                maxLines: 4,
+                decoration: InputDecoration(labelText: 'Description'),
+                validator: (String text) {
+                  if (text.isEmpty) {
+                    return 'Please fill description';
                   }
                 },
               ),
@@ -487,7 +513,13 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
 
                       FirebaseUtils.addMedicine(medicine);
 
-                      Navigator.pop(context);
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Homepage(
+                                    initialIndex: 0,
+                                  )),
+                          ModalRoute.withName('LoginPage'));
                     }
                   }
                 },
