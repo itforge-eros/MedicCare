@@ -60,6 +60,7 @@ class Hospital {
     return <String, dynamic>{
       'id': this._id,
       'name': this._name,
+      'placeId': this._placeId,
       'address': this._address,
       'notes': this._notes,
       'image': this._image, //TODO: Check Image properties
