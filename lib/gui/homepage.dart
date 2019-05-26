@@ -353,13 +353,23 @@ class _HomepageState extends State<Homepage> {
       ));
     } else {
       searchListView(medicines);
-      searchMed.forEach((m) {
-        if (m.remainingAmount == 0) {
-          emptyMedicine.add(m);
-        } else {
-          remainingMedicine.add(m);
-        }
-      });
+      if (searchMed != null) {
+        searchMed.forEach((m) {
+          if (m.remainingAmount == 0) {
+            emptyMedicine.add(m);
+          } else {
+            remainingMedicine.add(m);
+          }
+        });
+      } else {
+        medicines.forEach((m) {
+          if (m.remainingAmount == 0) {
+            emptyMedicine.add(m);
+          } else {
+            remainingMedicine.add(m);
+          }
+        });
+      }
 
       if (remainingMedicine.length > 0) {
         list.add(getSectionDivider('Remaining Medicines'));
@@ -437,7 +447,7 @@ class _HomepageState extends State<Homepage> {
   // |---------------------- Appointment List
 
   // Data Method: Returns a list of appointments
-  List<Widget> getAppointmentList(List<Appointment> appointmentList) {
+  List<Widget> getAppointmentList(List<Appointment> appointments) {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
@@ -456,96 +466,114 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    appointments.sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
-    List<Appointment> comingAppointmentList = List<Appointment>();
-    List<Appointment> completedAppointmentList = List<Appointment>();
-    List<Appointment> skipAppointmentList = List<Appointment>();
+    List<Appointment> comingAppointments = List();
+    List<Appointment> completedAppointments = List();
+    List<Appointment> skipAppointments = List();
 
-    appointmentList.forEach((a) {
+    appointments.forEach((a) {
       switch (a.status) {
         case 0:
-          comingAppointmentList.add(a);
+          comingAppointments.add(a);
+
           break;
         case 1:
-          completedAppointmentList.add(a);
+          completedAppointments.add(a);
+
           break;
         case 2:
-          skipAppointmentList.add(a);
+          skipAppointments.add(a);
           break;
       }
     });
-
-    if (comingAppointmentList.length > 0) {
-      list.add(getSectionDivider('Coming Appointment'));
-      comingAppointmentList.forEach((e) {
-        list.add(
-          getCustomCard(
-            name: e.title,
-            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-            icon: Icons.local_hospital,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditAppointmentPage(
-                        appointment: e,
-                      ),
-                ),
-              );
-            },
+    if (appointments.length == 0) {
+      list.add(Center(
+          child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Image.asset('assets/images/note-grey.png', height: 200),
           ),
-        );
-      });
-    }
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30.0),
+            child: Text(
+              'Start adding your appointment now!',
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
+            ),
+          )
+        ],
+      )));
+    } else {
+      if (comingAppointments.length > 0) {
+        list.add(getSectionDivider('Coming Appointments'));
+        comingAppointments.forEach((e) {
+          list.add(
+            getCustomCard(
+              name: e.title,
+              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+              icon: Icons.local_hospital,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditAppointmentPage(
+                          appointment: e,
+                        ),
+                  ),
+                );
+              },
+            ),
+          );
+        });
+      }
 
-    if (completedAppointmentList.length > 0) {
-      list.add(getSectionDivider('Completed Appointment'));
-      completedAppointmentList.forEach((e) {
-        list.add(
-          getCustomCard(
-            name: e.title,
-            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-            icon: Icons.local_hospital,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditAppointmentPage(
-                        appointment: e,
-                      ),
-                ),
-              );
-            },
-          ),
-        );
-      });
-    }
+      if (completedAppointments.length > 0) {
+        list.add(getSectionDivider('Completed Appointments'));
+        completedAppointments.forEach((e) {
+          list.add(
+            getCustomCard(
+              name: e.title,
+              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+              icon: Icons.local_hospital,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditAppointmentPage(
+                          appointment: e,
+                        ),
+                  ),
+                );
+              },
+            ),
+          );
+        });
+      }
 
-    if (skipAppointmentList.length > 0) {
-      list.add(getSectionDivider('Skipped Appointment'));
-      skipAppointmentList.forEach((e) {
-        list.add(
-          getCustomCard(
-            name: e.title,
-            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-            icon: Icons.local_hospital,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AppointmentPage(
-                        appointment: e,
-                      ),
-                ),
-              );
-            },
-          ),
-        );
-      });
+      if (skipAppointments.length > 0) {
+        list.add(getSectionDivider('Skipped Appointments'));
+        skipAppointments.forEach((e) {
+          list.add(
+            getCustomCard(
+              name: e.title,
+              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+              icon: Icons.local_hospital,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AppointmentPage(
+                          appointment: e,
+                        ),
+                  ),
+                );
+              },
+            ),
+          );
+        });
+      }
     }
-
-    list.add(SizedBox(height: 40.0));
 
     return list;
   }
@@ -558,7 +586,7 @@ class _HomepageState extends State<Homepage> {
         builder: (_, appointments) {
           if (appointments.connectionState == ConnectionState.waiting) {
             return Center(
-              child: Text('Loading...'),
+              child: CircularProgressIndicator(),
             );
           } else if (appointments.connectionState == ConnectionState.done) {
             return ListView(
