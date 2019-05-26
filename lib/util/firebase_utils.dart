@@ -112,11 +112,11 @@ class FirebaseUtils {
 
       doctor.id = d.documentID;
 
-      StorageReference firebaseStorageRef = FirebaseStorage.instance
-          .ref()
-          .child('$userId/doctor/${d.documentID}');
-
       try {
+        StorageReference firebaseStorageRef = FirebaseStorage.instance
+            .ref()
+            .child('$userId/doctor/${d.documentID}');
+
         String imageUrl = await firebaseStorageRef.getDownloadURL();
 
         doctor.image = imageUrl;
@@ -146,12 +146,16 @@ class FirebaseUtils {
 
     doctor.id = doctorId;
 
-    StorageReference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('$userId/doctor/$doctorId');
+    try {
+      StorageReference firebaseStorageRef =
+          FirebaseStorage.instance.ref().child('$userId/doctor/$doctorId');
 
-    String imageUrl = await firebaseStorageRef.getDownloadURL();
+      String imageUrl = await firebaseStorageRef.getDownloadURL();
 
-    doctor.image = imageUrl;
+      doctor.image = imageUrl;
+    } catch (e) {
+      doctor.image = null;
+    }
 
     return doctor;
   }
@@ -336,11 +340,11 @@ class FirebaseUtils {
 
       medicine.id = d.documentID;
 
-      StorageReference firebaseStorageRef = FirebaseStorage.instance
-          .ref()
-          .child('$userId/medicine/${d.documentID}');
-
       try {
+        StorageReference firebaseStorageRef = FirebaseStorage.instance
+            .ref()
+            .child('$userId/medicine/${d.documentID}');
+
         String imageUrl = await firebaseStorageRef.getDownloadURL();
 
         medicine.image = imageUrl;

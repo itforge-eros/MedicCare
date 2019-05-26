@@ -95,46 +95,54 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                       );
                     } else if (doctors.connectionState ==
                         ConnectionState.done) {
+                      List<DropdownMenuItem> items = List();
+
+                      items.add(DropdownMenuItem(
+                        value: null,
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.person_outline,
+                              color: Colors.grey,
+                            ),
+                            Text(' Unspecified'),
+                          ],
+                        ),
+                      ));
+
+                      doctors.data.map((e) {
+                        items.add(DropdownMenuItem(
+                          value: e,
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.person,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Text(' ' +
+                                  e.prefix +
+                                  ' ' +
+                                  e.firstName +
+                                  ' ' +
+                                  e.lastName),
+                            ],
+                          ),
+                        ));
+                      });
+
                       return DropdownButton(
                         isExpanded: true,
-                        value: null,
-                        items: List<DropdownMenuItem>.from(doctors.data.map(
-                              (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.person,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        Text(' ' +
-                                            e.prefix +
-                                            ' ' +
-                                            e.firstName +
-                                            ' ' +
-                                            e.lastName),
-                                      ],
-                                    ),
-                                  ),
-                            )) +
-                            [
-                              DropdownMenuItem(
-                                value: null,
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.person_outline,
-                                      color: Colors.grey,
-                                    ),
-                                    Text(' Unspecified'),
-                                  ],
-                                ),
-                              ),
-                            ],
+                        value: this._currentDoctor,
+                        items: items,
                         onChanged: (value) {
                           setState(() {
-                            this._currentDoctor = value.id;
-                            _controllerHospital.text = value.hospital;
+                            if (value != null) {
+                              this._currentDoctor = value.id;
+                              _controllerHospital.text = value.hospital;
+                            } else {
+                              this._currentDoctor = value;
+                              _controllerHospital.text = "";
+                            }
                           });
                         },
                       );
