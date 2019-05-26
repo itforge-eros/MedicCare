@@ -61,7 +61,7 @@ class _HomepageState extends State<Homepage> {
   Set<Medicine> searchMed;
   bool isMedSearch;
   String searchMedText;
-  
+
   Set<Doctor> searchDoc;
   bool isDocSearch;
   String searchDocText;
@@ -267,12 +267,10 @@ class _HomepageState extends State<Homepage> {
       return;
     }
   }
-  //End map search Area
+  // End map search Area
 
   // |---------------------- Medicine List
-
-  // Data Method: Returns a list of medicine
-  Widget searchListView(List<Medicine> medicines) {
+  void searchListView(List<Medicine> medicines) {
     searchMed = new Set<Medicine>();
     for (int i = 0; i < medicines.length; i++) {
       var item = medicines[i].name;
@@ -285,6 +283,7 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
+  // Data Method: Returns a list of medicine
   List<Widget> totalMedic(List<Medicine> medicines) {
     List<Widget> list = [
       Padding(
@@ -377,6 +376,8 @@ class _HomepageState extends State<Homepage> {
       });
     }
 
+    list.add(SizedBox(height: 40.0));
+
     return list;
   }
 
@@ -404,7 +405,7 @@ class _HomepageState extends State<Homepage> {
   // |---------------------- Appointment List
 
   // Data Method: Returns a list of appointments
-  List<Widget> getAppointmentList(List<Appointment> appointments) {
+  List<Widget> getAppointmentList(List<Appointment> appointmentList) {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
@@ -423,31 +424,29 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    appointments.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
-    List<Appointment> comingAppointments = List();
-    List<Appointment> completedAppointments = List();
-    List<Appointment> skipAppointments = List();
+    List<Appointment> comingAppointmentList = List<Appointment>();
+    List<Appointment> completedAppointmentList = List<Appointment>();
+    List<Appointment> skipAppointmentList = List<Appointment>();
 
-    appointments.forEach((a) {
+    appointmentList.forEach((a) {
       switch (a.status) {
         case 0:
-          comingAppointments.add(a);
-
+          comingAppointmentList.add(a);
           break;
         case 1:
-          completedAppointments.add(a);
-
+          completedAppointmentList.add(a);
           break;
         case 2:
-          skipAppointments.add(a);
+          skipAppointmentList.add(a);
           break;
       }
     });
 
-    if (comingAppointments.length > 0) {
-      list.add(getSectionDivider('Coming Appointments'));
-      comingAppointments.forEach((e) {
+    if (comingAppointmentList.length > 0) {
+      list.add(getSectionDivider('Coming Appointment'));
+      comingAppointmentList.forEach((e) {
         list.add(
           getCustomCard(
             name: e.title,
@@ -468,9 +467,9 @@ class _HomepageState extends State<Homepage> {
       });
     }
 
-    if (completedAppointments.length > 0) {
-      list.add(getSectionDivider('Completed Appointments'));
-      completedAppointments.forEach((e) {
+    if (completedAppointmentList.length > 0) {
+      list.add(getSectionDivider('Completed Appointment'));
+      completedAppointmentList.forEach((e) {
         list.add(
           getCustomCard(
             name: e.title,
@@ -491,9 +490,9 @@ class _HomepageState extends State<Homepage> {
       });
     }
 
-    if (skipAppointments.length > 0) {
-      list.add(getSectionDivider('Skipped Appointments'));
-      skipAppointments.forEach((e) {
+    if (skipAppointmentList.length > 0) {
+      list.add(getSectionDivider('Skipped Appointment'));
+      skipAppointmentList.forEach((e) {
         list.add(
           getCustomCard(
             name: e.title,
@@ -513,6 +512,8 @@ class _HomepageState extends State<Homepage> {
         );
       });
     }
+
+    list.add(SizedBox(height: 40.0));
 
     return list;
   }
@@ -543,25 +544,25 @@ class _HomepageState extends State<Homepage> {
   // |-------------------------- Overview
 
   // Data Method: Returns list of coming appointments
-
   List<Widget> getComingAppointmentList(List<Appointment> appointmentList) {
     List<Widget> list = List<Widget>();
 
     appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
-    List<Appointment> comingAppointments = List();
+    List<Appointment> comingAppointmentList = List();
 
     appointmentList.forEach((a) {
       switch (a.status) {
         case 0:
-          comingAppointments.add(a);
+          comingAppointmentList.add(a);
           break;
       }
     });
 
-    if (comingAppointments.length > 0) {
-      list.add(getSectionDivider('Coming Appointments'));
-      comingAppointments.forEach((e) {
+    if (comingAppointmentList.length > 0) {
+      list.add(textTitle(title: 'Coming Appointments'));
+      list.add(SizedBox(height: 20.0));
+      comingAppointmentList.forEach((e) {
         String formattedDate = DateFormat('MMM dd | kk:mm').format(e.dateTime);
         list.add(
           getCustomCard(
@@ -655,6 +656,7 @@ class _HomepageState extends State<Homepage> {
     return list;
   }
 
+  // GUI Method: Returns GUI of coming appointments (Part of overview)
   Container getComingAppointmentListWidget() {
     return Container(
       child: FutureBuilder(
@@ -674,6 +676,7 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
+  // Data Method: Returns list of remaining indose
   List<Widget> getRemainingIndoseList(List<Medicine> medicineList) {
     List<Widget> list = List<Widget>();
 
@@ -695,7 +698,10 @@ class _HomepageState extends State<Homepage> {
 
     if (medicineOverviewDataList.length > 0) {
       list.add(
-        Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose')),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+          child: textTitle(title: 'Remaining Indose'),
+        ),
       );
 
       List<DateTime> dateList = List<DateTime>();
@@ -790,7 +796,7 @@ class _HomepageState extends State<Homepage> {
     return list;
   }
 
-  // Data Method: Returns list of remaining indose
+  // GUI Method: Returns GUI of remaining indose (Part of overview)
   Container getRemainingIndoseListWidget() {
     return Container(
       child: FutureBuilder(
@@ -820,7 +826,8 @@ class _HomepageState extends State<Homepage> {
     return ListView(shrinkWrap: true, children: <Widget>[
       getComingAppointmentListWidget(),
       SizedBox(height: 20.0),
-      getRemainingIndoseListWidget()
+      getRemainingIndoseListWidget(),
+      SizedBox(height: 40.0),
     ]);
   }
 
@@ -901,11 +908,12 @@ class _HomepageState extends State<Homepage> {
       ));
     }
 
+    list.add(SizedBox(height: 40.0));
+
     return list;
   }
 
   // GUI Method: Returns GUI of doctor tab
-
   Container getDoctorListPage() {
     return Container(
       child: FutureBuilder(
