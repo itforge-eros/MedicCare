@@ -14,9 +14,11 @@ class APIUtil {
     }
   }
 
-  static Future<dynamic> getMedicineNameList() async {
+  static Future<dynamic> getMedicineNameList({String pattern = ''}) async {
     List<dynamic> objectList = List<dynamic>(); // Variable: List contains raw objects
-    List<dynamic> resultList = List<dynamic>(); // Variable: List contains string of medicine names
+    List<dynamic> nameList = List<dynamic>(); // Variable: List contains string of medicine names
+    List<dynamic> resultList =
+        List<dynamic>(); // Variable: List contains filtered string of medicine names
 
     // Step #1: Fetch for objects and store them in `objectList`
     await fetchPost().then((value) {
@@ -25,34 +27,52 @@ class APIUtil {
       });
     });
 
-    // Step #2: Add medicine names to `resultList`
+    // Step #2: Add medicine names to `nameList`
     objectList.forEach((e) {
-      if (!resultList.contains(e['medicinalproduct'])) {
-        resultList.add(e['medicinalproduct']);
+      if (!nameList.contains(e['medicinalproduct'].trim())) {
+        nameList.add(e['medicinalproduct'].trim());
       }
     });
 
-    // Step #3: String formatting of medicine names in `resultList`
-    for (int i = 0; i < resultList.length; i++) {
+    // Step #3: String formatting of medicine names in `nameList`
+    for (int i = 0; i < nameList.length; i++) {
       // Step #3.1: Capitalization
-      resultList[i] = resultList[i][0].toUpperCase() + resultList[i].replaceRange(0, 1, '').toLowerCase();
+      nameList[i] = nameList[i][0].toUpperCase() + nameList[i].replaceRange(0, 1, '').toLowerCase();
 
       // Step #3.2: Removes brackets and string in it
-      if (resultList[i].contains('(') && resultList[i].contains(')')) {
-        resultList[i] = resultList[i].replaceRange(
-          resultList[i].indexOf(' ('),
-          resultList[i].indexOf(')') + 1,
+      if (nameList[i].contains('(') && nameList[i].contains(')')) {
+        nameList[i] = nameList[i].replaceRange(
+          nameList[i].indexOf(' ('),
+          nameList[i].indexOf(')') + 1,
           '',
         );
       }
 
       // Step #3.3: Removes the ending dot
-      if (resultList[i][resultList[i].length - 1] == '.') {
-        resultList[i] = resultList[i].replaceRange(resultList[i].length - 1, resultList[i].length, '');
+      if (nameList[i][nameList[i].length - 1] == '.') {
+        nameList[i] = nameList[i].replaceRange(nameList[i].length - 1, nameList[i].length, '');
       }
     }
 
-    // Step #4: Returns `resultList`
+    // Step #4: Filtering
+    if (pattern.trim().isNotEmpty) {
+      nameList.forEach((e) {
+        try {
+          if (e.toLowerCase().contains(pattern.trim().toLowerCase())) {
+            resultList.add(e);
+          }
+        } catch (e) {
+          resultList.add(e);
+        }
+      });
+    } else {
+      resultList = nameList;
+    }
+
+    // Step #5: Sorting
+    resultList.sort((a, b) => a.compareTo(b));
+
+    // Step #6: Returns `resultList`
     return resultList;
   }
 }
