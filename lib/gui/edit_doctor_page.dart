@@ -298,7 +298,6 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                     widget._doctor.phone = _controllerPhone.text;
                     widget._doctor.notes = _controllerNotes.text;
                     // TODO: Implements image adding and loading
-
                     FirebaseUtils.updateDoctor(widget._doctor);
                     Navigator.pop(context);
                   }
