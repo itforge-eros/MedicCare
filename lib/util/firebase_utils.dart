@@ -105,9 +105,13 @@ class FirebaseUtils {
           .ref()
           .child('$userId/doctor/${d.documentID}');
 
-      String imageUrl = await firebaseStorageRef.getDownloadURL();
+      try {
+        String imageUrl = await firebaseStorageRef.getDownloadURL();
 
-      doctor.image = imageUrl;
+        doctor.image = imageUrl;
+      } catch (e) {
+        doctor.image = null;
+      }
 
       doctors.add(doctor);
     });
