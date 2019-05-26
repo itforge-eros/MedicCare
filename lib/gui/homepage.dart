@@ -106,10 +106,23 @@ class _HomepageState extends State<Homepage> {
       subtitle: Row(
         children: <Widget>[
           Icon(Icons.linear_scale, color: Colors.blueAccent),
-          Text(subtitle, style: TextStyle(color: Colors.black54))
+          Flexible(
+            fit: FlexFit.loose,
+            child: Text(
+              subtitle,
+              // "asdfghjklqwertyuiopzxcvbnm,asdfghjk",
+              style: TextStyle(
+                color: Colors.black54,
+              ),
+              overflow: TextOverflow.fade,
+              softWrap: false,
+              maxLines: 1,
+            ),
+          )
         ],
       ),
-      trailing: trailing ?? Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
+      trailing: trailing ??
+          Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
       onTap: onTap ?? () {},
     );
   }
@@ -214,7 +227,11 @@ class _HomepageState extends State<Homepage> {
         month = 'December';
         break;
     }
-    return dateTime.day.toString() + ' ' + month + ' ' + dateTime.year.toString();
+    return dateTime.day.toString() +
+        ' ' +
+        month +
+        ' ' +
+        dateTime.year.toString();
   }
 
   // Map Search Area
@@ -259,7 +276,9 @@ class _HomepageState extends State<Homepage> {
           onError: onError,
           mode: Mode.overlay,
           language: "en",
-          location: center == null ? null : Location(center.latitude, center.longitude),
+          location: center == null
+              ? null
+              : Location(center.latitude, center.longitude),
           radius: center == null ? null : 10000);
 
       print(" this is placeID ${p.placeId}");
@@ -280,7 +299,9 @@ class _HomepageState extends State<Homepage> {
       searchMedText = medicineSearch.text;
       if (searchMedText.trim() == '' || searchMedText == null) {
         searchMed.add(medicines[i]);
-      } else if (item.toLowerCase().contains(searchMedText.toLowerCase().trim())) {
+      } else if (item
+          .toLowerCase()
+          .contains(searchMedText.toLowerCase().trim())) {
         searchMed.add(medicines[i]);
       }
     }
@@ -683,12 +704,13 @@ class _HomepageState extends State<Homepage> {
   List<Widget> getRemainingIndoseList(List<Medicine> medicineList) {
     List<Widget> list = List<Widget>();
 
-    final List<MedicineOverviewData> medicineOverviewDataList = List<MedicineOverviewData>();
+    final List<MedicineOverviewData> medicineOverviewDataList =
+        List<MedicineOverviewData>();
     List<DateTime> temp = List<DateTime>();
 
     for (int i = 0; i < medicineList.length; i++) {
-      temp = medicineList[i]
-          .getMedicineSchedule(UserSettings()); // TODO: Pass object of UserSettings here
+      temp = medicineList[i].getMedicineSchedule(
+          UserSettings()); // TODO: Pass object of UserSettings here
       for (int j = 0; j < temp.length; j++) {
         medicineOverviewDataList.add(MedicineOverviewData(
           medicine: medicineList[i],
@@ -709,8 +731,10 @@ class _HomepageState extends State<Homepage> {
 
       List<DateTime> dateList = List<DateTime>();
       medicineOverviewDataList.forEach((e) {
-        if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
-          dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
+        if (!dateList.contains(
+            DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
+          dateList
+              .add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
         }
       });
 
@@ -729,13 +753,17 @@ class _HomepageState extends State<Homepage> {
         );
 
         medicineOverviewDataList.forEach((f) {
-          if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
+          if (e.year == f.dateTime.year &&
+              e.month == f.dateTime.month &&
+              e.day == f.dateTime.day) {
             list.add(
               getCustomCard(
                 name: f.medicine.name,
                 subtitle: f.getSubtitle(),
                 icon: CustomIcons.medicine,
-                trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
+                trailing: (DateTime.now().compareTo(
+                                f.dateTime.subtract(Duration(hours: 1))) >
+                            0 &&
                         DateTime(
                               f.dateTime.year,
                               f.dateTime.month,
@@ -847,7 +875,9 @@ class _HomepageState extends State<Homepage> {
       if (searchDocText.trim() == '' || searchDocText == null) {
         searchDoc.add(doctors[i]);
         print('searchDocText : ${doctorSearch.text}');
-      } else if (item.toLowerCase().contains(searchDocText.toLowerCase().trim())) {
+      } else if (item
+          .toLowerCase()
+          .contains(searchDocText.toLowerCase().trim())) {
         searchDoc.add(doctors[i]);
       }
     }
@@ -905,7 +935,8 @@ class _HomepageState extends State<Homepage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30),
               child: Text("Add your personal doctors now!",
-                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w500)),
             )
           ],
         ),
