@@ -127,7 +127,19 @@ class _HomepageState extends State<Homepage> {
       subtitle: Row(
         children: <Widget>[
           Icon(Icons.linear_scale, color: Colors.blueAccent),
-          Text(subtitle, style: TextStyle(color: Colors.black54))
+          Flexible(
+            fit: FlexFit.loose,
+            child: Text(
+              subtitle,
+              // "asdfghjklqwertyuiopzxcvbnm,asdfghjk",
+              style: TextStyle(
+                color: Colors.black54,
+              ),
+              overflow: TextOverflow.fade,
+              softWrap: false,
+              maxLines: 1,
+            ),
+          )
         ],
       ),
       trailing: trailing ??
@@ -290,6 +302,7 @@ class _HomepageState extends State<Homepage> {
               : Location(center.latitude, center.longitude),
           radius: center == null ? null : 10000);
 
+      print(" this is placeID ${p.placeId}");
       showDetailPlace(p.placeId);
     } catch (e) {
       return;

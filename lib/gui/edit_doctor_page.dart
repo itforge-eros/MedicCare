@@ -13,6 +13,15 @@ import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart' as LocationManager;
+import 'location.dart';
+import 'dart:async';
+import 'package:google_maps_webservice/places.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+
+const kGoogleApiKey = "AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E";
+
 class EditDoctorPage extends StatefulWidget {
   Doctor _doctor;
 
@@ -28,6 +37,7 @@ class EditDoctorPage extends StatefulWidget {
 
 class _EditDoctorPageState extends State<EditDoctorPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final homeScaffoldKey = GlobalKey<ScaffoldState>();
   static final TextEditingController _controllerPrefix =
       TextEditingController();
   static final TextEditingController _controllerFirstName =
@@ -35,7 +45,9 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
   static final TextEditingController _controllerLastName =
       TextEditingController();
   static final TextEditingController _controllerWard = TextEditingController();
-  static final TextEditingController _controllerHospital =
+  static final TextEditingController _controllerHospitalId =
+      TextEditingController();
+  static final TextEditingController _controllerHospitalName =
       TextEditingController();
   static final TextEditingController _controllerPhone = TextEditingController();
   static final TextEditingController _controllerNotes = TextEditingController();
@@ -65,7 +77,8 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
     _controllerFirstName.text = '';
     _controllerLastName.text = '';
     _controllerWard.text = '';
-    _controllerHospital.text = '';
+    _controllerHospitalId.text = '';
+    _controllerHospitalName.text = '';
     _controllerPhone.text = '';
     _controllerNotes.text = '';
   }
@@ -76,7 +89,8 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
       _controllerFirstName.text = widget._doctor.firstName;
       _controllerLastName.text = widget._doctor.lastName;
       _controllerWard.text = widget._doctor.ward;
-      _controllerHospital.text = widget._doctor.hospital;
+       _controllerHospitalName.text = widget._doctor.hospital;
+      _controllerHospitalId.text = widget._doctor.hospitalId;
       _controllerPhone.text = widget._doctor.phone;
       _controllerNotes.text = widget._doctor.notes;
       _image =
@@ -91,8 +105,58 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
     this.loadFields();
   }
 
+  void onError(PlacesAutocompleteResponse response) {
+    homeScaffoldKey.currentState.showSnackBar(
+      SnackBar(content: Text(response.errorMessage)),
+    );
+  }
+
+  Future<LatLng> getUserLocation() async {
+    var currentLocation = <String, double>{};
+    final location = LocationManager.Location();
+    try {
+      currentLocation = await location.getLocation();
+      final lat = currentLocation["latitude"];
+      final lng = currentLocation["longitude"];
+      final center = LatLng(lat, lng);
+      return center;
+    } on Exception {
+      currentLocation = null;
+      return null;
+    }
+  }
+
+  Future<Null> savePlace(String placeId, String placeName) async {
+    if (placeId != null) {
+      _controllerHospitalId.text = placeId;
+      _controllerHospitalName.text = placeName;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    Future<void> _handlePressButton() async {
+    try {
+      final center = await getUserLocation();
+      Prediction p = await PlacesAutocomplete.show(
+          context: context,
+          strictbounds: center == null ? false : true,
+          apiKey: kGoogleApiKey,
+          onError: onError,
+          mode: Mode.overlay,
+          language: "en",
+          location: center == null
+              ? null
+              : Location(center.latitude, center.longitude),
+          radius: center == null ? null : 10000);
+
+      savePlace(p.placeId, p.description);
+    } catch (e) {
+      return;
+    }
+  }
+
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
@@ -204,14 +268,11 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                 controller: _controllerWard,
                 decoration: InputDecoration(hintText: 'Ward'),
               ),
-              TextFormField(
-                controller: _controllerHospital,
-                decoration: InputDecoration(hintText: 'Hospital'),
-                validator: (String text) {
-                  if (text.isEmpty) {
-                    return 'Please fill hospital';
-                  }
-                },
+              RaisedButton(
+                child: Text(_controllerHospitalName.text),
+                  onPressed: () {
+                    _handlePressButton();
+                  },
               ),
               TextFormField(
                 controller: _controllerPhone,
@@ -232,7 +293,8 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                     widget._doctor.firstName = _controllerFirstName.text;
                     widget._doctor.lastName = _controllerLastName.text;
                     widget._doctor.ward = _controllerWard.text;
-                    widget._doctor.hospital = _controllerHospital.text;
+                    widget._doctor.hospital = _controllerHospitalName.text;
+                    widget._doctor.hospitalId = _controllerHospitalId.text;
                     widget._doctor.phone = _controllerPhone.text;
                     widget._doctor.notes = _controllerNotes.text;
                     // TODO: Implements image adding and loading

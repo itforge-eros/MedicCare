@@ -10,19 +10,19 @@ import 'package:intro_slider/intro_slider.dart';
 class IntroPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _IntroPageState();
+    return IntroPageState();
   }
 }
 
-class _IntroPageState extends State<IntroPage> {
-  List<Slide> _slides = List();
+class IntroPageState extends State<IntroPage> {
+  List<Slide> allslides = [];
 
   @override
   void initState() {
     super.initState();
 
-    _slides.add(
-          Slide(
+    allslides.add(
+          new Slide(
             title: 'Medicines',
             //'ยา',
             description: 'Keep track on your medicine schedules.',
@@ -30,11 +30,11 @@ class _IntroPageState extends State<IntroPage> {
             pathImage: 'assets/images/medical.png',
             colorBegin: Color(0xff00F260),
             colorEnd: Color(0xff0575E6),
-          ),
+          )
         );
 
-    _slides.add(
-          Slide(
+    allslides.add(
+          new Slide(
             title: 'Appointments',
             //'นัด',
             description: 'Never miss your doctor appointments again.',
@@ -42,11 +42,11 @@ class _IntroPageState extends State<IntroPage> {
             pathImage: 'assets/images/note.png',
             colorBegin: Color(0xffff6a00),
             colorEnd: Color(0xffee0979),
-          ),
+          )
         );
 
-    _slides.add(
-          Slide(
+    allslides.add(
+          new Slide(
             title: 'Doctors',
             //'แพทย์',
             description: 'Keep information of your doctors.',
@@ -54,11 +54,11 @@ class _IntroPageState extends State<IntroPage> {
             pathImage: 'assets/images/doctor.png',
             colorBegin: Color(0xff4776E6),
             colorEnd: Color(0xff8E54E9),
-          ),
+          )
         );
 
-    _slides.add(
-          Slide(
+    allslides.add(
+          new Slide(
             title: 'Nearby Hospitals',
             //'โรงพยาบาลใกล้เคียง',
             description: 'Search for nearby hospitals in no time.',
@@ -66,11 +66,11 @@ class _IntroPageState extends State<IntroPage> {
             pathImage: 'assets/images/map.png',
             colorBegin: Color(0xff0575E6),
             colorEnd: Color(0xff021B79),
-          ),
+          )
         );
 
-    _slides.add(
-          Slide(
+    allslides.add(
+          new Slide(
             title: 'All in one app',
             //'สรุปครบจบในที่เดียว',
             description: 'The hospital is in your hand.',
@@ -78,14 +78,14 @@ class _IntroPageState extends State<IntroPage> {
             pathImage: 'assets/images/hospital.png',
             colorBegin: Color(0xff00c6ff),
             colorEnd: Color(0xff0072ff),
-          ),
+          )
         );
   }
 
   @override
   Widget build(BuildContext context) {
-    return IntroSlider(
-      slides: _slides,
+    return new IntroSlider(
+      slides: this.allslides,
       onDonePress: () {
         Navigator.pop(context);
       },
