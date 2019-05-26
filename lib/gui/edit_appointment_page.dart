@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/user.dart';
+import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
 import 'package:mediccare/util/firebase_utils.dart';
@@ -88,9 +89,15 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
                 content:
                     'Deleting this appointment will permanently remove it from your appointment list.',
                 onPressedConfirm: () {
-                  Navigator.of(context).pop();
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  FirebaseUtils.deleteAppointment(widget._appointment);
+
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Homepage(
+                                initialIndex: 1,
+                              )),
+                      ModalRoute.withName('LoginPage'));
                 },
               );
             },
