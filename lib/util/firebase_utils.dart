@@ -192,6 +192,11 @@ class FirebaseUtils {
         .collection('doctors')
         .document(doctorId)
         .delete();
+
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('$userId/doctor/${doctor.id}');
+
+    await firebaseStorageRef.delete();
   }
 
   // End Doctor
