@@ -84,6 +84,21 @@ class _RegisterPageState extends State<RegisterPage> {
     super.initState();
     FirebaseUtils.isLogin().then((isLogin) async {
       if (isLogin) {
+        FirebaseUser user = await FirebaseAuth.instance.currentUser();
+        if (!user.isEmailVerified) {
+          Alert.displayAlert(
+            context,
+            title: 'Login failed',
+            content: 'Please verify your account.',
+          );
+          try {
+            await user.sendEmailVerification();
+          } catch (e) {
+            print("An error occured while trying to send email verification");
+            print(e.message);
+          }
+          return;
+        }
         bool exist = await FirebaseUtils.getUserExist();
         if (exist) {
           Navigator.pushReplacementNamed(context, 'Homepage');
