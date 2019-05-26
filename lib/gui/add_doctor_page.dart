@@ -55,7 +55,6 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
     });
   }
 
-
   void clearFields() {
     _controllerPrefix.text = '';
     _controllerFirstName.text = '';
@@ -88,12 +87,8 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
         key: this._formKey,
         child: Center(
           child: ListView(
-            padding: EdgeInsets.only(
-<<<<<<< HEAD
-                left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
-=======
-                left: 30.0, top: 1, right: 30.0, bottom: 15.0),
->>>>>>> design
+            padding:
+                EdgeInsets.only(left: 30.0, top: 1, right: 30.0, bottom: 15.0),
             children: <Widget>[
               Container(
                 child: Column(
@@ -112,13 +107,14 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                             backgroundColor: Color(0xff476cfb),
                             child: ClipOval(
                               child: SizedBox(
-                                width: 150.0,
-                                height: 150.0,
-                                child: (_image!=null)?Image.file(_image,fit:BoxFit.fill):
-                                Image.network("https://image.flaticon.com/icons/png/512/64/64572.png",
-                                fit:BoxFit.fill,
-                                )
-                              ),
+                                  width: 150.0,
+                                  height: 150.0,
+                                  child: (_image != null)
+                                      ? Image.file(_image, fit: BoxFit.fill)
+                                      : Image.network(
+                                          "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                          fit: BoxFit.fill,
+                                        )),
                             ),
                           ),
                         )

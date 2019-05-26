@@ -41,15 +41,18 @@ class MedicineSchedule {
   }
 
   MedicineSchedule.fromMap(Map<String, dynamic> map) {
+    List<bool> time = new List<bool>.from(map['time']);
+    List<bool> day = new List<bool>.from(map['day']);
+
     if (map['time'] != null) {
-      checkTimeException(map['time']);
+      checkTimeException(time);
     }
     if (map['day'] != null) {
       checkDayException(day);
     }
 
-    this._time = map['time'] ?? [true, true, true, false];
-    this._day = map['day'] ?? [true, true, true, true, true, true, true];
+    this._time = time ?? [true, true, true, false];
+    this._day = day ?? [true, true, true, true, true, true, true];
     this._isBeforeMeal = map['isBeforeMeal'];
   }
 
