@@ -6,7 +6,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
 import 'location.dart';
 
-const kGoogleApiKey = "AIzaSyBsuCsTp0blLS4mrE3KrLZsTEriEG4CTIQ";
+const kGoogleApiKey = "AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E";
+// const kGoogleApiKey = "AIzaSyDs6e27tsCtmiWLUEY1PyICXAdXYyC8CIw";
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 class MapPage extends StatefulWidget {
@@ -93,7 +94,9 @@ class MapPageState extends State<MapPage> {
     });
 
     final location = Location(center.latitude, center.longitude);
-    final result = await _places.searchNearbyWithRadius(location, 2000);
+    final result = await _places.searchNearbyWithRadius(location, 20000,
+        keyword: "โรงพยาบาล");
+    // final result = await _places.se
     var list = [
       "pharmacy",
       "health",
@@ -101,25 +104,31 @@ class MapPageState extends State<MapPage> {
       "doctor",
       "hospital",
       "physiotherapist",
-      "spa"
+      "spa",
     ];
     setState(() {
       this.isLoading = false;
       if (result.status == "OK") {
         // this.places = result.results;
         result.results.forEach((f) {
-          for (var a in f.types) {
-            if (list.contains(a)) {
+          // for (var a in f.types) {
+          //   if (list.contains(a)) {
               this.places.add(f);
-              final markerOptions = MarkerOptions(
-                  position:
-                      LatLng(f.geometry.location.lat, f.geometry.location.lng),
-                  infoWindowText:
-                      InfoWindowText("${f.name}", "${f.types?.first}"));
-              mapController.addMarker(markerOptions);
-            }
-            break;
-          }
+          //     print("Hello ${f}");
+          //     // final markerOptions = MarkerOptions(
+          //     //     position:
+          //     //         LatLng(f.geometry.location.lat, f.geometry.location.lng),
+          //     //     infoWindowText:
+          //     //         InfoWindowText("${f.name}", "${f.types?.first}"));
+          //     // mapController.addMarker(markerOptions);
+          //   }
+          //   break;
+          // }
+          final markerOptions = MarkerOptions(
+              position:
+                  LatLng(f.geometry.location.lat, f.geometry.location.lng),
+              infoWindowText: InfoWindowText("${f.name}", "${f.types?.first}"));
+          mapController.addMarker(markerOptions);
         });
       } else {
         this.errorMessage = result.errorMessage;
@@ -146,7 +155,7 @@ class MapPageState extends State<MapPage> {
           location: center == null
               ? null
               : Location(center.latitude, center.longitude),
-          radius: center == null ? null : 10000);
+          radius: center == null ? null : 1000000);
 
       showDetailPlace(p.placeId);
     } catch (e) {
@@ -179,7 +188,7 @@ class MapPageState extends State<MapPage> {
                   decoration: new BoxDecoration(
                       border: new Border(
                           right: new BorderSide(
-                              width: 1.0, color:  Colors.blue[300]))),
+                              width: 1.0, color: Colors.blue[300]))),
                   child: Icon(Icons.location_on, color: Colors.blue[300]),
                 ),
                 title: Text(
@@ -192,33 +201,8 @@ class MapPageState extends State<MapPage> {
                 onTap: () {
                   showDetailPlace(f.placeId);
                 },
-              )
-          )
-      )
-    );
+              ))));
     });
-
-    //   return Padding(
-    //     padding: EdgeInsets.only(top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
-    //     child: Card(
-    //       child: InkWell(
-    //         onTap: () {
-    //           showDetailPlace(f.placeId);
-    //         },
-    //         highlightColor: Colors.lightBlueAccent,
-    //         splashColor: Colors.red,
-    //         child: Padding(
-    //           padding: EdgeInsets.all(8.0),
-    //           child: Column(
-    //             mainAxisAlignment: MainAxisAlignment.start,
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: list,
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //   );
-    // }).toList();
     return ListView(shrinkWrap: true, children: list);
   }
 }

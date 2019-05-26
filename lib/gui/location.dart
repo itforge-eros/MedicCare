@@ -2,7 +2,8 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-const kGoogleApiKey = "AIzaSyDs6e27tsCtmiWLUEY1PyICXAdXYyC8CIw";
+// const kGoogleApiKey = "AIzaSyDs6e27tsCtmiWLUEY1PyICXAdXYyC8CIw";
+const kGoogleApiKey = "AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E";
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 class PlaceDetailWidget extends StatefulWidget {
@@ -76,12 +77,16 @@ class PlaceDetailState extends State<PlaceDetailWidget> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(title, style: TextStyle(color: Colors.blueGrey),),
-          iconTheme: IconThemeData(color: Colors.blueGrey),
-          backgroundColor: Colors.white.withOpacity(0.9),
+      appBar: AppBar(
+        title: Text(
+          title,
+          style: TextStyle(color: Colors.blueGrey),
         ),
-        body: bodyChild);
+        iconTheme: IconThemeData(color: Colors.blueGrey),
+        backgroundColor: Colors.white.withOpacity(0.9),
+      ),
+      body: bodyChild
+    );
   }
 
   void fetchPlaceDetail() async {
@@ -140,9 +145,14 @@ class PlaceDetailState extends State<PlaceDetailWidget> {
                     child: SizedBox(
                       height: 100,
                       child: Image.network(
-                          buildPhotoURL(photos[index].photoReference)),
-                    ));
-              })));
+                          buildPhotoURL(photos[index].photoReference)
+                        ),
+                    )
+                );
+              }
+          )
+        )
+      );
     }
 
     list.add(

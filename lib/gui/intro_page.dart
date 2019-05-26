@@ -28,7 +28,8 @@ class _IntroPageState extends State<IntroPage> {
             description: 'Keep track on your medicine schedules.',
             //'บันทึกยาที่กำลังใช้ในปัจจุบัน',
             pathImage: 'assets/images/medical.png',
-            backgroundColor: Color(0xff2196F3),
+            colorBegin: Color(0xffF09819),
+            colorEnd: Color(0xffFF512F),
           ),
         );
 
@@ -39,7 +40,8 @@ class _IntroPageState extends State<IntroPage> {
             description: 'Never miss your doctor appointments again.',
             //'นัดที่ไหน เมื่อไหร่ ก็ไม่ลืม',
             pathImage: 'assets/images/note.png',
-            backgroundColor: Color(0xff9AC4F8),
+            colorBegin: Color(0xfff857a6),
+            colorEnd: Color(0xffff5858),
           ),
         );
 
@@ -50,7 +52,8 @@ class _IntroPageState extends State<IntroPage> {
             description: 'Keep information of your doctors.',
             //'กลับไปพบแพทย์เมื่อไหร่ก็ไม่พลาดวัน',
             pathImage: 'assets/images/doctor.png',
-            backgroundColor: Color(0xffC3E1F8),
+            colorBegin: Color(0xff00c6ff),
+            colorEnd: Color(0xff0072ff),
           ),
         );
 
@@ -61,7 +64,8 @@ class _IntroPageState extends State<IntroPage> {
             description: 'Search for nearby hospitals in no time.',
             //'ค้นหาโรงพยาบาลได้ทันที',
             pathImage: 'assets/images/map.png',
-            backgroundColor: Color(0xff87BFFF),
+            colorBegin: Color(0xffa044ff),
+            colorEnd: Color(0xff6a3093),
           ),
         );
 
@@ -72,7 +76,8 @@ class _IntroPageState extends State<IntroPage> {
             description: 'The hospital is in your hand.',
             //'โรงพยาบาลในมือคุณ',
             pathImage: 'assets/images/hospital.png',
-            backgroundColor: Color(0xff306BAC),
+            colorBegin: Color(0xff56CCF2),
+            colorEnd: Color(0xff2F80ED),
           ),
         );
   }
