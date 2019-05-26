@@ -162,7 +162,8 @@ class DoctorPageState extends State<DoctorPage> {
                           color: Theme.of(context).primaryColor),
                       title: Text(widget._doctor.hospital),
                       trailing: RaisedButton(
-                        child: Text("map"),
+                        color: Theme.of(context).primaryColor,
+                        child: Text("map", style: TextStyle(color: Colors.white),),
                         onPressed: () async {
                           await showDetailPlace(widget._doctor.hospitalId);
                         },
