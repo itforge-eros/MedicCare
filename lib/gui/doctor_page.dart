@@ -39,57 +39,57 @@ class DoctorPageState extends State<DoctorPage> {
 
   @override
   Widget build(BuildContext context) {
-      void onError(PlacesAutocompleteResponse response) {
-    homeScaffoldKey.currentState.showSnackBar(
-      SnackBar(content: Text(response.errorMessage)),
-    );
-  }
-
-  Future<LatLng> getUserLocation() async {
-    var currentLocation = <String, double>{};
-    final location = LocationManager.Location();
-    try {
-      currentLocation = await location.getLocation();
-      final lat = currentLocation["latitude"];
-      final lng = currentLocation["longitude"];
-      final center = LatLng(lat, lng);
-      return center;
-    } on Exception {
-      currentLocation = null;
-      return null;
-    }
-  }
-
-  Future<Null> showDetailPlace(String placeId) async {
-    if (placeId != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PlaceDetailWidget(placeId)),
+    void onError(PlacesAutocompleteResponse response) {
+      homeScaffoldKey.currentState.showSnackBar(
+        SnackBar(content: Text(response.errorMessage)),
       );
     }
-  }
 
-  Future<void> _handlePressButton() async {
-    try {
-      final center = await getUserLocation();
-      Prediction p = await PlacesAutocomplete.show(
-          context: context,
-          strictbounds: center == null ? false : true,
-          apiKey: kGoogleApiKey,
-          onError: onError,
-          mode: Mode.overlay,
-          language: "en",
-          location: center == null
-              ? null
-              : Location(center.latitude, center.longitude),
-          radius: center == null ? null : 10000);
-
-      print(" this is placeID ${p.placeId}");
-      showDetailPlace(p.placeId);
-    } catch (e) {
-      return;
+    Future<LatLng> getUserLocation() async {
+      var currentLocation = <String, double>{};
+      final location = LocationManager.Location();
+      try {
+        currentLocation = await location.getLocation();
+        final lat = currentLocation["latitude"];
+        final lng = currentLocation["longitude"];
+        final center = LatLng(lat, lng);
+        return center;
+      } on Exception {
+        currentLocation = null;
+        return null;
+      }
     }
-  }
+
+    Future<Null> showDetailPlace(String placeId) async {
+      if (placeId != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PlaceDetailWidget(placeId)),
+        );
+      }
+    }
+
+    Future<void> _handlePressButton() async {
+      try {
+        final center = await getUserLocation();
+        Prediction p = await PlacesAutocomplete.show(
+            context: context,
+            strictbounds: center == null ? false : true,
+            apiKey: kGoogleApiKey,
+            onError: onError,
+            mode: Mode.overlay,
+            language: "en",
+            location: center == null
+                ? null
+                : Location(center.latitude, center.longitude),
+            radius: center == null ? null : 10000);
+
+        print(" this is placeID ${p.placeId}");
+        showDetailPlace(p.placeId);
+      } catch (e) {
+        return;
+      }
+    }
 
     return new Scaffold(
       appBar: AppBar(
@@ -157,53 +157,41 @@ class DoctorPageState extends State<DoctorPage> {
                     SizedBox(
                       height: 20.0,
                     ),
-                    Row(
-                      children: <Widget>[
-                        Icon(Icons.local_hospital,
-                            color: Theme.of(context).primaryColor),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Text(
-                          widget._doctor.hospital,
-                          style: TextStyle(
-                              fontSize: 18.0, color: Colors.grey[800]),
-                        )
-                      ],
+                    ListTile(
+                      leading: Icon(Icons.local_hospital,
+                          color: Theme.of(context).primaryColor),
+                      title: Text(widget._doctor.hospital),
+                      trailing: RaisedButton(
+                        color: Theme.of(context).primaryColor,
+                        child: Text("map", style: TextStyle(color: Colors.white),),
+                        onPressed: () async {
+                          await showDetailPlace(widget._doctor.hospitalId);
+                        },
+                      ),
                     ),
                     SizedBox(
                       height: 10.0,
                     ),
-                    Row(
-                      children: <Widget>[
-                        Icon(CustomIcons.medical_kit,
-                            color: Theme.of(context).primaryColor),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Text(
-                          widget._doctor.ward,
-                          style: TextStyle(
-                              fontSize: 18.0, color: Colors.grey[800]),
-                        ),
-                      ],
+                    ListTile(
+                      leading: Icon(CustomIcons.medical_kit,
+                          color: Theme.of(context).primaryColor),
+                      title: Text(
+                        widget._doctor.ward,
+                        style:
+                            TextStyle(fontSize: 18.0, color: Colors.grey[800]),
+                      ),
                     ),
                     SizedBox(
                       height: 10.0,
                     ),
-                    Row(
-                      children: <Widget>[
-                        Icon(Icons.phone,
-                            color: Theme.of(context).primaryColor),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Text(
-                          widget._doctor.phone,
-                          style: TextStyle(
-                              fontSize: 18.0, color: Colors.grey[800]),
-                        )
-                      ],
+                    ListTile(
+                      leading: Icon(Icons.phone,
+                          color: Theme.of(context).primaryColor),
+                      title: Text(
+                        widget._doctor.phone,
+                        style:
+                            TextStyle(fontSize: 18.0, color: Colors.grey[800]),
+                      ),
                     ),
                     SizedBox(
                       height: 10.0,
@@ -219,12 +207,6 @@ class DoctorPageState extends State<DoctorPage> {
                     color: Colors.black12,
                   ),
                 ),
-              ),
-              RaisedButton(
-                child: Text("map"),
-                onPressed: () async {
-                  await showDetailPlace(widget._doctor.hospitalId);
-                },
               ),
               Container(
                 padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
