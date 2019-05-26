@@ -224,7 +224,8 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 decoration: InputDecoration(hintText: 'Ward'),
               ),
               RaisedButton(
-                child: Text(_controllerHospitalName.text),
+                child: Text(_controllerHospitalName.text=="" ? "กรุณาเลือกโรงพยาบาล" : _controllerHospitalName.text),
+                color: Theme.of(context).primaryColor,
                 onPressed: () {
                   _handlePressButton();
                 },
