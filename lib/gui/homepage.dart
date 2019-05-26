@@ -205,35 +205,53 @@ class _HomepageState extends State<Homepage> {
     List<Medicine> remainingMedicine = List();
     List<Medicine> emptyMedicine = List();
 
-    medicines.forEach((m) {
-      if (m.remainingAmount == 0) {
-        emptyMedicine.add(m);
-      } else {
-        remainingMedicine.add(m);
-      }
-    });
-
-    if (remainingMedicine.length > 0) {
-      list.add(getSectionDivider('Remaining Medicines'));
-      remainingMedicine.forEach((e) {
-        list.add(
-          getCustomCard(
-            name: e.name,
-            subtitle: e.getSubtitle(),
-            icon: CustomIcons.medicine,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MedicinePage(
-                        medicine: e,
-                      ),
-                ),
-              );
-            },
+    if (medicines.length == 0) {
+      list.add(Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Image.asset('assets/images/medical-grey.png', height: 200),
           ),
-        );
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30.0),
+            child: Text(
+              'Start adding your medicine now!',
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
+            ),
+          )
+        ],
+      ));
+    } else {
+      medicines.forEach((m) {
+        if (m.remainingAmount == 0) {
+          emptyMedicine.add(m);
+        } else {
+          remainingMedicine.add(m);
+        }
       });
+
+      if (remainingMedicine.length > 0) {
+        list.add(getSectionDivider('Remaining Medicines'));
+        remainingMedicine.forEach((e) {
+          list.add(
+            getCustomCard(
+              name: e.name,
+              subtitle: e.getSubtitle(),
+              icon: CustomIcons.medicine,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MedicinePage(
+                          medicine: e,
+                        ),
+                  ),
+                );
+              },
+            ),
+          );
+        });
+      }
     }
 
     if (emptyMedicine.length > 0) {
@@ -549,7 +567,6 @@ class _HomepageState extends State<Homepage> {
               ? getFormattedDate(e)
               : getFormattedDate(e) + ' (Today)'),
         );
-
         this._user.getMedicineOverview().forEach((f) {
           if (e.year == f.dateTime.year &&
               e.month == f.dateTime.month &&
@@ -698,8 +715,8 @@ class _HomepageState extends State<Homepage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30),
               child: Text("Add your personal doctors now!",
-                  style:
-                      TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w500)),
             )
           ],
         ),
