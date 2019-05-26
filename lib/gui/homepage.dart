@@ -48,7 +48,6 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  User _user;
   int _currentIndex = 2;
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController medicineSearch = new TextEditingController();
@@ -56,13 +55,13 @@ class _HomepageState extends State<Homepage> {
   TextEditingController doctorSearch = new TextEditingController();
 
   Future<List<Doctor>> _getDoctors;
-
   Future<List<Medicine>> _getMedicines;
   Future<List<Appointment>> _getAppointments;
+
   Set<Medicine> searchMed;
   bool isMedSearch;
   String searchMedText;
-
+  
   Set<Doctor> searchDoc;
   bool isDocSearch;
   String searchDocText;
@@ -110,8 +109,7 @@ class _HomepageState extends State<Homepage> {
           Text(subtitle, style: TextStyle(color: Colors.black54))
         ],
       ),
-      trailing: trailing ??
-          Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
+      trailing: trailing ?? Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
       onTap: onTap ?? () {},
     );
   }
@@ -216,14 +214,10 @@ class _HomepageState extends State<Homepage> {
         month = 'December';
         break;
     }
-    return dateTime.day.toString() +
-        ' ' +
-        month +
-        ' ' +
-        dateTime.year.toString();
+    return dateTime.day.toString() + ' ' + month + ' ' + dateTime.year.toString();
   }
 
-  //Map Search Area
+  // Map Search Area
 
   void onError(PlacesAutocompleteResponse response) {
     homeScaffoldKey.currentState.showSnackBar(
@@ -265,9 +259,7 @@ class _HomepageState extends State<Homepage> {
           onError: onError,
           mode: Mode.overlay,
           language: "en",
-          location: center == null
-              ? null
-              : Location(center.latitude, center.longitude),
+          location: center == null ? null : Location(center.latitude, center.longitude),
           radius: center == null ? null : 10000);
 
       showDetailPlace(p.placeId);
@@ -285,9 +277,7 @@ class _HomepageState extends State<Homepage> {
     for (int i = 0; i < medicines.length; i++) {
       var item = medicines[i].name;
       searchMedText = medicineSearch.text;
-      if (searchMedText == '' ||
-          searchMedText == null ||
-          searchMedText == ' ') {
+      if (searchMedText == '' || searchMedText == null || searchMedText == ' ') {
         searchMed.add(medicines[i]);
       } else if (item.toLowerCase().contains(searchMedText.toLowerCase())) {
         searchMed.add(medicines[i]);
@@ -675,8 +665,7 @@ class _HomepageState extends State<Homepage> {
               child: Text('Loading...'),
             );
           } else if (appointments.connectionState == ConnectionState.done) {
-            return ListView(
-              shrinkWrap: true,
+            return Column(
               children: getComingAppointmentList(appointments.data),
             );
           }
@@ -688,13 +677,12 @@ class _HomepageState extends State<Homepage> {
   List<Widget> getRemainingIndoseList(List<Medicine> medicineList) {
     List<Widget> list = List<Widget>();
 
-    final List<MedicineOverviewData> medicineOverviewDataList =
-        List<MedicineOverviewData>();
+    final List<MedicineOverviewData> medicineOverviewDataList = List<MedicineOverviewData>();
     List<DateTime> temp = List<DateTime>();
 
     for (int i = 0; i < medicineList.length; i++) {
-      temp = medicineList[i].getMedicineSchedule(
-          UserSettings()); // TODO: Pass object of UserSettings here
+      temp = medicineList[i]
+          .getMedicineSchedule(UserSettings()); // TODO: Pass object of UserSettings here
       for (int j = 0; j < temp.length; j++) {
         medicineOverviewDataList.add(MedicineOverviewData(
           medicine: medicineList[i],
@@ -707,17 +695,13 @@ class _HomepageState extends State<Homepage> {
 
     if (medicineOverviewDataList.length > 0) {
       list.add(
-        Padding(
-            padding: const EdgeInsets.all(10),
-            child: textTitle(title: 'Remaining Indose')),
+        Padding(padding: const EdgeInsets.all(10), child: textTitle(title: 'Remaining Indose')),
       );
 
       List<DateTime> dateList = List<DateTime>();
       medicineOverviewDataList.forEach((e) {
-        if (!dateList.contains(
-            DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
-          dateList
-              .add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
+        if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
+          dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
         }
       });
 
@@ -736,17 +720,13 @@ class _HomepageState extends State<Homepage> {
         );
 
         medicineOverviewDataList.forEach((f) {
-          if (e.year == f.dateTime.year &&
-              e.month == f.dateTime.month &&
-              e.day == f.dateTime.day) {
+          if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
             list.add(
               getCustomCard(
                 name: f.medicine.name,
                 subtitle: f.getSubtitle(),
                 icon: CustomIcons.medicine,
-                trailing: (DateTime.now().compareTo(
-                                f.dateTime.subtract(Duration(hours: 1))) >
-                            0 &&
+                trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
                         DateTime(
                               f.dateTime.year,
                               f.dateTime.month,
@@ -821,8 +801,7 @@ class _HomepageState extends State<Homepage> {
                 child: Text('Loading...'),
               );
             } else if (medicines.connectionState == ConnectionState.done) {
-              return ListView(
-                shrinkWrap: true,
+              return Column(
                 children: getRemainingIndoseList(medicines.data),
               );
             }
@@ -849,14 +828,12 @@ class _HomepageState extends State<Homepage> {
 
   // |----------------------Doctor
 
-  Widget searchDoctor(List<Doctor> doctors) {
+  void searchDoctor(List<Doctor> doctors) {
     searchDoc = new Set<Doctor>();
     for (int i = 0; i < doctors.length; i++) {
       var item = doctors[i].firstName;
       searchDocText = doctorSearch.text;
-      if (searchDocText == '' ||
-          searchDocText == null ||
-          searchDocText == ' ') {
+      if (searchDocText == '' || searchDocText == null || searchDocText == ' ') {
         searchDoc.add(doctors[i]);
         print('searchDocText : ${doctorSearch.text}');
       } else if (item.toLowerCase().contains(searchDocText.toLowerCase())) {
@@ -864,8 +841,8 @@ class _HomepageState extends State<Homepage> {
       }
     }
   }
-  // Data Method: Returns a list of doctors
 
+  // Data Method: Returns a list of doctors
   List<Widget> getDoctorList(List<Doctor> doctors) {
     List<Widget> list = [
       Padding(
@@ -917,8 +894,7 @@ class _HomepageState extends State<Homepage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30),
               child: Text("Add your personal doctors now!",
-                  style: TextStyle(
-                      color: Colors.grey, fontWeight: FontWeight.w500)),
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
             )
           ],
         ),
@@ -957,11 +933,9 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-    // TODO: Implements loading data from firebase
     _getDoctors = FirebaseUtils.getDoctors();
     _getMedicines = FirebaseUtils.getMedicines();
     _getAppointments = FirebaseUtils.getAppointments();
-
     this._currentIndex = widget.initialIndex;
   }
 
