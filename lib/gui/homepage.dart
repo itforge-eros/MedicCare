@@ -45,7 +45,27 @@ class _HomepageState extends State<Homepage> {
   TextEditingController doctorSearch = new TextEditingController();
 
   Future<List<Doctor>> _getDoctors;
+
   Future<List<Medicine>> _getMedicines;
+  Set<Medicine> searchMed;
+  bool isMedSearch;
+  String searchMedText;
+
+  _HomepageState(){
+    medicineSearch.addListener((){
+      if (medicineSearch.text.isEmpty) {
+        setState(() {
+          isMedSearch = true;
+          searchMedText = "";
+        });
+      } else {
+        setState(() {
+          isMedSearch = false;
+          searchMedText = medicineSearch.text;
+        });
+      }
+    });
+    }
 
   // Utility Method: Returns Custom List Tile
   ListTile getCustomListTile({
@@ -190,6 +210,21 @@ class _HomepageState extends State<Homepage> {
   // |---------------------- Medicine List
 
   // Data Method: Returns a list of medicine
+  Widget searchListView(List<Medicine> medicines) {
+    searchMed = new Set<Medicine>();
+    for (int i = 0; i < medicines.length; i++) {
+      var item = medicines[i].name;
+      searchMedText = medicineSearch.text;
+      if (searchMedText == '' || searchMedText == null || searchMedText == ' '){
+        searchMed.add(medicines[i]);
+        print('searchMedText $searchMedText');
+      }
+      else if (item.toLowerCase().contains(searchMedText.toLowerCase())) {
+        searchMed.add(medicines[i]);
+      }
+    }
+  }
+
   List<Widget> totalMedic(List<Medicine> medicines) {
     List<Widget> list = [
       Padding(
@@ -226,14 +261,15 @@ class _HomepageState extends State<Homepage> {
         ],
       ));
     } else {
-      medicines.forEach((m) {
+      searchListView(medicines);
+      searchMed.forEach((m) {
         if (m.remainingAmount == 0) {
           emptyMedicine.add(m);
         } else {
           remainingMedicine.add(m);
         }
       });
-
+      
       if (remainingMedicine.length > 0) {
         list.add(getSectionDivider('Remaining Medicines'));
         remainingMedicine.forEach((e) {
@@ -284,6 +320,7 @@ class _HomepageState extends State<Homepage> {
     return list;
   }
 
+
   // GUI Method: Returns GUI of medicine tab
   Container getMedicineListPage() {
     return Container(
@@ -292,7 +329,7 @@ class _HomepageState extends State<Homepage> {
           builder: (_, medicines) {
             if (medicines.connectionState == ConnectionState.waiting) {
               return Center(
-                child: Text('Loading...'),
+                child: CircularProgressIndicator(),
               );
             } else if (medicines.connectionState == ConnectionState.done) {
               return ListView(
