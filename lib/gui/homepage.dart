@@ -332,13 +332,23 @@ class _HomepageState extends State<Homepage> {
       ));
     } else {
       searchListView(medicines);
-      searchMed.forEach((m) {
-        if (m.remainingAmount == 0) {
-          emptyMedicine.add(m);
-        } else {
-          remainingMedicine.add(m);
-        }
-      });
+      if (searchMed != null){
+        searchMed.forEach((m) {
+          if (m.remainingAmount == 0) {
+            emptyMedicine.add(m);
+          } else {
+            remainingMedicine.add(m);
+          }
+        });
+      }else{
+          medicines.forEach((m) {
+          if (m.remainingAmount == 0) {
+            emptyMedicine.add(m);
+          } else {
+            remainingMedicine.add(m);
+          }
+        });
+      }
 
       if (remainingMedicine.length > 0) {
         list.add(getSectionDivider('Remaining Medicines'));
