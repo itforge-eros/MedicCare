@@ -221,7 +221,6 @@ class _HomepageState extends State<Homepage> {
           searchMedText == null ||
           searchMedText == ' ') {
         searchMed.add(medicines[i]);
-        print('searchMedText $searchMedText');
       } else if (item.toLowerCase().contains(searchMedText.toLowerCase())) {
         searchMed.add(medicines[i]);
       }
