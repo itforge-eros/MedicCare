@@ -447,7 +447,7 @@ class _HomepageState extends State<Homepage> {
   // |---------------------- Appointment List
 
   // Data Method: Returns a list of appointments
-  List<Widget> getAppointmentList(List<Appointment> appointments) {
+  List<Widget> getAppointmentList(List<Appointment> appointmentList) {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
@@ -466,114 +466,96 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    appointments.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
-    List<Appointment> comingAppointments = List();
-    List<Appointment> completedAppointments = List();
-    List<Appointment> skipAppointments = List();
+    List<Appointment> comingAppointmentList = List<Appointment>();
+    List<Appointment> completedAppointmentList = List<Appointment>();
+    List<Appointment> skipAppointmentList = List<Appointment>();
 
-    appointments.forEach((a) {
+    appointmentList.forEach((a) {
       switch (a.status) {
         case 0:
-          comingAppointments.add(a);
-
+          comingAppointmentList.add(a);
           break;
         case 1:
-          completedAppointments.add(a);
-
+          completedAppointmentList.add(a);
           break;
         case 2:
-          skipAppointments.add(a);
+          skipAppointmentList.add(a);
           break;
       }
     });
-    if (appointments.length == 0) {
-      list.add(Center(
-          child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Image.asset('assets/images/note-grey.png', height: 200),
+
+    if (comingAppointmentList.length > 0) {
+      list.add(getSectionDivider('Coming Appointment'));
+      comingAppointmentList.forEach((e) {
+        list.add(
+          getCustomCard(
+            name: e.title,
+            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+            icon: Icons.local_hospital,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditAppointmentPage(
+                        appointment: e,
+                      ),
+                ),
+              );
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30.0),
-            child: Text(
-              'Start adding your appointment now!',
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
-            ),
-          )
-        ],
-      )));
-    } else {
-      if (comingAppointments.length > 0) {
-        list.add(getSectionDivider('Coming Appointments'));
-        comingAppointments.forEach((e) {
-          list.add(
-            getCustomCard(
-              name: e.title,
-              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-              icon: Icons.local_hospital,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditAppointmentPage(
-                          appointment: e,
-                        ),
-                  ),
-                );
-              },
-            ),
-          );
-        });
-      }
-
-      if (completedAppointments.length > 0) {
-        list.add(getSectionDivider('Completed Appointments'));
-        completedAppointments.forEach((e) {
-          list.add(
-            getCustomCard(
-              name: e.title,
-              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-              icon: Icons.local_hospital,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditAppointmentPage(
-                          appointment: e,
-                        ),
-                  ),
-                );
-              },
-            ),
-          );
-        });
-      }
-
-      if (skipAppointments.length > 0) {
-        list.add(getSectionDivider('Skipped Appointments'));
-        skipAppointments.forEach((e) {
-          list.add(
-            getCustomCard(
-              name: e.title,
-              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-              icon: Icons.local_hospital,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AppointmentPage(
-                          appointment: e,
-                        ),
-                  ),
-                );
-              },
-            ),
-          );
-        });
-      }
+        );
+      });
     }
+
+    if (completedAppointmentList.length > 0) {
+      list.add(getSectionDivider('Completed Appointment'));
+      completedAppointmentList.forEach((e) {
+        list.add(
+          getCustomCard(
+            name: e.title,
+            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+            icon: Icons.local_hospital,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditAppointmentPage(
+                        appointment: e,
+                      ),
+                ),
+              );
+            },
+          ),
+        );
+      });
+    }
+
+    if (skipAppointmentList.length > 0) {
+      list.add(getSectionDivider('Skipped Appointment'));
+      skipAppointmentList.forEach((e) {
+        list.add(
+          getCustomCard(
+            name: e.title,
+            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+            icon: Icons.local_hospital,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AppointmentPage(
+                        appointment: e,
+                      ),
+                ),
+              );
+            },
+          ),
+        );
+      });
+    }
+
+    list.add(SizedBox(height: 40.0));
 
     return list;
   }
