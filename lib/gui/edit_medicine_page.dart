@@ -10,6 +10,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
+import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/api_util.dart';
 import 'package:mediccare/util/firebase_utils.dart';
@@ -18,7 +19,7 @@ class EditMedicinePage extends StatefulWidget {
   final Medicine _medicine;
 
   EditMedicinePage(this._medicine);
-  
+
   @override
   State<StatefulWidget> createState() {
     return _EditMedicinePageState();
@@ -27,10 +28,14 @@ class EditMedicinePage extends StatefulWidget {
 
 class _EditMedicinePageState extends State<EditMedicinePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  static final TextEditingController _controllerMedicineName = TextEditingController();
-  static final TextEditingController _controllerDescription = TextEditingController();
-  static final TextEditingController _controllerDoseAmount = TextEditingController();
-  static final TextEditingController _controllerTotalAmount = TextEditingController();
+  static final TextEditingController _controllerMedicineName =
+      TextEditingController();
+  static final TextEditingController _controllerDescription =
+      TextEditingController();
+  static final TextEditingController _controllerDoseAmount =
+      TextEditingController();
+  static final TextEditingController _controllerTotalAmount =
+      TextEditingController();
   String _currentMedicineType = 'capsule';
   DateTime _currentDateAdded;
   MedicineSchedule _currentMedicineSchedule = MedicineSchedule();
@@ -112,10 +117,15 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
                 content:
                     'Deleting this medicine will permanently remove it from your medicine list.',
                 onPressedConfirm: () {
-                  // TODO: Implements delete medicine
-                  Navigator.of(context).pop();
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  FirebaseUtils.deleteMedicine(widget._medicine);
+
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Homepage(
+                                initialIndex: 0,
+                              )),
+                      ModalRoute.withName('LoginPage'));
                 },
               );
             },
@@ -126,7 +136,8 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
         key: this._formKey,
         child: Center(
           child: ListView(
-            padding: EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
+            padding: EdgeInsets.only(
+                left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
             children: <Widget>[
               FloatingActionButton(
                 onPressed: getImage,
@@ -258,7 +269,9 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
                   labelText: 'Date Added',
                   prefixIcon: Icon(Icons.calendar_today),
                 ),
-                initialValue: widget._medicine.dateAdded.toString().replaceRange(16, 23, ''),
+                initialValue: widget._medicine.dateAdded
+                    .toString()
+                    .replaceRange(16, 23, ''),
                 enabled: false,
               ),
               SizedBox(height: 20.0),
@@ -443,7 +456,8 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
                       Alert.displayAlert(
                         context,
                         title: 'Invalid Medicine Amount',
-                        content: 'Dose amount must be less than or equal to total amount.',
+                        content:
+                            'Dose amount must be less than or equal to total amount.',
                       );
                     }
                     if (int.parse(_controllerTotalAmount.text) %
@@ -452,19 +466,22 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
                       Alert.displayAlert(
                         context,
                         title: 'Invalid Medicine Dose',
-                        content: 'Total amount must be able to divide by dose amount.',
+                        content:
+                            'Total amount must be able to divide by dose amount.',
                       );
                     } else if (!_currentMedicineSchedule.time.contains(true)) {
                       Alert.displayAlert(
                         context,
                         title: 'Invalid Medicine Time',
-                        content: 'Medicine must be taken at least once per day to be taken.',
+                        content:
+                            'Medicine must be taken at least once per day to be taken.',
                       );
                     } else if (!_currentMedicineSchedule.day.contains(true)) {
                       Alert.displayAlert(
                         context,
                         title: 'Invalid Medicine Day',
-                        content: 'Medicine must be taken at least one day per week.',
+                        content:
+                            'Medicine must be taken at least one day per week.',
                       );
                     } else {
                       Image image;
@@ -476,7 +493,8 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
                       }
 
                       widget._medicine.name = _controllerMedicineName.text;
-                      widget._medicine.description = _controllerDescription.text;
+                      widget._medicine.description =
+                          _controllerDescription.text;
                       widget._medicine.type = this._currentMedicineType;
                       widget._medicine.image = image;
                       widget._medicine.medicineSchedule.isBeforeMeal =
