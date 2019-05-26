@@ -61,17 +61,19 @@ class _LoginPageState extends State<LoginPage> {
         SharedPreferencesUtil.saveLastEmail(_controllerEmail.text);
         this.clearFields();
       } else {
-        if (!user.isEmailVerified) {
-          Alert.displayAlert(
-            context,
-            title: 'Login failed',
-            content: 'Please verify your account.',
-          );
-          try {
-            await user.sendEmailVerification();
-          } catch (e) {
-            print("An error occured while trying to send email verification");
-            print(e.message);
+        if (user != null) {
+          if (!user.isEmailVerified) {
+            Alert.displayAlert(
+              context,
+              title: 'Login failed',
+              content: 'Please verify your account.',
+            );
+            try {
+              await user.sendEmailVerification();
+            } catch (e) {
+              print("An error occured while trying to send email verification");
+              print(e.message);
+            }
           }
         } else {
           Alert.displayAlert(
