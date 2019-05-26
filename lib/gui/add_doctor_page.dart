@@ -130,7 +130,6 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
               : Location(center.latitude, center.longitude),
           radius: center == null ? null : 10000);
 
-      print(" this is placeID ${p.placeId}");
       savePlace(p.placeId, p.description);
     } catch (e) {
       return;
@@ -251,7 +250,8 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                         firstName: _controllerFirstName.text,
                         lastName: _controllerLastName.text,
                         ward: _controllerWard.text,
-                        hospital: _controllerHospitalId.text,
+                        hospital: _controllerHospitalName.text,
+                        hospitalId: _controllerHospitalId.text,
                         phone: _controllerPhone.text,
                         notes: _controllerNotes.text,
                         image: null,

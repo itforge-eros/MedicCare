@@ -89,7 +89,8 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
       _controllerFirstName.text = widget._doctor.firstName;
       _controllerLastName.text = widget._doctor.lastName;
       _controllerWard.text = widget._doctor.ward;
-      _controllerHospitalId.text = widget._doctor.hospital;
+       _controllerHospitalName.text = widget._doctor.hospital;
+      _controllerHospitalId.text = widget._doctor.hospitalId;
       _controllerPhone.text = widget._doctor.phone;
       _controllerNotes.text = widget._doctor.notes;
       _image =
@@ -292,7 +293,8 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                     widget._doctor.firstName = _controllerFirstName.text;
                     widget._doctor.lastName = _controllerLastName.text;
                     widget._doctor.ward = _controllerWard.text;
-                    widget._doctor.hospital = _controllerHospitalId.text;
+                    widget._doctor.hospital = _controllerHospitalName.text;
+                    widget._doctor.hospitalId = _controllerHospitalId.text;
                     widget._doctor.phone = _controllerPhone.text;
                     widget._doctor.notes = _controllerNotes.text;
                     // TODO: Implements image adding and loading

@@ -223,7 +223,7 @@ class DoctorPageState extends State<DoctorPage> {
               RaisedButton(
                 child: Text("map"),
                 onPressed: () async {
-                  await showDetailPlace(widget._doctor.hospital);
+                  await showDetailPlace(widget._doctor.hospitalId);
                 },
               ),
               Container(
