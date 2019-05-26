@@ -32,7 +32,7 @@ class _InitAccountPageState extends State<InitAccountPage> {
   static final TextEditingController _controllerWeight =
       TextEditingController();
   String _currentGender;
-  DateTime _currentBirthDate;
+  DateTime _currentBirthDate = DateTime.now();
   String _currentBloodGroup;
   File _image;
 

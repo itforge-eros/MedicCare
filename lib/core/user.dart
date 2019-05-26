@@ -13,7 +13,6 @@ import 'package:mediccare/core/medicine_overview_data.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/exceptions.dart';
-import 'package:mediccare/util/alert.dart';
 
 class User extends Equatable {
   String _id;
@@ -76,20 +75,19 @@ class User extends Equatable {
     this._height = map['height'];
     this._weight = map['weight'];
     this._image = map['image']; //TODO: Check Image properties
-    this._medicineList =
-        map['medicineList'].map((e) => Medicine.fromMap(e)).toList() ??
-            List<Medicine>();
-    this._appointmentList =
-        map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ??
-            List<Appointment>();
-    this._doctorList =
-        map['doctorList'].map((e) => Doctor.fromMap(e)).toList() ??
-            List<Doctor>();
-    this._hospitalList =
-        map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ??
-            List<Hospital>();
-    this._userSettings =
-        UserSettings.fromMap(map['userSettings']) ?? UserSettings();
+    // this._medicineList =
+    //     map['medicineList'].map((e) => Medicine.fromMap(e)).toList() ??
+    //         List<Medicine>();
+    // this._appointmentList =
+    //     map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ??
+    //         List<Appointment>();
+    // this._doctorList =
+    //     map['doctorList'].map((e) => Doctor.fromMap(e)).toList() ??
+    //         List<Doctor>();
+    // this._hospitalList =
+    //     map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ??
+    //         List<Hospital>();
+    this._userSettings = UserSettings.fromMap(map['userSettings']) ?? UserSettings();
   }
 
   String get id => this._id;
@@ -136,23 +134,19 @@ class User extends Equatable {
   set image(Image image) => this._image = image;
 
   List<Medicine> get medicineList => this._medicineList;
-  set medicineList(List<Medicine> medicineList) =>
-      this._medicineList = medicineList;
+  set medicineList(List<Medicine> medicineList) => this._medicineList = medicineList;
 
   List<Appointment> get appointmentList => this._appointmentList;
-  set appointmentList(List<Appointment> appointmentList) =>
-      this._appointmentList = appointmentList;
+  set appointmentList(List<Appointment> appointmentList) => this._appointmentList = appointmentList;
 
   List<Doctor> get doctorList => this._doctorList;
   set doctorList(List<Doctor> doctorList) => this._doctorList = doctorList;
 
   List<Hospital> get hospitalList => this._hospitalList;
-  set hospitalList(List<Hospital> hospitalList) =>
-      this._hospitalList = hospitalList;
+  set hospitalList(List<Hospital> hospitalList) => this._hospitalList = hospitalList;
 
   UserSettings get userSettings => this._userSettings;
-  set userSettings(UserSettings userSettings) =>
-      this._userSettings = userSettings;
+  set userSettings(UserSettings userSettings) => this._userSettings = userSettings;
 
   String getFormattedBirthDate() {
     String month;
@@ -195,11 +189,7 @@ class User extends Equatable {
         month = 'December';
         break;
     }
-    return this._birthDate.day.toString() +
-        ' ' +
-        month +
-        ' ' +
-        this._birthDate.year.toString();
+    return this._birthDate.day.toString() + ' ' + month + ' ' + this._birthDate.year.toString();
   }
 
   void addMedicine(Medicine medicine) {
@@ -242,152 +232,6 @@ class User extends Equatable {
       }
     }
     return false;
-  }
-
-  // Method: Get all medicine overview item list
-  List<MedicineOverviewData> getMedicineOverview() {
-    final List<MedicineOverviewData> medicineOverviewDataList =
-        List<MedicineOverviewData>();
-    List<DateTime> temp = List<DateTime>();
-
-    for (int i = 0; i < this._medicineList.length; i++) {
-      temp = this.getMedicineSchedule(this._medicineList[i]);
-      for (int j = 0; j < temp.length; j++) {
-        medicineOverviewDataList.add(MedicineOverviewData(
-          medicine: this._medicineList[i],
-          dateTime: temp[j],
-        ));
-      }
-    }
-
-    medicineOverviewDataList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
-
-    return medicineOverviewDataList;
-  }
-
-  // Data Method: Get medicine schedule of a single medicine
-  List<DateTime> getMedicineSchedule(Medicine medicine) {
-    DateTime firstDay;
-    Duration firstTime;
-    final List<Duration> oneDayTime = List<Duration>();
-    final List<Duration> durations = List<Duration>();
-    final List<DateTime> medicineSchedule = List<DateTime>();
-    int offset = 0;
-
-    // Logic: Calculate `firstDay`
-    firstDay = DateTime(medicine.dateAdded.year, medicine.dateAdded.month,
-        medicine.dateAdded.day);
-    bool _availableFirstDay = false;
-
-    for (int i = 0; i < 4; i++) {
-      if (Duration(
-                  hours: medicine.dateAdded.hour,
-                  minutes: medicine.dateAdded.minute) <
-              this._userSettings.userTime[i] &&
-          medicine.medicineSchedule.time[i]) {
-        _availableFirstDay = true;
-        break;
-      }
-    }
-
-    if (!_availableFirstDay) {
-      // If not able to take any medicine on the first day, skip a day.
-      firstDay = firstDay.add(Duration(days: 1));
-    }
-
-    while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
-      firstDay = firstDay.add(Duration(days: 1));
-    }
-
-    // Logic: Calculate `firstTime`
-    for (int i = 0; i < 4; i++) {
-      if (medicine.dateAdded.day != firstDay.day) {
-        firstTime = this
-            ._userSettings
-            .userTime[medicine.medicineSchedule.time.indexOf(true)];
-        break;
-      }
-
-      if (medicine.medicineSchedule.time[i] &&
-          medicine.dateAdded.compareTo(
-                DateTime(
-                  firstDay.year,
-                  firstDay.month,
-                  firstDay.day,
-                  this._userSettings.userTime[i].inHours % 24,
-                  this._userSettings.userTime[i].inMinutes % 60,
-                ),
-              ) <
-              0) {
-        if (firstTime == null) {
-          firstTime = this._userSettings.userTime[i];
-        } else if (this._userSettings.userTime[i].compareTo(firstTime) < 0) {
-          firstTime = this._userSettings.userTime[i];
-        }
-      }
-    }
-
-    // Logic: Calculate `oneDayTime`
-    for (int i = 0; i < 4; i++) {
-      if (medicine.medicineSchedule.time[i]) {
-        oneDayTime.add(this._userSettings.userTime[i]);
-      }
-    }
-
-    // Logic: Calculate `durations`
-    for (int i = 0; i < oneDayTime.length - 1; i++) {
-      if ((oneDayTime[i + 1] - oneDayTime[i]).isNegative) {
-        durations.add(oneDayTime[i + 1] - oneDayTime[i] + Duration(days: 1));
-      } else {
-        durations.add(oneDayTime[i + 1] - oneDayTime[i]);
-      }
-    }
-
-    if ((oneDayTime[0] - oneDayTime[oneDayTime.length - 1]).isNegative ||
-        (oneDayTime[0] - oneDayTime[oneDayTime.length - 1]) ==
-            Duration(seconds: 0)) {
-      durations.add(oneDayTime[0] -
-          oneDayTime[oneDayTime.length - 1] +
-          Duration(days: 1));
-    } else {
-      durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1]);
-    }
-
-    // Logic: Calculate `offset`
-    for (int i = 0; i < oneDayTime.length; i++) {
-      if (firstTime.compareTo(oneDayTime[i]) != 0) {
-        offset++;
-      } else {
-        break;
-      }
-    }
-
-    // Logic: Calculate `medicineSchedule`
-    firstDay = firstDay.add(firstTime);
-    for (int i = 0;
-        i <
-            (medicine.totalAmount / medicine.doseAmount).ceil() +
-                medicine.skippedTimes;
-        i++) {
-      medicineSchedule.add(firstDay);
-      firstDay = firstDay.add(durations[(i + offset) % durations.length]);
-
-      while (!medicine.medicineSchedule.day[firstDay.weekday - 1]) {
-        firstDay = firstDay.add(Duration(days: 1));
-      }
-    }
-
-    // Logic: Remove taken and skipped medicine
-    for (int i = 0;
-        i <
-            (medicine.totalAmount - medicine.remainingAmount) /
-                    medicine.doseAmount +
-                medicine.skippedTimes;
-        i++) {
-      medicineSchedule.removeAt(0);
-    }
-
-    return medicineSchedule;
   }
 
   bool containsRemainingMedicine() {
@@ -449,7 +293,7 @@ class User extends Equatable {
       'image': this._image, //TODO: Check Image property
       'medicineList': this._medicineList.map((e) => e.toMap()).toList(),
       'appointment': this._appointmentList.map((e) => e.toMap()).toList(),
-      'doctorList': this._doctorList.map((e) => e.toMap()).toList(),
+      // 'doctorList': this._doctorList.map((e) => e.toMap()).toList(),
       'hospitalList': this._hospitalList.map((e) => e.toMap()).toList(),
       'userSettings': this._userSettings.toMap(),
     };

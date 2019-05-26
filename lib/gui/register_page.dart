@@ -49,7 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Navigator.pop(context);
           },
         );
-        FirebaseUtils.createUserData(user.uid, _controllerEmail.text);
+        // FirebaseUtils.createUserData(user.uid, _controllerEmail.text);
       } else {
         // Event: Sign up failed
         Alert.displayAlert(
@@ -77,8 +77,17 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    FirebaseUtils.getUser().then((user) {
-      if (user != null) {}
+    FirebaseUtils.isLogin().then((isLogin) async {
+      if (isLogin) {
+        bool exist = await FirebaseUtils.getUserExist();
+        if (exist) {
+          Navigator.pushReplacementNamed(context, 'Homepage');
+        } else {
+          Navigator.pushReplacementNamed(context, 'InitAccountPage');
+        }
+      } else {
+        return;
+      }
     });
   }
 

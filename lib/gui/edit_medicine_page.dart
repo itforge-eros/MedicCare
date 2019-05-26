@@ -8,23 +8,25 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
 import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/api_util.dart';
-import 'package:mediccare/util/datetime_picker_formfield.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
-class AddMedicinePage extends StatefulWidget {
+class EditMedicinePage extends StatefulWidget {
+  final Medicine _medicine;
+
+  EditMedicinePage(this._medicine);
+
   @override
   State<StatefulWidget> createState() {
-    return _AddMedicinePageState();
+    return _EditMedicinePageState();
   }
 }
 
-class _AddMedicinePageState extends State<AddMedicinePage> {
+class _EditMedicinePageState extends State<EditMedicinePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   static final TextEditingController _controllerMedicineName =
       TextEditingController();
@@ -57,6 +59,18 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
     this._currentMedicineSchedule = MedicineSchedule();
   }
 
+  void loadFields() {
+    if (widget._medicine != null) {
+      _controllerMedicineName.text = widget._medicine.name;
+      _controllerDescription.text = widget._medicine.description;
+      _controllerDoseAmount.text = widget._medicine.doseAmount.toString();
+      _controllerTotalAmount.text = widget._medicine.totalAmount.toString();
+      this._currentMedicineType = widget._medicine.type;
+      this._currentDateAdded = widget._medicine.dateAdded;
+      this._currentMedicineSchedule = widget._medicine.medicineSchedule;
+    }
+  }
+
   // Utility Method
   String getUnit() {
     switch (this._currentMedicineType) {
@@ -78,6 +92,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   void initState() {
     super.initState();
     this.clearFields();
+    this.loadFields();
   }
 
   @override
@@ -86,11 +101,36 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         title: Text(
-          'Add Medicine',
+          'Edit Medicine',
           style: TextStyle(color: Colors.blueGrey),
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
         elevation: 0.1,
+        actions: <Widget>[
+          IconButton(
+            color: Colors.red,
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              Alert.displayConfirmDelete(
+                context,
+                title: 'Delete Medicine?',
+                content:
+                    'Deleting this medicine will permanently remove it from your medicine list.',
+                onPressedConfirm: () {
+                  FirebaseUtils.deleteMedicine(widget._medicine);
+
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Homepage(
+                                initialIndex: 0,
+                              )),
+                      ModalRoute.withName('LoginPage'));
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Form(
         key: this._formKey,
@@ -185,6 +225,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                   labelText: 'Dose Amount',
                   suffixText: getUnit(),
                 ),
+                enabled: false,
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill dose amount';
@@ -207,6 +248,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                   labelText: 'Total Amount',
                   suffixText: getUnit(),
                 ),
+                enabled: false,
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill total amount';
@@ -222,21 +264,15 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                   }
                 },
               ),
-              DateTimePickerFormField(
-                initialDate: DateTime.now(),
-                format: DateFormat('yyyy-MM-dd HH:mm'),
-                inputType: InputType.both,
+              TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Date Added',
-                  helperText: 'Leave blank to use the current time.',
                   prefixIcon: Icon(Icons.calendar_today),
                 ),
-                onChanged: (DateTime dateTime) {
-                  try {
-                    this._currentDateAdded = dateTime;
-                  } catch (e) {}
-                },
-                validator: (DateTime dateTime) {},
+                initialValue: widget._medicine.dateAdded
+                    .toString()
+                    .replaceRange(16, 23, ''),
+                enabled: false,
               ),
               SizedBox(height: 20.0),
               Text('Before/After Meal'),
@@ -285,24 +321,18 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.time[0],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.time[0] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.time[0],
+                            onChanged: null,
+                          ),
                           Text('Breakfast'),
                         ],
                       ),
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.time[2],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.time[2] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.time[2],
+                            onChanged: null,
+                          ),
                           Text('Dinner'),
                         ],
                       ),
@@ -315,24 +345,18 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.time[1],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.time[1] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.time[1],
+                            onChanged: null,
+                          ),
                           Text('Lunch'),
                         ],
                       ),
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.time[3],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.time[3] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.time[3],
+                            onChanged: null,
+                          ),
                           Text('Bedtime'),
                         ],
                       ),
@@ -351,48 +375,36 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.day[0],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.day[0] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.day[0],
+                            onChanged: null,
+                          ),
                           Text('Monday'),
                         ],
                       ),
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.day[1],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.day[1] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.day[1],
+                            onChanged: null,
+                          ),
                           Text('Tuesday'),
                         ],
                       ),
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.day[2],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.day[2] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.day[2],
+                            onChanged: null,
+                          ),
                           Text('Wednesday'),
                         ],
                       ),
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.day[3],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.day[3] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.day[3],
+                            onChanged: null,
+                          ),
                           Text('Thursday'),
                         ],
                       ),
@@ -405,36 +417,27 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.day[4],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.day[4] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.day[4],
+                            onChanged: null,
+                          ),
                           Text('Friday'),
                         ],
                       ),
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.day[5],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.day[5] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.day[5],
+                            onChanged: null,
+                          ),
                           Text('Saturday'),
                         ],
                       ),
                       Row(
                         children: <Widget>[
                           Checkbox(
-                              value: this._currentMedicineSchedule.day[6],
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this._currentMedicineSchedule.day[6] = value;
-                                });
-                              }),
+                            value: this._currentMedicineSchedule.day[6],
+                            onChanged: null,
+                          ),
                           Text('Sunday'),
                         ],
                       ),
@@ -489,27 +492,17 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                         image = null;
                       }
 
-                      Medicine medicine = Medicine(
-                        name: _controllerMedicineName.text,
-                        description: _controllerDescription.text,
-                        type: this._currentMedicineType,
-                        image: image,
-                        doseAmount: int.parse(_controllerDoseAmount.text),
-                        totalAmount: int.parse(_controllerTotalAmount.text),
-                        medicineSchedule: this._currentMedicineSchedule,
-                        dateAdded: this._currentDateAdded,
-                      );
+                      widget._medicine.name = _controllerMedicineName.text;
+                      widget._medicine.description =
+                          _controllerDescription.text;
+                      widget._medicine.type = this._currentMedicineType;
+                      widget._medicine.image = image;
+                      widget._medicine.medicineSchedule.isBeforeMeal =
+                          this._currentMedicineSchedule.isBeforeMeal;
 
-                      FirebaseUtils.addMedicine(medicine);
-
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Homepage(
-                                    initialIndex: 0,
-                                  )),
-                          ModalRoute.withName('LoginPage'));
+                      FirebaseUtils.updateMedicine(widget._medicine);
                     }
+                    Navigator.pop(context);
                   }
                 },
               ),

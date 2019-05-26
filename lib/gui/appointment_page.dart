@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/appointment.dart';
-import 'package:mediccare/core/user.dart';
-import 'package:mediccare/gui/add_appointment_page.dart';
+import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/gui/edit_appointment_page.dart';
+import 'package:mediccare/util/firebase_utils.dart';
 
 class AppointmentPage extends StatefulWidget {
-  Function _refreshState;
-  User _user;
   Appointment _appointment;
 
-  AppointmentPage({Function refreshState, User user, Appointment appointment}) {
-    this._refreshState = refreshState;
-    this._user = user;
+  AppointmentPage({Appointment appointment}) {
     this._appointment = appointment;
   }
 
@@ -21,8 +18,17 @@ class AppointmentPage extends StatefulWidget {
 }
 
 class AppointmentPageState extends State<AppointmentPage> {
+  Future<Doctor> _getDoctor;
+
   void refreshState() {
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _getDoctor = FirebaseUtils.getDoctor(widget._appointment.doctor);
   }
 
   @override
@@ -44,9 +50,7 @@ class AppointmentPageState extends State<AppointmentPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddAppointmentPage.editMode(
-                        refreshState: this.refreshState,
-                        user: widget._user,
+                  builder: (context) => EditAppointmentPage(
                         appointment: widget._appointment,
                       ),
                 ),
@@ -83,11 +87,14 @@ class AppointmentPageState extends State<AppointmentPage> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: Text(
-                      widget._appointment.dateTime.toString().replaceAll(':00.000', ''),
+                      widget._appointment.dateTime
+                          .toString()
+                          .replaceAll(':00.000', ''),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
-                      style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500, color: Colors.black45),
                     ),
                   ),
                 ],
@@ -104,41 +111,56 @@ class AppointmentPageState extends State<AppointmentPage> {
             ] +
             ((widget._appointment.doctor != null)
                 ? [
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            'Doctor',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Theme.of(context).primaryColorDark,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10.0),
-                          Text(
-                            widget._appointment.doctor.fullName,
-                            style: TextStyle(color: Colors.black45, fontSize: 15),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(10, 30, 10, 30),
-                            child: Text(
-                              // TODO: Implements doctor's image
-                              'Picture',
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 50,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            widget._appointment.doctor.ward,
-                            style: TextStyle(color: Colors.black45, fontSize: 15),
-                          )
-                        ],
-                      ),
-                    ),
+                    FutureBuilder(
+                        future: _getDoctor,
+                        builder: (_, doctor) {
+                          if (doctor.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: Text('Loading...'),
+                            );
+                          } else if (doctor.connectionState ==
+                              ConnectionState.done) {
+                            return Container(
+                                padding: EdgeInsets.all(10),
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Doctor',
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          color: Theme.of(context)
+                                              .primaryColorDark,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 10.0),
+                                    Text(
+                                      doctor.data.fullName,
+                                      style: TextStyle(
+                                          color: Colors.black45, fontSize: 15),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 30, 10, 30),
+                                      child: Text(
+                                        // TODO: Implements doctor's image
+                                        'Picture',
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          fontSize: 50,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      doctor.data.ward,
+                                      style: TextStyle(
+                                          color: Colors.black45, fontSize: 15),
+                                    )
+                                  ],
+                                ));
+                          }
+                        }),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: Container(
@@ -170,7 +192,8 @@ class AppointmentPageState extends State<AppointmentPage> {
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
-                        style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, color: Colors.black45),
                       ),
                     ),
                   ],
@@ -204,7 +227,8 @@ class AppointmentPageState extends State<AppointmentPage> {
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
-                        style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, color: Colors.black45),
                       ),
                     ),
                   ],

@@ -3,12 +3,11 @@
 /// Class for login page GUI
 ///
 
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/firebase_utils.dart';
+import 'package:mediccare/util/shared_preferences_util.dart';
 import 'package:mediccare/util/validator.dart';
 
 class LoginPage extends StatefulWidget {
@@ -22,8 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   static final TextEditingController _controllerEmail = TextEditingController();
-  static final TextEditingController _controllerPassword =
-      TextEditingController();
+  static final TextEditingController _controllerPassword = TextEditingController();
 
   void signInWithEmail() async {
     FirebaseUser user;
@@ -40,10 +38,11 @@ class _LoginPageState extends State<LoginPage> {
       if (user != null) {
         bool exist = await FirebaseUtils.getUserExist();
         if (exist) {
-          Navigator.pushNamed(context, 'Homepage');
+          Navigator.pushReplacementNamed(context, 'Homepage');
         } else {
-          Navigator.pushNamed(context, 'InitAccountPage');
+          Navigator.pushReplacementNamed(context, 'InitAccountPage');
         }
+        SharedPreferencesUtil.saveLastEmail(_controllerEmail.text);
         this.clearFields();
       } else {
         Alert.displayAlert(
@@ -66,20 +65,39 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void trimEmailField() {
-    _LoginPageState._controllerEmail.text =
-        _LoginPageState._controllerEmail.text.trim();
+    _LoginPageState._controllerEmail.text = _LoginPageState._controllerEmail.text.trim();
+  }
+
+  void loadEmailField() {
+    SharedPreferencesUtil.loadLastEmail().then((value) {
+      _LoginPageState._controllerEmail.text = value ?? '';
+    });
   }
 
   @override
   void initState() {
     super.initState();
+
+    SharedPreferencesUtil.loadAppOpenCount().then((value) {
+      if (value == null) {
+        Navigator.pushNamed(context, 'IntroPage');
+        SharedPreferencesUtil.saveAppOpenCount(1);
+      } else {
+        SharedPreferencesUtil.saveAppOpenCount(value + 1);
+      }
+    });
+
+    loadEmailField();
     FirebaseUtils.isLogin().then((isLogin) async {
-      bool exist = await FirebaseUtils.getUserExist();
       if (isLogin) {
+        bool exist = await FirebaseUtils.getUserExist();
         if (exist) {
-          return Navigator.pushNamed(context, 'Homepage');
+          Navigator.pushReplacementNamed(context, 'Homepage');
+        } else {
+          Navigator.pushReplacementNamed(context, 'InitAccountPage');
         }
-        return Navigator.pushNamed(context, 'InitAccountPage');
+      } else {
+        return;
       }
     });
   }
@@ -145,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.only(left: 30.0, right: 30.0),
             children: <Widget>[
               Container(
-                child: Image.asset('assets/logo_temporary.jpg'),
+                child: Image.asset('assets/logo.png'),
                 padding: EdgeInsets.only(left: 30.0, right: 30.0),
               ),
               SizedBox(height: 20.0),

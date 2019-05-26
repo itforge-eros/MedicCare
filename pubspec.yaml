@@ -21,6 +21,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   firebase_core: ^0.2.5+1
   firebase_auth: ^0.7.0
+  firebase_storage: ^1.0.4
   cloud_firestore: ^0.7.4
   image_picker: ^0.4.12+1
   intro_slider: ^2.0.2
@@ -29,6 +30,9 @@ dependencies:
   google_maps_flutter: ^0.0.3
   flutter_google_places: ^0.1.4
   location: ^1.4.1
+  path_provider: ^1.1.0
+  shared_preferences: ^0.5.2+1
+  flutter_typeahead: ^1.6.0
 
 dev_dependencies:
   flutter_test:
@@ -48,11 +52,14 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/logo_temporary.jpg
+    - assets/logo.png
     - assets/images/medical.png
     - assets/images/note.png
     - assets/images/doctor.png
     - assets/images/map.png
     - assets/images/hospital.png
+    - assets/images/doctor-grey.png
+    - assets/images/medical-grey.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
@@ -83,4 +90,4 @@ flutter:
   # see https://flutter.io/custom-fonts/#from-packages
 
 
-   
+

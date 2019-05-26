@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
+import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/exceptions.dart';
 
 class Medicine {
@@ -54,7 +55,10 @@ class Medicine {
     this._totalAmount = map['totalAmount'];
     this._remainingAmount = map['totalAmount'];
     this._skippedTimes = map['skippedTimes'];
-    this._medicineSchedule = MedicineSchedule.fromMap(map['medicineSchedule']);
+
+    Map<String, dynamic> medicineSchedule = new Map<String, dynamic>.from(map['medicineSchedule']);
+
+    this._medicineSchedule = MedicineSchedule.fromMap(medicineSchedule);
   }
 
   String get id => this._id;
@@ -130,6 +134,116 @@ class Medicine {
         return ' ' + this._remainingAmount.toString() + ' ml remaining.';
     }
     return null;
+  }
+
+  // Data Method: Get medicine schedule of a single medicine
+  List<DateTime> getMedicineSchedule(UserSettings userSettings) {
+    DateTime firstDay;
+    Duration firstTime;
+    final List<Duration> oneDayTime = List<Duration>();
+    final List<Duration> durations = List<Duration>();
+    final List<DateTime> medicineSchedule = List<DateTime>();
+    int offset = 0;
+
+    // Logic: Calculate `firstDay`
+    firstDay = DateTime(this._dateAdded.year, this._dateAdded.month, this._dateAdded.day);
+    bool _availableFirstDay = false;
+
+    for (int i = 0; i < 4; i++) {
+      if (Duration(hours: this._dateAdded.hour, minutes: this._dateAdded.minute) <
+              userSettings.userTime[i] &&
+          this._medicineSchedule.time[i]) {
+        _availableFirstDay = true;
+        break;
+      }
+    }
+
+    if (!_availableFirstDay) {
+      // If not able to take any medicine on the first day, skip a day.
+      firstDay = firstDay.add(Duration(days: 1));
+    }
+
+    while (!this._medicineSchedule.day[firstDay.weekday - 1]) {
+      firstDay = firstDay.add(Duration(days: 1));
+    }
+
+    // Logic: Calculate `firstTime`
+    for (int i = 0; i < 4; i++) {
+      if (this._dateAdded.day != firstDay.day) {
+        firstTime = userSettings.userTime[this._medicineSchedule.time.indexOf(true)];
+        break;
+      }
+
+      if (this._medicineSchedule.time[i] &&
+          this._dateAdded.compareTo(
+                    DateTime(
+                      firstDay.year,
+                      firstDay.month,
+                      firstDay.day,
+                      userSettings.userTime[i].inHours % 24,
+                      userSettings.userTime[i].inMinutes % 60,
+                    ),
+                  ) <
+              0) {
+        if (firstTime == null) {
+          firstTime = userSettings.userTime[i];
+        } else if (userSettings.userTime[i].compareTo(firstTime) < 0) {
+          firstTime = userSettings.userTime[i];
+        }
+      }
+    }
+
+    // Logic: Calculate `oneDayTime`
+    for (int i = 0; i < 4; i++) {
+      if (this._medicineSchedule.time[i]) {
+        oneDayTime.add(userSettings.userTime[i]);
+      }
+    }
+
+    // Logic: Calculate `durations`
+    for (int i = 0; i < oneDayTime.length - 1; i++) {
+      if ((oneDayTime[i + 1] - oneDayTime[i]).isNegative) {
+        durations.add(oneDayTime[i + 1] - oneDayTime[i] + Duration(days: 1));
+      } else {
+        durations.add(oneDayTime[i + 1] - oneDayTime[i]);
+      }
+    }
+
+    if ((oneDayTime[0] - oneDayTime[oneDayTime.length - 1]).isNegative ||
+        (oneDayTime[0] - oneDayTime[oneDayTime.length - 1]) == Duration(seconds: 0)) {
+      durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1] + Duration(days: 1));
+    } else {
+      durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1]);
+    }
+
+    // Logic: Calculate `offset`
+    for (int i = 0; i < oneDayTime.length; i++) {
+      if (firstTime.compareTo(oneDayTime[i]) != 0) {
+        offset++;
+      } else {
+        break;
+      }
+    }
+
+    // Logic: Calculate `medicineSchedule`
+    firstDay = firstDay.add(firstTime);
+    for (int i = 0; i < (this._totalAmount / this._doseAmount).ceil() + this._skippedTimes; i++) {
+      medicineSchedule.add(firstDay);
+      firstDay = firstDay.add(durations[(i + offset) % durations.length]);
+
+      while (!this._medicineSchedule.day[firstDay.weekday - 1]) {
+        firstDay = firstDay.add(Duration(days: 1));
+      }
+    }
+
+    // Logic: Remove taken and skipped medicine
+    for (int i = 0;
+        i < (this._totalAmount - this._remainingAmount) / this._doseAmount + this._skippedTimes;
+        i++) {
+      medicineSchedule.removeAt(0);
+    }
+
+    return medicineSchedule;
   }
 
   Map<String, dynamic> toMap() {
