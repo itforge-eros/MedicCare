@@ -47,9 +47,14 @@ class _HomepageState extends State<Homepage> {
   Future<List<Doctor>> _getDoctors;
 
   Future<List<Medicine>> _getMedicines;
+
   Set<Medicine> searchMed;
   bool isMedSearch;
   String searchMedText;
+
+  Set<Doctor> searchDoc;
+  bool isDocSearch;
+  String searchDocText;
 
   _HomepageState(){
     medicineSearch.addListener((){
@@ -706,13 +711,29 @@ class _HomepageState extends State<Homepage> {
 
   // |----------------------Doctor
 
+Widget searchDoctor(List<Doctor> doctors) {
+    searchDoc = new Set<Doctor>();
+    for (int i = 0; i < doctors.length; i++) {
+      var item = doctors[i].firstName;
+      searchDocText = doctorSearch.text;
+      if (searchDocText == '' || searchDocText == null || searchDocText == ' '){
+        searchDoc.add(doctors[i]);
+        print('searchDocText : ${doctorSearch.text}');
+      }
+      else if (item.toLowerCase().contains(searchDocText.toLowerCase())) {
+        searchDoc.add(doctors[i]);
+      }
+    }
+  }
   // Data Method: Returns a list of doctors
+  
   List<Widget> getDoctorList(List<Doctor> doctors) {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
         child: TextField(
           onChanged: (value) {},
+          controller: doctorSearch,
           // controller: ,
           decoration: InputDecoration(
             labelText: 'Search',
@@ -723,7 +744,8 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
     if (doctors.length != 0) {
-      doctors.forEach((e) {
+      searchDoctor(doctors);
+      searchDoc.forEach((e) {
         list.add(
           getCustomCard(
             name: e.prefix + ' ' + e.firstName + ' ' + e.lastName,
@@ -768,6 +790,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   // GUI Method: Returns GUI of doctor tab
+  
   Container getDoctorListPage() {
     return Container(
       child: FutureBuilder(
@@ -775,7 +798,7 @@ class _HomepageState extends State<Homepage> {
         builder: (_, doctors) {
           if (doctors.connectionState == ConnectionState.waiting) {
             return Center(
-              child: Text('Loading...'),
+              child: CircularProgressIndicator(),
             );
           } else if (doctors.connectionState == ConnectionState.done) {
             return ListView(
