@@ -135,7 +135,6 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
               : Location(center.latitude, center.longitude),
           radius: center == null ? null : 10000);
 
-      print(" this is placeID ${p.placeId}");
       savePlace(p.placeId, p.description);
     } catch (e) {
       return;
