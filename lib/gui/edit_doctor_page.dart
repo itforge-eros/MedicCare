@@ -98,6 +98,14 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
     }
   }
 
+  bool isNumeric(String s) {
+    if(s == null) {
+      return false;
+    }
+    return double.parse(s, (e) => null) != null;
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -277,6 +285,13 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
               ),
               TextFormField(
                 controller: _controllerPhone,
+                validator: (value){
+                  if(value.isNotEmpty){
+                    if(value.length != 10 || !isNumeric(value)){
+                      return "Please Enter Phonenumber Correctly";
+                    }
+                  }
+                },
                 decoration: InputDecoration(hintText: 'Phone'),
               ),
               TextFormField(
