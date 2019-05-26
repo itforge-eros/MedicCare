@@ -176,7 +176,7 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
                                         fit: BoxFit.fill,
                                       )
                                     : Image.asset(
-                                        "assets/person.png",
+                                        "assets/medicine.png",
                                         fit: BoxFit.fill,
                                       ),
                               ),

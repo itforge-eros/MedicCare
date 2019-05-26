@@ -134,7 +134,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                                     ? Image.file(_currentImage,
                                         fit: BoxFit.fill)
                                     : Image.asset(
-                                        "assets/person.png",
+                                        "assets/medicine.png",
                                         fit: BoxFit.fill,
                                       ),
                               ),
