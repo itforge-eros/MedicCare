@@ -117,27 +117,6 @@ class MapPageState extends State<MapPage> {
     );
   }
 
-  Future<void> _handlePressButton() async {
-    try {
-      final center = await getUserLocation();
-      Prediction p = await PlacesAutocomplete.show(
-          context: context,
-          strictbounds: center == null ? false : true,
-          apiKey: kGoogleApiKey,
-          onError: onError,
-          mode: Mode.fullscreen,
-          language: "en",
-          location: center == null
-              ? null
-              : Location(center.latitude, center.longitude),
-          radius: center == null ? null : 1000000);
-
-      showDetailPlace(p.placeId);
-    } catch (e) {
-      return;
-    }
-  }
-
   Future<Null> showDetailPlace(String placeId) async {
     if (placeId != null) {
       Navigator.push(

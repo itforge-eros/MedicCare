@@ -270,6 +270,7 @@ class _HomepageState extends State<Homepage> {
               : Location(center.latitude, center.longitude),
           radius: center == null ? null : 10000);
 
+      print(" this is placeID ${p.placeId}");
       showDetailPlace(p.placeId);
     } catch (e) {
       return;

@@ -15,6 +15,15 @@ import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart' as LocationManager;
+import 'location.dart';
+import 'dart:async';
+import 'package:google_maps_webservice/places.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+
+const kGoogleApiKey = "AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E";
+
 class AddDoctorPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -24,6 +33,7 @@ class AddDoctorPage extends StatefulWidget {
 
 class _AddDoctorPageState extends State<AddDoctorPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final homeScaffoldKey = GlobalKey<ScaffoldState>();
   static final TextEditingController _controllerPrefix =
       TextEditingController();
   static final TextEditingController _controllerFirstName =
@@ -31,7 +41,9 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
   static final TextEditingController _controllerLastName =
       TextEditingController();
   static final TextEditingController _controllerWard = TextEditingController();
-  static final TextEditingController _controllerHospital =
+  static final TextEditingController _controllerHospitalId =
+      TextEditingController();
+  static final TextEditingController _controllerHospitalName =
       TextEditingController();
   static final TextEditingController _controllerPhone = TextEditingController();
   static final TextEditingController _controllerNotes = TextEditingController();
@@ -61,7 +73,8 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
     _controllerFirstName.text = '';
     _controllerLastName.text = '';
     _controllerWard.text = '';
-    _controllerHospital.text = '';
+    _controllerHospitalId.text = '';
+    _controllerHospitalName.text = '';
     _controllerPhone.text = '';
     _controllerNotes.text = '';
   }
@@ -72,8 +85,58 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
     this.clearFields();
   }
 
+  void onError(PlacesAutocompleteResponse response) {
+    homeScaffoldKey.currentState.showSnackBar(
+      SnackBar(content: Text(response.errorMessage)),
+    );
+  }
+
+  Future<LatLng> getUserLocation() async {
+    var currentLocation = <String, double>{};
+    final location = LocationManager.Location();
+    try {
+      currentLocation = await location.getLocation();
+      final lat = currentLocation["latitude"];
+      final lng = currentLocation["longitude"];
+      final center = LatLng(lat, lng);
+      return center;
+    } on Exception {
+      currentLocation = null;
+      return null;
+    }
+  }
+
+  Future<Null> savePlace(String placeId, String placeName) async {
+    if (placeId != null) {
+      _controllerHospitalId.text = placeId;
+      _controllerHospitalName.text = placeName;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    Future<void> _handlePressButton() async {
+    try {
+      final center = await getUserLocation();
+      Prediction p = await PlacesAutocomplete.show(
+          context: context,
+          strictbounds: center == null ? false : true,
+          apiKey: kGoogleApiKey,
+          onError: onError,
+          mode: Mode.overlay,
+          language: "en",
+          location: center == null
+              ? null
+              : Location(center.latitude, center.longitude),
+          radius: center == null ? null : 10000);
+
+      print(" this is placeID ${p.placeId}");
+      savePlace(p.placeId, p.description);
+    } catch (e) {
+      return;
+    }
+  }
+
     return Scaffold(
       appBar: AppBar(
           iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
@@ -160,14 +223,11 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 controller: _controllerWard,
                 decoration: InputDecoration(hintText: 'Ward'),
               ),
-              TextFormField(
-                controller: _controllerHospital,
-                decoration: InputDecoration(hintText: 'Hospital'),
-                validator: (String text) {
-                  if (text.isEmpty) {
-                    return 'Please fill hospital';
-                  }
-                },
+              RaisedButton(
+                child: Text(_controllerHospitalName.text),
+                  onPressed: () {
+                    _handlePressButton();
+                  },
               ),
               TextFormField(
                 controller: _controllerPhone,
@@ -190,7 +250,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                         firstName: _controllerFirstName.text,
                         lastName: _controllerLastName.text,
                         ward: _controllerWard.text,
-                        hospital: _controllerHospital.text,
+                        hospital: _controllerHospitalId.text,
                         phone: _controllerPhone.text,
                         notes: _controllerNotes.text,
                         image: null,
