@@ -35,7 +35,7 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
       TextEditingController();
   static final TextEditingController _controllerHospital =
       TextEditingController();
-  String _currentDoctor;
+  Doctor _currentDoctor;
   DateTime _currentDateTime;
 
   Future<List<Doctor>> _getDoctors;
@@ -48,12 +48,15 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
     this._currentDateTime = null;
   }
 
-  void loadFields() {
+  void loadFields() async {
     if (widget._appointment != null) {
       _controllerTitle.text = widget._appointment.title;
       _controllerDescription.text = widget._appointment.description;
       _controllerHospital.text = widget._appointment.hospital;
-      this._currentDoctor = widget._appointment.doctor;
+      if (widget._appointment.doctor != null) {
+        this._currentDoctor =
+            await FirebaseUtils.getDoctor(widget._appointment.doctor);
+      }
       this._currentDateTime = widget._appointment.dateTime;
     }
   }
@@ -136,7 +139,7 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
                         ConnectionState.done) {
                       return DropdownButton(
                         isExpanded: true,
-                        value: null,
+                        value: this._currentDoctor,
                         items: List<DropdownMenuItem>.from(doctors.data.map(
                               (e) => DropdownMenuItem(
                                     value: e,
@@ -172,8 +175,13 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
                             ],
                         onChanged: (value) {
                           setState(() {
-                            this._currentDoctor = value.id;
-                            _controllerHospital.text = value.hospital;
+                            if (value != null) {
+                              this._currentDoctor = value;
+                              _controllerHospital.text = value.hospital;
+                            } else {
+                              this._currentDoctor = value;
+                              _controllerHospital.text = "";
+                            }
                           });
                         },
                       );
@@ -228,7 +236,11 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
                     widget._appointment.title = _controllerTitle.text;
                     widget._appointment.description =
                         _controllerDescription.text;
-                    widget._appointment.doctor = this._currentDoctor;
+                    if (this._currentDoctor != null) {
+                      widget._appointment.doctor = this._currentDoctor.id;
+                    } else {
+                      widget._appointment.doctor = null;
+                    }
                     widget._appointment.hospital = _controllerHospital.text;
                     widget._appointment.dateTime = this._currentDateTime;
 

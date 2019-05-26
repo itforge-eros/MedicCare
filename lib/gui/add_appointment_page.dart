@@ -31,7 +31,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
       TextEditingController();
   static final TextEditingController _controllerHospital =
       TextEditingController();
-  String _currentDoctor;
+  Doctor _currentDoctor;
   DateTime _currentDateTime;
 
   Future<List<Doctor>> _getDoctors;
@@ -97,19 +97,6 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                         ConnectionState.done) {
                       List<DropdownMenuItem> items = List();
 
-                      items.add(DropdownMenuItem(
-                        value: null,
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.person_outline,
-                              color: Colors.grey,
-                            ),
-                            Text(' Unspecified'),
-                          ],
-                        ),
-                      ));
-
                       doctors.data.forEach((e) {
                         items.add(DropdownMenuItem(
                           value: e,
@@ -137,7 +124,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                         onChanged: (value) {
                           setState(() {
                             if (value != null) {
-                              this._currentDoctor = value.id;
+                              this._currentDoctor = value;
                               _controllerHospital.text = value.hospital;
                             } else {
                               this._currentDoctor = value;
@@ -191,7 +178,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                     Appointment appointment = Appointment(
                       title: _controllerTitle.text,
                       description: _controllerDescription.text,
-                      doctor: this._currentDoctor,
+                      doctor: this._currentDoctor.id,
                       hospital: _controllerHospital.text,
                       dateTime: this._currentDateTime,
                     );
