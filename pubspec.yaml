@@ -25,7 +25,7 @@ dependencies:
   firebase_messaging: ^2.1.0
   cloud_firestore: ^0.7.4
   image_picker: ^0.4.12+1
-  intro_slider: ^2.0.2
+  intro_slider: ^1.0.8
   equatable: ^0.2.0
   intl: ^0.15.0
   google_maps_flutter: ^0.0.3
