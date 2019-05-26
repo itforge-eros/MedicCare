@@ -6,6 +6,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/medicine.dart';
@@ -95,10 +96,18 @@ class FirebaseUtils {
 
     List<Doctor> doctors = List();
 
-    snapshot.documents.forEach((d) {
+    snapshot.documents.forEach((d) async {
       Doctor doctor = Doctor.fromMap(d.data);
 
       doctor.id = d.documentID;
+
+      StorageReference firebaseStorageRef = FirebaseStorage.instance
+          .ref()
+          .child('$userId/doctor/${d.documentID}');
+
+      String imageUrl = await firebaseStorageRef.getDownloadURL();
+
+      doctor.image = imageUrl;
 
       doctors.add(doctor);
     });
@@ -121,6 +130,13 @@ class FirebaseUtils {
     Doctor doctor = Doctor.fromMap(snapshot.data);
 
     doctor.id = doctorId;
+
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('$userId/doctor/$doctorId');
+
+    String imageUrl = await firebaseStorageRef.getDownloadURL();
+
+    doctor.image = imageUrl;
 
     return doctor;
   }

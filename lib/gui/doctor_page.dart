@@ -60,7 +60,7 @@ class DoctorPageState extends State<DoctorPage> {
             children: <Widget>[
               Hero(
                 // TODO: Implements doctor's image
-                tag: 'assets/logo_temporary.jpg',
+                tag: widget._doctor.image,
                 child: Container(
                   height: 200.0,
                   width: 200.0,
@@ -68,7 +68,7 @@ class DoctorPageState extends State<DoctorPage> {
                     borderRadius: BorderRadius.circular(100),
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: AssetImage('assets/logo_temporary.jpg'),
+                      image: NetworkImage(widget._doctor.image),
                     ),
                   ),
                 ),

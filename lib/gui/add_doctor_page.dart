@@ -38,16 +38,17 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
   File _image;
 
   Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;
     });
   }
 
-  Future uploadPic(BuildContext context) async {
-    String filName = basename(_image.path);
+  Future uploadPic(String doctorId) async {
+    String userId = await FirebaseUtils.getUserId();
+
     StorageReference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child(filName);
+        FirebaseStorage.instance.ref().child('$userId/doctor/$doctorId');
     StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     setState(() {
@@ -183,25 +184,32 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
-                    Doctor newDoctor = Doctor(
-                      prefix: _controllerPrefix.text,
-                      firstName: _controllerFirstName.text,
-                      lastName: _controllerLastName.text,
-                      ward: _controllerWard.text,
-                      hospital: _controllerHospital.text,
-                      phone: _controllerPhone.text,
-                      notes: _controllerNotes.text,
-                      image: null, // TODO: Implements image adding and loading
-                    );
-                    FirebaseUtils.addDoctor(newDoctor);
+                    void addNewDoctor() async {
+                      Doctor newDoctor = Doctor(
+                        prefix: _controllerPrefix.text,
+                        firstName: _controllerFirstName.text,
+                        lastName: _controllerLastName.text,
+                        ward: _controllerWard.text,
+                        hospital: _controllerHospital.text,
+                        phone: _controllerPhone.text,
+                        notes: _controllerNotes.text,
+                        image: null,
+                      );
+                      String doctorId =
+                          await FirebaseUtils.addDoctor(newDoctor);
 
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Homepage(
-                                  initialIndex: 3,
-                                )),
-                        ModalRoute.withName('LoginPage'));
+                      await uploadPic(doctorId);
+
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Homepage(
+                                    initialIndex: 3,
+                                  )),
+                          ModalRoute.withName('LoginPage'));
+                    }
+
+                    addNewDoctor();
                   }
                 },
               ),
