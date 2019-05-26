@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.only(left: 30.0, right: 30.0),
             children: <Widget>[
               Container(
-                child: Image.asset('assets/logo_temporary.jpg'),
+                child: Image.asset('assets/logo.png'),
                 padding: EdgeInsets.only(left: 30.0, right: 30.0),
               ),
               SizedBox(height: 20.0),
