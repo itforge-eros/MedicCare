@@ -21,58 +21,63 @@ class _IntroPageState extends State<IntroPage> {
   void initState() {
     super.initState();
 
-    this._slides.add(
+    _slides.add(
           Slide(
             title: 'Medicines',
             //'ยา',
             description: 'Keep track on your medicine schedules.',
             //'บันทึกยาที่กำลังใช้ในปัจจุบัน',
             pathImage: 'assets/images/medical.png',
-            backgroundColor: Color(0xff2196F3),
+            colorBegin: Color(0xff00F260),
+            colorEnd: Color(0xff0575E6),
           ),
         );
 
-    this._slides.add(
+    _slides.add(
           Slide(
             title: 'Appointments',
             //'นัด',
             description: 'Never miss your doctor appointments again.',
             //'นัดที่ไหน เมื่อไหร่ ก็ไม่ลืม',
             pathImage: 'assets/images/note.png',
-            backgroundColor: Color(0xff9AC4F8),
+            colorBegin: Color(0xffff6a00),
+            colorEnd: Color(0xffee0979),
           ),
         );
 
-    this._slides.add(
+    _slides.add(
           Slide(
             title: 'Doctors',
             //'แพทย์',
             description: 'Keep information of your doctors.',
             //'กลับไปพบแพทย์เมื่อไหร่ก็ไม่พลาดวัน',
             pathImage: 'assets/images/doctor.png',
-            backgroundColor: Color(0xffC3E1F8),
+            colorBegin: Color(0xff4776E6),
+            colorEnd: Color(0xff8E54E9),
           ),
         );
 
-    this._slides.add(
+    _slides.add(
           Slide(
             title: 'Nearby Hospitals',
             //'โรงพยาบาลใกล้เคียง',
             description: 'Search for nearby hospitals in no time.',
             //'ค้นหาโรงพยาบาลได้ทันที',
             pathImage: 'assets/images/map.png',
-            backgroundColor: Color(0xff87BFFF),
+            colorBegin: Color(0xff0575E6),
+            colorEnd: Color(0xff021B79),
           ),
         );
 
-    this._slides.add(
+    _slides.add(
           Slide(
             title: 'All in one app',
             //'สรุปครบจบในที่เดียว',
             description: 'The hospital is in your hand.',
             //'โรงพยาบาลในมือคุณ',
             pathImage: 'assets/images/hospital.png',
-            backgroundColor: Color(0xff306BAC),
+            colorBegin: Color(0xff00c6ff),
+            colorEnd: Color(0xff0072ff),
           ),
         );
   }
@@ -80,7 +85,7 @@ class _IntroPageState extends State<IntroPage> {
   @override
   Widget build(BuildContext context) {
     return IntroSlider(
-      slides: this._slides,
+      slides: _slides,
       onDonePress: () {
         Navigator.pop(context);
       },
