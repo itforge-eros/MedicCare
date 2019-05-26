@@ -67,15 +67,12 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
   }
 
   @override
-<<<<<<< HEAD
   void initState() {
     super.initState();
     this.clearFields();
   }
 
   @override
-=======
->>>>>>> design
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
