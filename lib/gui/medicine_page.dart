@@ -7,15 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
+import 'package:mediccare/gui/edit_medicine_page.dart';
 
 class MedicinePage extends StatefulWidget {
-  Function _refreshState;
-  User _user;
   Medicine _medicine;
 
-  MedicinePage({Function refreshState, User user, Medicine medicine}) {
-    this._refreshState = refreshState;
-    this._user = user;
+  MedicinePage({Medicine medicine}) {
     this._medicine = medicine;
   }
 
@@ -123,7 +120,8 @@ class _MedicinePageState extends State<MedicinePage> {
                     color: Theme.of(context).primaryColor,
                   ),
                 ),
-                Text(labels[i], style: TextStyle(color: Colors.black45, fontSize: 15)),
+                Text(labels[i],
+                    style: TextStyle(color: Colors.black45, fontSize: 15)),
               ],
             ),
           ),
@@ -157,9 +155,7 @@ class _MedicinePageState extends State<MedicinePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddMedicinePage.editMode(
-                        refreshState: widget._refreshState,
-                        user: widget._user,
+                  builder: (context) => EditMedicinePage(
                         medicine: widget._medicine,
                       ),
                 ),
@@ -206,8 +202,10 @@ class _MedicinePageState extends State<MedicinePage> {
                   padding: const EdgeInsets.all(0),
                   child: Text(
                     'in dose',
-                    style:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black45),
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black45),
                   ),
                 ),
               ],
@@ -360,7 +358,8 @@ class _MedicinePageState extends State<MedicinePage> {
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
-                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500, color: Colors.black45),
                   ),
                 ),
               ],
@@ -387,7 +386,8 @@ class _MedicinePageState extends State<MedicinePage> {
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
-                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500, color: Colors.black45),
                   ),
                 ),
               ],

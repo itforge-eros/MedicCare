@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/core/user_setting.dart';
 
@@ -278,5 +279,105 @@ class FirebaseUtils {
   }
 
   // End Appointment
+
+  // Medicine
+
+  static Future<List<Medicine>> getMedicines() async {
+    String userId = await getUserId();
+
+    var firestore = Firestore.instance;
+
+    QuerySnapshot snapshot = await firestore
+        .collection('users')
+        .document(userId)
+        .collection('medicines')
+        .getDocuments();
+
+    List<Medicine> medicines = List();
+
+    snapshot.documents.forEach((d) {
+      Medicine medicine = Medicine.fromMap(d.data);
+
+      medicine.id = d.documentID;
+
+      medicines.add(medicine);
+    });
+
+    return medicines;
+  }
+
+  static Future<Medicine> getMedicine(String medicineId) async {
+    String userId = await getUserId();
+
+    var firestore = Firestore.instance;
+
+    DocumentSnapshot snapshot = await firestore
+        .collection('users')
+        .document(userId)
+        .collection('medicines')
+        .document(medicineId)
+        .get();
+
+    Medicine medicine = Medicine.fromMap(snapshot.data);
+
+    medicine.id = medicineId;
+
+    return medicine;
+  }
+
+  static Future<String> addMedicine(Medicine medicine) async {
+    String userId = await getUserId();
+
+    Map<String, dynamic> map = medicine.toMap();
+    map.remove('id');
+
+    var firestore = Firestore.instance;
+
+    DocumentReference doctorRef = await firestore
+        .collection('users')
+        .document(userId)
+        .collection('medicines')
+        .add(map);
+
+    String medicineId = doctorRef.documentID;
+
+    return medicineId;
+  }
+
+  static void updateMedicine(Medicine medicine) async {
+    String userId = await getUserId();
+
+    Map<String, dynamic> map = medicine.toMap();
+    String medicineId = medicine.id;
+    map.remove('id');
+
+    var firestore = Firestore.instance;
+
+    firestore
+        .collection('users')
+        .document(userId)
+        .collection('medicines')
+        .document(medicineId)
+        .setData(map);
+  }
+
+  static void deleteMedicine(Medicine medicine) async {
+    String userId = await getUserId();
+
+    Map<String, dynamic> map = medicine.toMap();
+    String medicineId = medicine.id;
+    map.remove('id');
+
+    var firestore = Firestore.instance;
+
+    firestore
+        .collection('users')
+        .document(userId)
+        .collection('medicines')
+        .document(medicineId)
+        .delete();
+  }
+
+  // End Medicine
 
 }

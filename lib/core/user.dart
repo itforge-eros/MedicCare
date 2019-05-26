@@ -76,18 +76,18 @@ class User extends Equatable {
     this._height = map['height'];
     this._weight = map['weight'];
     this._image = map['image']; //TODO: Check Image properties
-    this._medicineList =
-        map['medicineList'].map((e) => Medicine.fromMap(e)).toList() ??
-            List<Medicine>();
-    this._appointmentList =
-        map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ??
-            List<Appointment>();
+    // this._medicineList =
+    //     map['medicineList'].map((e) => Medicine.fromMap(e)).toList() ??
+    //         List<Medicine>();
+    // this._appointmentList =
+    //     map['appointmentList'].map((e) => Appointment.fromMap(e)).toList() ??
+    //         List<Appointment>();
     // this._doctorList =
     //     map['doctorList'].map((e) => Doctor.fromMap(e)).toList() ??
     //         List<Doctor>();
-    this._hospitalList =
-        map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ??
-            List<Hospital>();
+    // this._hospitalList =
+    //     map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ??
+    //         List<Hospital>();
     this._userSettings =
         UserSettings.fromMap(map['userSettings']) ?? UserSettings();
   }

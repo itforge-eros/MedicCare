@@ -1,7 +1,7 @@
 ///
 /// `medicine_schedule.dart`
 /// Class contains data of medicine schedule
-/// 
+///
 
 import 'package:mediccare/exceptions.dart';
 

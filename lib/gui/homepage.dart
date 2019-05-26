@@ -42,6 +42,7 @@ class _HomepageState extends State<Homepage> {
   int _currentIndex = 2;
 
   Future<List<Doctor>> _getDoctors;
+  Future<List<Medicine>> _getMedicines;
 
   // Utility Method: Returns Custom List Tile
   ListTile getCustomListTile({
@@ -186,7 +187,7 @@ class _HomepageState extends State<Homepage> {
   // |---------------------- Medicine List
 
   // Data Method: Returns a list of medicine
-  List<Widget> totalMedic() {
+  List<Widget> totalMedic(List<Medicine> medicines) {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
@@ -201,57 +202,60 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    if (this._user.containsRemainingMedicine()) {
+    List<Medicine> remainingMedicine = List();
+    List<Medicine> emptyMedicine = List();
+
+    medicines.forEach((m) {
+      if (m.remainingAmount == 0) {
+        emptyMedicine.add(m);
+      } else {
+        remainingMedicine.add(m);
+      }
+    });
+
+    if (remainingMedicine.length > 0) {
       list.add(getSectionDivider('Remaining Medicines'));
-      this._user.medicineList.forEach((e) {
-        if (e.remainingAmount > 0) {
-          list.add(
-            getCustomCard(
-              name: e.name,
-              subtitle: e.getSubtitle(),
-              icon: CustomIcons.medicine,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MedicinePage(
-                          refreshState: this.refreshState,
-                          user: this._user,
-                          medicine: e,
-                        ),
-                  ),
-                );
-              },
-            ),
-          );
-        }
+      remainingMedicine.forEach((e) {
+        list.add(
+          getCustomCard(
+            name: e.name,
+            subtitle: e.getSubtitle(),
+            icon: CustomIcons.medicine,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MedicinePage(
+                        medicine: e,
+                      ),
+                ),
+              );
+            },
+          ),
+        );
       });
     }
 
-    if (this._user.containsEmptyMedicine()) {
+    if (emptyMedicine.length > 0) {
       list.add(getSectionDivider('Depleted Medicines'));
-      this._user.medicineList.forEach((e) {
-        if (e.remainingAmount == 0) {
-          list.add(
-            getCustomCard(
-              name: e.name,
-              subtitle: e.getSubtitle(),
-              icon: CustomIcons.medicine,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MedicinePage(
-                          refreshState: this.refreshState,
-                          user: this._user,
-                          medicine: e,
-                        ),
-                  ),
-                );
-              },
-            ),
-          );
-        }
+      emptyMedicine.forEach((e) {
+        list.add(
+          getCustomCard(
+            name: e.name,
+            subtitle: e.getSubtitle(),
+            icon: CustomIcons.medicine,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MedicinePage(
+                        medicine: e,
+                      ),
+                ),
+              );
+            },
+          ),
+        );
       });
     }
 
@@ -259,10 +263,22 @@ class _HomepageState extends State<Homepage> {
   }
 
   // GUI Method: Returns GUI of medicine tab
-  ListView getMedicineListPage() {
-    return ListView(
-      shrinkWrap: true,
-      children: totalMedic(),
+  Container getMedicineListPage() {
+    return Container(
+      child: FutureBuilder(
+          future: _getMedicines,
+          builder: (_, medicines) {
+            if (medicines.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: Text('Loading...'),
+              );
+            } else if (medicines.connectionState == ConnectionState.done) {
+              return ListView(
+                shrinkWrap: true,
+                children: totalMedic(medicines.data),
+              );
+            }
+          }),
     );
   }
   // |---------------------- end Medicine List
@@ -702,6 +718,7 @@ class _HomepageState extends State<Homepage> {
     super.initState();
     // TODO: Implements loading data from firebase
     _getDoctors = FirebaseUtils.getDoctors();
+    _getMedicines = FirebaseUtils.getMedicines();
 
     this._currentIndex = widget.initialIndex;
 
@@ -830,10 +847,7 @@ class _HomepageState extends State<Homepage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddMedicinePage(
-                      refreshState: this.refreshState,
-                      user: this._user,
-                    ),
+                builder: (context) => AddMedicinePage(),
               ),
             );
           },

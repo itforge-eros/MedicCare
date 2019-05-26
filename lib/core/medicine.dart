@@ -54,6 +54,7 @@ class Medicine {
     this._totalAmount = map['totalAmount'];
     this._remainingAmount = map['totalAmount'];
     this._skippedTimes = map['skippedTimes'];
+
     this._medicineSchedule = MedicineSchedule.fromMap(map['medicineSchedule']);
   }
 
@@ -79,7 +80,8 @@ class Medicine {
   set totalAmount(int totalAmount) => this._totalAmount = totalAmount;
 
   int get remainingAmount => this._remainingAmount;
-  set remainingAmount(int remainingAmount) => this._remainingAmount = remainingAmount;
+  set remainingAmount(int remainingAmount) =>
+      this._remainingAmount = remainingAmount;
 
   int get skippedTimes => this._skippedTimes;
 
