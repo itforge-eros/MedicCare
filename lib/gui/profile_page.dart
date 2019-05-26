@@ -5,13 +5,11 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/gui/edit_profile_page.dart';
 import 'package:mediccare/gui/user_settings_page.dart';
 import 'package:mediccare/util/firebase_utils.dart';
-import 'package:mediccare/util/shared_preferences_util.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage();
@@ -103,22 +101,60 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: ListView(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.symmetric(vertical: 30),
-                      child: FlutterLogo(
-                        size: 130,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.center,
+                                child: CircleAvatar(
+                                  radius: 80,
+                                  backgroundColor: Color(0xff476cfb),
+                                  child: ClipOval(
+                                    child: SizedBox(
+                                      width: 150.0,
+                                      height: 150.0,
+                                      child: (userInstance.image != null)
+                                          ? Image.network(
+                                              userInstance.image,
+                                              fit: BoxFit.fill,
+                                            )
+                                          : Image.network(
+                                              "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                              fit: BoxFit.fill,
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                        ],
                       ),
                     ),
                     Text(
                       userInstance.firstName,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: Colors.blueGrey, fontSize: 30, fontWeight: FontWeight.bold),
+                          color: Colors.blueGrey,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold),
                     ),
                     Text(
                       userInstance.lastName,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: Colors.blueGrey, fontSize: 25, fontWeight: FontWeight.bold),
+                          color: Colors.blueGrey,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold),
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(vertical: 10),
@@ -150,7 +186,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           titleText(title: 'Date of Birth'),
-                          contextText(context: userInstance.getFormattedBirthDate())
+                          contextText(
+                              context: userInstance.getFormattedBirthDate())
                         ],
                       ),
                     ),
@@ -160,7 +197,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           titleText(title: 'Height'),
-                          contextText(context: userInstance.height.toString() + ' cm'),
+                          contextText(
+                              context: userInstance.height.toString() + ' cm'),
                         ],
                       ),
                     ),
@@ -170,7 +208,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           titleText(title: 'Weight'),
-                          contextText(context: userInstance.weight.toString() + ' kg'),
+                          contextText(
+                              context: userInstance.weight.toString() + ' kg'),
                         ],
                       ),
                     ),
@@ -209,7 +248,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         RaisedButton(
                           child: Text(
                             'Logout',
-                            style: TextStyle(color: Color.fromRGBO(216, 32, 32, 1), fontSize: 15),
+                            style: TextStyle(
+                                color: Color.fromRGBO(216, 32, 32, 1),
+                                fontSize: 15),
                           ),
                           color: Colors.white,
                           elevation: 4.0,

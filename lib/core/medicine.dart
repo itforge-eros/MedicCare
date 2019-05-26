@@ -13,7 +13,7 @@ class Medicine {
   String _name;
   String _description;
   String _type;
-  Image _image;
+  String _image;
   int _doseAmount;
   int _totalAmount;
   int _remainingAmount;
@@ -26,7 +26,7 @@ class Medicine {
     String name,
     String description,
     String type,
-    Image image,
+    String image,
     int doseAmount = 1,
     int totalAmount = 10,
     MedicineSchedule medicineSchedule,
@@ -56,7 +56,8 @@ class Medicine {
     this._remainingAmount = map['totalAmount'];
     this._skippedTimes = map['skippedTimes'];
 
-    Map<String, dynamic> medicineSchedule = new Map<String, dynamic>.from(map['medicineSchedule']);
+    Map<String, dynamic> medicineSchedule =
+        new Map<String, dynamic>.from(map['medicineSchedule']);
 
     this._medicineSchedule = MedicineSchedule.fromMap(medicineSchedule);
   }
@@ -73,8 +74,8 @@ class Medicine {
   String get type => this._type;
   set type(String type) => this._type = type;
 
-  Image get image => this._image;
-  set image(Image image) => this._image = image;
+  String get image => this._image;
+  set image(String image) => this._image = image;
 
   int get doseAmount => this._doseAmount;
   set doseAmount(int doseAmount) => this._doseAmount = doseAmount;
@@ -83,7 +84,8 @@ class Medicine {
   set totalAmount(int totalAmount) => this._totalAmount = totalAmount;
 
   int get remainingAmount => this._remainingAmount;
-  set remainingAmount(int remainingAmount) => this._remainingAmount = remainingAmount;
+  set remainingAmount(int remainingAmount) =>
+      this._remainingAmount = remainingAmount;
 
   int get skippedTimes => this._skippedTimes;
 
@@ -146,11 +148,14 @@ class Medicine {
     int offset = 0;
 
     // Logic: Calculate `firstDay`
-    firstDay = DateTime(this._dateAdded.year, this._dateAdded.month, this._dateAdded.day);
+    firstDay = DateTime(
+        this._dateAdded.year, this._dateAdded.month, this._dateAdded.day);
     bool _availableFirstDay = false;
 
     for (int i = 0; i < 4; i++) {
-      if (Duration(hours: this._dateAdded.hour, minutes: this._dateAdded.minute) <
+      if (Duration(
+                  hours: this._dateAdded.hour,
+                  minutes: this._dateAdded.minute) <
               userSettings.userTime[i] &&
           this._medicineSchedule.time[i]) {
         _availableFirstDay = true;
@@ -170,7 +175,8 @@ class Medicine {
     // Logic: Calculate `firstTime`
     for (int i = 0; i < 4; i++) {
       if (this._dateAdded.day != firstDay.day) {
-        firstTime = userSettings.userTime[this._medicineSchedule.time.indexOf(true)];
+        firstTime =
+            userSettings.userTime[this._medicineSchedule.time.indexOf(true)];
         break;
       }
 
@@ -210,8 +216,11 @@ class Medicine {
     }
 
     if ((oneDayTime[0] - oneDayTime[oneDayTime.length - 1]).isNegative ||
-        (oneDayTime[0] - oneDayTime[oneDayTime.length - 1]) == Duration(seconds: 0)) {
-      durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1] + Duration(days: 1));
+        (oneDayTime[0] - oneDayTime[oneDayTime.length - 1]) ==
+            Duration(seconds: 0)) {
+      durations.add(oneDayTime[0] -
+          oneDayTime[oneDayTime.length - 1] +
+          Duration(days: 1));
     } else {
       durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1]);
     }
@@ -227,7 +236,9 @@ class Medicine {
 
     // Logic: Calculate `medicineSchedule`
     firstDay = firstDay.add(firstTime);
-    for (int i = 0; i < (this._totalAmount / this._doseAmount).ceil() + this._skippedTimes; i++) {
+    for (int i = 0;
+        i < (this._totalAmount / this._doseAmount).ceil() + this._skippedTimes;
+        i++) {
       medicineSchedule.add(firstDay);
       firstDay = firstDay.add(durations[(i + offset) % durations.length]);
 
@@ -238,7 +249,9 @@ class Medicine {
 
     // Logic: Remove taken and skipped medicine
     for (int i = 0;
-        i < (this._totalAmount - this._remainingAmount) / this._doseAmount + this._skippedTimes;
+        i <
+            (this._totalAmount - this._remainingAmount) / this._doseAmount +
+                this._skippedTimes;
         i++) {
       medicineSchedule.removeAt(0);
     }
