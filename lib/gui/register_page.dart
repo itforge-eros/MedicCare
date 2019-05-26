@@ -43,13 +43,18 @@ class _RegisterPageState extends State<RegisterPage> {
           context,
           title: 'Registration Success',
           content:
-              'New account created, you are now able to use this new account to login.',
+              'New account created, please check yours mailbox to verify your account before login.',
           onPressed: () {
             Navigator.of(context).pop();
             Navigator.pop(context);
           },
         );
-        // FirebaseUtils.createUserData(user.uid, _controllerEmail.text);
+        try {
+          await user.sendEmailVerification();
+        } catch (e) {
+          print("An error occured while trying to send email verification");
+          print(e.message);
+        }
       } else {
         // Event: Sign up failed
         Alert.displayAlert(
