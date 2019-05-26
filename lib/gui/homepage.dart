@@ -40,6 +40,9 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   User _user;
   int _currentIndex = 2;
+  TextEditingController medicineSearch  = new TextEditingController();
+  TextEditingController appointmentSearch = new TextEditingController();
+  TextEditingController doctorSearch = new TextEditingController();
 
   Future<List<Doctor>> _getDoctors;
   Future<List<Medicine>> _getMedicines;
@@ -192,6 +195,7 @@ class _HomepageState extends State<Homepage> {
       Padding(
         padding: const EdgeInsets.all(20),
         child: TextField(
+          controller: medicineSearch,
           onChanged: (value) {},
           decoration: InputDecoration(
             labelText: 'Search',
