@@ -7,6 +7,8 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
 import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/util/alert.dart';
@@ -48,6 +50,16 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
     setState(() {
       _image = image;
+    });
+  }
+
+  Future uploadPic(BuildContext context) async{
+    String filName=basename(_image.path);
+    StorageReference firebaseStorageRef=FirebaseStorage.instance.ref().child(filName);
+    StorageUploadTask uploadTask=firebaseStorageRef.putFile(_image);
+    StorageTaskSnapshot taskSnapshot= await uploadTask.onComplete;
+    setState((){
+      print("profile pic is uploaded");
     });
   }
 
