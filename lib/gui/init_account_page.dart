@@ -6,6 +6,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -37,10 +38,21 @@ class _InitAccountPageState extends State<InitAccountPage> {
   File _image;
 
   Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
     setState(() {
       _image = image;
     });
+  }
+
+  Future uploadPic() async {
+    String userId = await FirebaseUtils.getUserId();
+
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('$userId/profile');
+    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    setState(() {});
   }
 
   void clearFields() {
@@ -52,24 +64,6 @@ class _InitAccountPageState extends State<InitAccountPage> {
   void initState() {
     super.initState();
     this.clearFields();
-  }
-
-  void doInitiation() async {
-    FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
-
-    User user = User(
-      email: firebaseUser.email,
-      id: firebaseUser.uid,
-      bloodGroup: this._currentBloodGroup,
-      birthDate: this._currentBirthDate,
-      gender: _currentGender,
-      height: double.parse(_controllerHeight.text),
-      weight: double.parse(_controllerWeight.text),
-      firstName: _controllerFirstName.text,
-      lastName: _controllerLastName.text,
-    );
-
-    FirebaseUtils.updateUserData(user);
   }
 
   @override
@@ -91,6 +85,43 @@ class _InitAccountPageState extends State<InitAccountPage> {
             padding: EdgeInsets.only(
                 left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
             children: <Widget>[
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.center,
+                          child: CircleAvatar(
+                            radius: 80,
+                            backgroundColor: Color(0xff476cfb),
+                            child: ClipOval(
+                              child: SizedBox(
+                                width: 150.0,
+                                height: 150.0,
+                                child: (_image != null)
+                                    ? Image.file(_image, fit: BoxFit.fill)
+                                    : Image.network(
+                                        "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                        fit: BoxFit.fill,
+                                      ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                  ],
+                ),
+              ),
               FloatingActionButton(
                 onPressed: getImage,
                 tooltip: 'Pick Image',
@@ -264,9 +295,32 @@ class _InitAccountPageState extends State<InitAccountPage> {
                         content: 'Please select blood group.',
                       );
                     } else {
-                      doInitiation();
+                      void runInitation() async {
+                        FirebaseUser firebaseUser =
+                            await FirebaseAuth.instance.currentUser();
 
-                      Navigator.pushReplacementNamed(context, 'Homepage');
+                        User user = User(
+                          email: firebaseUser.email,
+                          id: firebaseUser.uid,
+                          bloodGroup: this._currentBloodGroup,
+                          birthDate: this._currentBirthDate,
+                          gender: _currentGender,
+                          height: double.parse(_controllerHeight.text),
+                          weight: double.parse(_controllerWeight.text),
+                          firstName: _controllerFirstName.text,
+                          lastName: _controllerLastName.text,
+                        );
+
+                        if (_image != null) {
+                          await uploadPic();
+                        }
+
+                        FirebaseUtils.updateUserData(user);
+
+                        Navigator.pushReplacementNamed(context, 'Homepage');
+                      }
+
+                      runInitation();
                     }
                   }
                 },

@@ -24,7 +24,7 @@ class User extends Equatable {
   DateTime _birthDate;
   double _height;
   double _weight;
-  Image _image;
+  String _image;
   List<Medicine> _medicineList;
   List<Appointment> _appointmentList;
   List<Doctor> _doctorList;
@@ -41,7 +41,7 @@ class User extends Equatable {
     double height,
     double weight,
     DateTime birthDate,
-    Image image,
+    String image,
     List<Medicine> medicineList,
     List<Appointment> appointmentList,
     List<Doctor> doctorList,
@@ -87,7 +87,8 @@ class User extends Equatable {
     // this._hospitalList =
     //     map['hospitalList'].map((e) => Hospital.fromMap(e)).toList() ??
     //         List<Hospital>();
-    this._userSettings = UserSettings.fromMap(map['userSettings']) ?? UserSettings();
+    this._userSettings =
+        UserSettings.fromMap(map['userSettings']) ?? UserSettings();
   }
 
   String get id => this._id;
@@ -130,23 +131,27 @@ class User extends Equatable {
   DateTime get birthDate => this._birthDate;
   set birthDate(DateTime birthDate) => this._birthDate = birthDate;
 
-  Image get image => this._image;
-  set image(Image image) => this._image = image;
+  String get image => this._image;
+  set image(String image) => this._image = image;
 
   List<Medicine> get medicineList => this._medicineList;
-  set medicineList(List<Medicine> medicineList) => this._medicineList = medicineList;
+  set medicineList(List<Medicine> medicineList) =>
+      this._medicineList = medicineList;
 
   List<Appointment> get appointmentList => this._appointmentList;
-  set appointmentList(List<Appointment> appointmentList) => this._appointmentList = appointmentList;
+  set appointmentList(List<Appointment> appointmentList) =>
+      this._appointmentList = appointmentList;
 
   List<Doctor> get doctorList => this._doctorList;
   set doctorList(List<Doctor> doctorList) => this._doctorList = doctorList;
 
   List<Hospital> get hospitalList => this._hospitalList;
-  set hospitalList(List<Hospital> hospitalList) => this._hospitalList = hospitalList;
+  set hospitalList(List<Hospital> hospitalList) =>
+      this._hospitalList = hospitalList;
 
   UserSettings get userSettings => this._userSettings;
-  set userSettings(UserSettings userSettings) => this._userSettings = userSettings;
+  set userSettings(UserSettings userSettings) =>
+      this._userSettings = userSettings;
 
   String getFormattedBirthDate() {
     String month;
@@ -189,7 +194,11 @@ class User extends Equatable {
         month = 'December';
         break;
     }
-    return this._birthDate.day.toString() + ' ' + month + ' ' + this._birthDate.year.toString();
+    return this._birthDate.day.toString() +
+        ' ' +
+        month +
+        ' ' +
+        this._birthDate.year.toString();
   }
 
   void addMedicine(Medicine medicine) {

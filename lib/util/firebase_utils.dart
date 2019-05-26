@@ -39,6 +39,17 @@ class FirebaseUtils {
       id: firebaseUser.uid,
     );
 
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('${firebaseUser.uid}/profile');
+
+    try {
+      String imageUrl = await firebaseStorageRef.getDownloadURL();
+
+      user.image = imageUrl;
+    } catch (e) {
+      user.image = null;
+    }
+
     return user;
   }
 
