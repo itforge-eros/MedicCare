@@ -1,5 +1,5 @@
 ///
-/// `intro_page.dart`
+/// intro_page.dart
 /// Class for intro page GUI
 /// by Supakit Theanthunyakit (@POKINBKK)
 ///
@@ -10,19 +10,19 @@ import 'package:intro_slider/intro_slider.dart';
 class IntroPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _IntroPageState();
+    return IntroPageState();
   }
 }
 
-class _IntroPageState extends State<IntroPage> {
-  List<Slide> _slides = List();
+class IntroPageState extends State<IntroPage> {
+  List<Slide> slideshow = List();
 
   @override
   void initState() {
     super.initState();
 
-    this._slides.add(
-          Slide(
+    this.slideshow.add(
+          new Slide(
             title: 'Medicines',
             //'ยา',
             description: 'Keep track on your medicine schedules.',
@@ -33,8 +33,8 @@ class _IntroPageState extends State<IntroPage> {
           ),
         );
 
-    this._slides.add(
-          Slide(
+    this.slideshow.add(
+          new Slide(
             title: 'Appointments',
             //'นัด',
             description: 'Never miss your doctor appointments again.',
@@ -45,8 +45,8 @@ class _IntroPageState extends State<IntroPage> {
           ),
         );
 
-    this._slides.add(
-          Slide(
+    this.slideshow.add(
+          new Slide(
             title: 'Doctors',
             //'แพทย์',
             description: 'Keep information of your doctors.',
@@ -57,8 +57,8 @@ class _IntroPageState extends State<IntroPage> {
           ),
         );
 
-    this._slides.add(
-          Slide(
+    this.slideshow.add(
+          new Slide(
             title: 'Nearby Hospitals',
             //'โรงพยาบาลใกล้เคียง',
             description: 'Search for nearby hospitals in no time.',
@@ -69,8 +69,8 @@ class _IntroPageState extends State<IntroPage> {
           ),
         );
 
-    this._slides.add(
-          Slide(
+    this.slideshow.add(
+          new Slide(
             title: 'All in one app',
             //'สรุปครบจบในที่เดียว',
             description: 'The hospital is in your hand.',
@@ -82,13 +82,14 @@ class _IntroPageState extends State<IntroPage> {
         );
   }
 
+  void onDonePress() {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return IntroSlider(
-      slides: this._slides,
-      onDonePress: () {
-        Navigator.pop(context);
-      },
-    );
+      slides: this.slideshow,
+      onDonePress: this.onDonePress);
   }
 }
