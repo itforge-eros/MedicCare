@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/firebase_utils.dart';
+import 'package:mediccare/util/shared_preferences_util.dart';
 import 'package:mediccare/util/validator.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,8 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   static final TextEditingController _controllerEmail = TextEditingController();
-  static final TextEditingController _controllerPassword =
-      TextEditingController();
+  static final TextEditingController _controllerPassword = TextEditingController();
 
   void signInWithEmail() async {
     FirebaseUser user;
@@ -42,6 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           Navigator.pushReplacementNamed(context, 'InitAccountPage');
         }
+        SharedPreferencesUtil.saveLastEmail(_controllerEmail.text);
         this.clearFields();
       } else {
         Alert.displayAlert(
@@ -64,13 +65,29 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void trimEmailField() {
-    _LoginPageState._controllerEmail.text =
-        _LoginPageState._controllerEmail.text.trim();
+    _LoginPageState._controllerEmail.text = _LoginPageState._controllerEmail.text.trim();
+  }
+
+  void loadEmailField() {
+    SharedPreferencesUtil.loadLastEmail().then((value) {
+      _LoginPageState._controllerEmail.text = value ?? '';
+    });
   }
 
   @override
   void initState() {
     super.initState();
+
+    SharedPreferencesUtil.loadAppOpenCount().then((value) {
+      if (value == null) {
+        Navigator.pushNamed(context, 'IntroPage');
+        SharedPreferencesUtil.saveAppOpenCount(1);
+      } else {
+        SharedPreferencesUtil.saveAppOpenCount(value + 1);
+      }
+    });
+
+    loadEmailField();
     FirebaseUtils.isLogin().then((isLogin) async {
       if (isLogin) {
         bool exist = await FirebaseUtils.getUserExist();

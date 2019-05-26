@@ -21,6 +21,18 @@ class SharedPreferencesUtil {
     return (prefs.getString('email'));
   }
 
+  // Utility Method: Save app enter count
+  static void saveAppOpenCount(int count) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('appOpenCount', count);
+  }
+
+  // Utility Method: Load app enter count
+  static Future<int> loadAppOpenCount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return (prefs.getInt('appOpenCount'));
+  }
+
   // Utility Method: Get local path
   static Future<String> getLocalPath() async {
     final Directory directory = await getApplicationDocumentsDirectory();
