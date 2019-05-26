@@ -6,8 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/doctor.dart';
-import 'package:mediccare/core/hospital.dart';
 import 'package:mediccare/core/medicine.dart';
+import 'package:mediccare/core/medicine_overview_data.dart';
 import 'package:mediccare/core/medicine_schedule.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/core/user_setting.dart';
@@ -51,10 +51,33 @@ class _HomepageState extends State<Homepage> {
   User _user;
   int _currentIndex = 2;
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController medicineSearch = new TextEditingController();
+  TextEditingController appointmentSearch = new TextEditingController();
+  TextEditingController doctorSearch = new TextEditingController();
 
   Future<List<Doctor>> _getDoctors;
+
   Future<List<Medicine>> _getMedicines;
   Future<List<Appointment>> _getAppointments;
+  Set<Medicine> searchMed;
+  bool isMedSearch;
+  String searchMedText;
+
+  _HomepageState() {
+    medicineSearch.addListener(() {
+      if (medicineSearch.text.isEmpty) {
+        setState(() {
+          isMedSearch = true;
+          searchMedText = "";
+        });
+      } else {
+        setState(() {
+          isMedSearch = false;
+          searchMedText = medicineSearch.text;
+        });
+      }
+    });
+  }
 
   // Utility Method: Returns Custom List Tile
   ListTile getCustomListTile({
@@ -253,11 +276,27 @@ class _HomepageState extends State<Homepage> {
   // |---------------------- Medicine List
 
   // Data Method: Returns a list of medicine
+  Widget searchListView(List<Medicine> medicines) {
+    searchMed = new Set<Medicine>();
+    for (int i = 0; i < medicines.length; i++) {
+      var item = medicines[i].name;
+      searchMedText = medicineSearch.text;
+      if (searchMedText == '' ||
+          searchMedText == null ||
+          searchMedText == ' ') {
+        searchMed.add(medicines[i]);
+      } else if (item.toLowerCase().contains(searchMedText.toLowerCase())) {
+        searchMed.add(medicines[i]);
+      }
+    }
+  }
+
   List<Widget> totalMedic(List<Medicine> medicines) {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
         child: TextField(
+          controller: medicineSearch,
           onChanged: (value) {},
           decoration: InputDecoration(
             labelText: 'Search',
@@ -271,35 +310,54 @@ class _HomepageState extends State<Homepage> {
     List<Medicine> remainingMedicine = List();
     List<Medicine> emptyMedicine = List();
 
-    medicines.forEach((m) {
-      if (m.remainingAmount == 0) {
-        emptyMedicine.add(m);
-      } else {
-        remainingMedicine.add(m);
-      }
-    });
-
-    if (remainingMedicine.length > 0) {
-      list.add(getSectionDivider('Remaining Medicines'));
-      remainingMedicine.forEach((e) {
-        list.add(
-          getCustomCard(
-            name: e.name,
-            subtitle: e.getSubtitle(),
-            icon: CustomIcons.medicine,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MedicinePage(
-                        medicine: e,
-                      ),
-                ),
-              );
-            },
+    if (medicines.length == 0) {
+      list.add(Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Image.asset('assets/images/medical-grey.png', height: 200),
           ),
-        );
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30.0),
+            child: Text(
+              'Start adding your medicine now!',
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
+            ),
+          )
+        ],
+      ));
+    } else {
+      searchListView(medicines);
+      searchMed.forEach((m) {
+        if (m.remainingAmount == 0) {
+          emptyMedicine.add(m);
+        } else {
+          remainingMedicine.add(m);
+        }
       });
+
+      if (remainingMedicine.length > 0) {
+        list.add(getSectionDivider('Remaining Medicines'));
+        remainingMedicine.forEach((e) {
+          list.add(
+            getCustomCard(
+              name: e.name,
+              subtitle: e.getSubtitle(),
+              icon: CustomIcons.medicine,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MedicinePage(
+                          medicine: e,
+                        ),
+                  ),
+                );
+              },
+            ),
+          );
+        });
+      }
     }
 
     if (emptyMedicine.length > 0) {
@@ -336,7 +394,7 @@ class _HomepageState extends State<Homepage> {
           builder: (_, medicines) {
             if (medicines.connectionState == ConnectionState.waiting) {
               return Center(
-                child: Text('Loading...'),
+                child: CircularProgressIndicator(),
               );
             } else if (medicines.connectionState == ConnectionState.done) {
               return ListView(
@@ -352,7 +410,7 @@ class _HomepageState extends State<Homepage> {
   // |---------------------- Appointment List
 
   // Data Method: Returns a list of appointments
-  List<Widget> totalAppoint(List<Appointment> appointments) {
+  List<Widget> getAppointmentList(List<Appointment> appointments) {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
@@ -478,7 +536,7 @@ class _HomepageState extends State<Homepage> {
           } else if (appointments.connectionState == ConnectionState.done) {
             return ListView(
               shrinkWrap: true,
-              children: totalAppoint(appointments.data),
+              children: getAppointmentList(appointments.data),
             );
           }
         },
@@ -492,14 +550,14 @@ class _HomepageState extends State<Homepage> {
 
   // Data Method: Returns list of coming appointments
 
-  List<Widget> getComingAppointment(List<Appointment> appointments) {
-    List<Widget> list = [];
+  List<Widget> getComingAppointmentList(List<Appointment> appointmentList) {
+    List<Widget> list = List<Widget>();
 
-    appointments.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
     List<Appointment> comingAppointments = List();
 
-    appointments.forEach((a) {
+    appointmentList.forEach((a) {
       switch (a.status) {
         case 0:
           comingAppointments.add(a);
@@ -519,16 +577,15 @@ class _HomepageState extends State<Homepage> {
             // subtitle: e.dateTime.toString(),
             icon: Icons.local_hospital,
             trailing: (DateTime(
-                          DateTime.now().year,
-                          DateTime.now().month,
-                          DateTime.now().day,
-                        ).compareTo(DateTime(
-                          e.dateTime.year,
-                          e.dateTime.month,
-                          e.dateTime.day,
-                        )) >=
-                        0 ||
-                    true) // TODO: Reconsider checkable condition and remove || true
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                    ).compareTo(DateTime(
+                      e.dateTime.year,
+                      e.dateTime.month,
+                      e.dateTime.day,
+                    )) >=
+                    0)
                 ? DropdownButtonHideUnderline(
                     child: DropdownButton(
                       icon: Icon(
@@ -604,7 +661,7 @@ class _HomepageState extends State<Homepage> {
     return list;
   }
 
-  Container getComingAppointmentList() {
+  Container getComingAppointmentListWidget() {
     return Container(
       child: FutureBuilder(
         future: _getAppointments,
@@ -616,7 +673,7 @@ class _HomepageState extends State<Homepage> {
           } else if (appointments.connectionState == ConnectionState.done) {
             return ListView(
               shrinkWrap: true,
-              children: getComingAppointment(appointments.data),
+              children: getComingAppointmentList(appointments.data),
             );
           }
         },
@@ -624,58 +681,27 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  List<Widget> getRemainingMedicine(List<Medicine> medicines) {
-    List<Widget> list = [
-      Padding(
-        padding: const EdgeInsets.all(20),
-        child: TextField(
-          onChanged: (value) {},
-          decoration: InputDecoration(
-            labelText: 'Search',
-            hintText: 'Search',
-            prefixIcon: Icon(Icons.search),
-          ),
-        ),
-      ),
-    ];
-
-    List<Medicine> remainingMedicine = List();
-
-    medicines.forEach((m) {
-      if (m.remainingAmount > 0) {
-        remainingMedicine.add(m);
-      }
-    });
-
-    if (remainingMedicine.length > 0) {
-      // TODO: Refactor Overview Remaining Dose
-    }
-
-    return list;
-  }
-
-  // Data Method: Returns list of remaining indose
-  Container getRemainingIndoseList() {
+  List<Widget> getRemainingIndoseList(List<Medicine> medicineList) {
     List<Widget> list = List<Widget>();
 
-    return Container(
-      child: FutureBuilder(
-          future: _getMedicines,
-          builder: (_, medicines) {
-            if (medicines.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: Text('Loading...'),
-              );
-            } else if (medicines.connectionState == ConnectionState.done) {
-              return ListView(
-                shrinkWrap: true,
-                children: getRemainingMedicine(medicines.data),
-              );
-            }
-          }),
-    );
+    final List<MedicineOverviewData> medicineOverviewDataList =
+        List<MedicineOverviewData>();
+    List<DateTime> temp = List<DateTime>();
 
-    if (this._user.containsRemainingMedicine()) {
+    for (int i = 0; i < medicineList.length; i++) {
+      temp = medicineList[i].getMedicineSchedule(
+          UserSettings()); // TODO: Pass object of UserSettings here
+      for (int j = 0; j < temp.length; j++) {
+        medicineOverviewDataList.add(MedicineOverviewData(
+          medicine: medicineList[i],
+          dateTime: temp[j],
+        ));
+      }
+    }
+
+    medicineOverviewDataList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
+    if (medicineOverviewDataList.length > 0) {
       list.add(
         Padding(
             padding: const EdgeInsets.all(10),
@@ -683,7 +709,7 @@ class _HomepageState extends State<Homepage> {
       );
 
       List<DateTime> dateList = List<DateTime>();
-      this._user.getMedicineOverview().forEach((e) {
+      medicineOverviewDataList.forEach((e) {
         if (!dateList.contains(
             DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
           dateList
@@ -705,7 +731,7 @@ class _HomepageState extends State<Homepage> {
               : getFormattedDate(e) + ' (Today)'),
         );
 
-        this._user.getMedicineOverview().forEach((f) {
+        medicineOverviewDataList.forEach((f) {
           if (e.year == f.dateTime.year &&
               e.month == f.dateTime.month &&
               e.day == f.dateTime.day) {
@@ -715,20 +741,16 @@ class _HomepageState extends State<Homepage> {
                 subtitle: f.getSubtitle(),
                 icon: CustomIcons.medicine,
                 trailing: (DateTime.now().compareTo(
-                                    f.dateTime.subtract(Duration(hours: 1))) >
-                                0 &&
-                            DateTime(
-                                  f.dateTime.year,
-                                  f.dateTime.month,
-                                  f.dateTime.day,
-                                  f.dateTime.hour,
-                                  f.dateTime.minute,
-                                ).compareTo(this
-                                    ._user
-                                    .getMedicineOverview()[0]
-                                    .dateTime) ==
-                                0 ||
-                        true) // TODO: Removes || true
+                                f.dateTime.subtract(Duration(hours: 1))) >
+                            0 &&
+                        DateTime(
+                              f.dateTime.year,
+                              f.dateTime.month,
+                              f.dateTime.day,
+                              f.dateTime.hour,
+                              f.dateTime.minute,
+                            ).compareTo(medicineOverviewDataList[0].dateTime) ==
+                            0)
                     ? DropdownButtonHideUnderline(
                         child: DropdownButton(
                           icon: Icon(
@@ -768,6 +790,7 @@ class _HomepageState extends State<Homepage> {
                               } else if (value == 'skip') {
                                 f.medicine.skipMedicine();
                               }
+                              FirebaseUtils.updateMedicine(f.medicine);
                             });
                           },
                         ),
@@ -780,7 +803,27 @@ class _HomepageState extends State<Homepage> {
       });
     }
 
-    // return list;
+    return list;
+  }
+
+  // Data Method: Returns list of remaining indose
+  Container getRemainingIndoseListWidget() {
+    return Container(
+      child: FutureBuilder(
+          future: _getMedicines,
+          builder: (_, medicines) {
+            if (medicines.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: Text('Loading...'),
+              );
+            } else if (medicines.connectionState == ConnectionState.done) {
+              return ListView(
+                shrinkWrap: true,
+                children: getRemainingIndoseList(medicines.data),
+              );
+            }
+          }),
+    );
   }
 
   // GUI Method: Returns GUI of overview tab
@@ -792,9 +835,9 @@ class _HomepageState extends State<Homepage> {
     // }
 
     return ListView(shrinkWrap: true, children: <Widget>[
-      getComingAppointmentList(),
+      getComingAppointmentListWidget(),
       SizedBox(height: 20.0),
-      // getRemainingIndoseList()
+      getRemainingIndoseListWidget()
     ]);
   }
 
@@ -818,26 +861,47 @@ class _HomepageState extends State<Homepage> {
         ),
       ),
     ];
-
-    doctors.forEach((e) {
-      list.add(
-        getCustomCard(
-          name: e.prefix + ' ' + e.firstName + ' ' + e.lastName,
-          subtitle: ' ' + e.hospital,
-          icon: CustomIcons.doctor_specialist,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DoctorPage(
-                      doctor: e,
-                    ),
+    if (doctors.length != 0) {
+      doctors.forEach((e) {
+        list.add(
+          getCustomCard(
+            name: e.prefix + ' ' + e.firstName + ' ' + e.lastName,
+            subtitle: ' ' + e.hospital,
+            icon: CustomIcons.doctor_specialist,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DoctorPage(
+                        doctor: e,
+                      ),
+                ),
+              );
+            },
+          ),
+        );
+      });
+    } else {
+      list.add(Center(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Image.asset(
+                'assets/images/doctor-grey.png',
+                height: 200,
               ),
-            );
-          },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              child: Text("Add your personal doctors now!",
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w500)),
+            )
+          ],
         ),
-      );
-    });
+      ));
+    }
 
     return list;
   }
