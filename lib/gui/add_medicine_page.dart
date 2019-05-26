@@ -91,7 +91,6 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
         elevation: 0.1,
-        actions: <Widget>[],
       ),
       body: Form(
         key: this._formKey,

@@ -5,8 +5,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:mediccare/core/medicine.dart';
-import 'package:mediccare/core/user.dart';
-import 'package:mediccare/gui/add_medicine_page.dart';
 import 'package:mediccare/gui/edit_medicine_page.dart';
 
 class MedicinePage extends StatefulWidget {
@@ -120,8 +118,7 @@ class _MedicinePageState extends State<MedicinePage> {
                     color: Theme.of(context).primaryColor,
                   ),
                 ),
-                Text(labels[i],
-                    style: TextStyle(color: Colors.black45, fontSize: 15)),
+                Text(labels[i], style: TextStyle(color: Colors.black45, fontSize: 15)),
               ],
             ),
           ),
@@ -156,7 +153,7 @@ class _MedicinePageState extends State<MedicinePage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => EditMedicinePage(
-                        medicine: widget._medicine,
+                        widget._medicine,
                       ),
                 ),
               );
@@ -202,10 +199,8 @@ class _MedicinePageState extends State<MedicinePage> {
                   padding: const EdgeInsets.all(0),
                   child: Text(
                     'in dose',
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black45),
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black45),
                   ),
                 ),
               ],
@@ -347,9 +342,10 @@ class _MedicinePageState extends State<MedicinePage> {
                   'Medical Description',
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      fontSize: 17,
-                      color: Theme.of(context).primaryColorDark,
-                      fontWeight: FontWeight.bold),
+                    fontSize: 17,
+                    color: Theme.of(context).primaryColorDark,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
@@ -358,8 +354,7 @@ class _MedicinePageState extends State<MedicinePage> {
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Colors.black45),
+                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
                   ),
                 ),
               ],
@@ -387,12 +382,15 @@ class _MedicinePageState extends State<MedicinePage> {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
                     style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Colors.black45),
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black45,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+          SizedBox(height: 40.0),
         ],
       ),
     );
