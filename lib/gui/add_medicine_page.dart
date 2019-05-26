@@ -91,7 +91,6 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
         ),
         backgroundColor: Colors.white.withOpacity(0.9),
         elevation: 0.1,
-        actions: <Widget>[],
       ),
       body: Form(
         key: this._formKey,
@@ -127,16 +126,6 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                 validator: (String text) {
                   if (text.isEmpty) {
                     return 'Please fill medicine name';
-                  }
-                },
-              ),
-              TextFormField(
-                controller: _controllerDescription,
-                maxLines: 4,
-                decoration: InputDecoration(labelText: 'Description'),
-                validator: (String text) {
-                  if (text.isEmpty) {
-                    return 'Please fill description';
                   }
                 },
               ),
