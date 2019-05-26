@@ -14,16 +14,20 @@ import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
-class AddAppointmentPage extends StatefulWidget {
-  AddAppointmentPage();
+class EditAppointmentPage extends StatefulWidget {
+  Appointment _appointment;
+
+  EditAppointmentPage({Appointment appointment}) {
+    this._appointment = appointment;
+  }
 
   @override
   State<StatefulWidget> createState() {
-    return _AddAppointmentPageState();
+    return _EditAppointmentPageState();
   }
 }
 
-class _AddAppointmentPageState extends State<AddAppointmentPage> {
+class _EditAppointmentPageState extends State<EditAppointmentPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   static final TextEditingController _controllerTitle = TextEditingController();
   static final TextEditingController _controllerDescription =
@@ -41,24 +45,54 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
     this._currentDateTime = null;
   }
 
+  void loadFields() {
+    if (widget._appointment != null) {
+      _controllerTitle.text = widget._appointment.title;
+      _controllerDescription.text = widget._appointment.description;
+      _controllerHospital.text = widget._appointment.hospital;
+      this._currentDoctor = widget._appointment.doctor;
+      this._currentDateTime = widget._appointment.dateTime;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     this.clearFields();
+    this.loadFields();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
-          title: Text(
-            'Add Appointment',
-            style: TextStyle(color: Colors.blueGrey),
+        iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
+        title: Text(
+          'Edit Appointment',
+          style: TextStyle(color: Colors.blueGrey),
+        ),
+        backgroundColor: Colors.white.withOpacity(0.9),
+        elevation: 0.1,
+        actions: <Widget>[
+          IconButton(
+            color: Colors.red,
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              Alert.displayConfirmDelete(
+                context,
+                title: 'Delete Appointment?',
+                content:
+                    'Deleting this appointment will permanently remove it from your appointment list.',
+                onPressedConfirm: () {
+                  Navigator.of(context).pop();
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+              );
+            },
           ),
-          backgroundColor: Colors.white.withOpacity(0.9),
-          elevation: 0.1,
-          actions: <Widget>[]),
+        ],
+      ),
       body: Form(
         key: this._formKey,
         child: Center(
@@ -84,7 +118,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                 isExpanded: true,
                 value: this._currentDoctor,
                 items:
-                    // widget._user.doctorList
+                    //  widget._user.doctorList
                     //         .map(
                     //           (e) => DropdownMenuItem(
                     //                 value: e,
@@ -122,9 +156,15 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
               ),
               TextFormField(
                 controller: _controllerHospital,
-                decoration: InputDecoration(
-                  labelText: 'Hospital',
-                ),
+                decoration: (this._currentDoctor == null)
+                    ? InputDecoration(
+                        labelText: 'Hospital',
+                      )
+                    : InputDecoration(
+                        labelText: 'Hospital',
+                        helperText:
+                            'Leave blank to use default hospital of the selected doctor.',
+                      ),
                 validator: (text) {
                   if (this._currentDoctor == null && text.trim().isEmpty) {
                     return 'Please fill hospital';
@@ -160,17 +200,17 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                 child: Text('Save'),
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
-                    Appointment appointment = Appointment(
-                      title: _controllerTitle.text,
-                      description: _controllerDescription.text,
-                      doctor: this._currentDoctor,
-                      hospital: (_controllerHospital.text.trim().isNotEmpty)
-                          ? _controllerHospital.text
-                          : this._currentDoctor.hospital,
-                      dateTime: this._currentDateTime,
-                    );
+                    widget._appointment.title = _controllerTitle.text;
+                    widget._appointment.description =
+                        _controllerDescription.text;
+                    widget._appointment.doctor = this._currentDoctor;
+                    widget._appointment.hospital =
+                        (_controllerHospital.text.trim().isNotEmpty)
+                            ? _controllerHospital.text
+                            : this._currentDoctor.hospital;
+                    widget._appointment.dateTime = this._currentDateTime;
 
-                    FirebaseUtils.addAppointment(appointment);
+                    FirebaseUtils.updateAppointment(widget._appointment);
 
                     Navigator.pop(context);
                   }

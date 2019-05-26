@@ -12,6 +12,7 @@ import 'package:mediccare/core/medicine_schedule.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
+import 'package:mediccare/gui/edit_appointment_page.dart';
 import 'package:mediccare/gui/map_page.dart';
 import 'package:mediccare/gui/appointment_page.dart';
 import 'package:mediccare/gui/doctor_page.dart';
@@ -43,6 +44,7 @@ class _HomepageState extends State<Homepage> {
 
   Future<List<Doctor>> _getDoctors;
   Future<List<Medicine>> _getMedicines;
+  Future<List<Appointment>> _getAppointments;
 
   // Utility Method: Returns Custom List Tile
   ListTile getCustomListTile({
@@ -286,7 +288,7 @@ class _HomepageState extends State<Homepage> {
   // |---------------------- Appointment List
 
   // Data Method: Returns a list of appointments
-  List<Widget> totalAppoint() {
+  List<Widget> totalAppoint(List<Appointment> appointments) {
     List<Widget> list = [
       Padding(
         padding: const EdgeInsets.all(20),
@@ -305,59 +307,62 @@ class _HomepageState extends State<Homepage> {
       ),
     ];
 
-    this._user.appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    appointments.sort((a, b) => a.dateTime.compareTo(b.dateTime));
 
-    if (this._user.containsComingAppointments()) {
+    List<Appointment> comingAppointments = List();
+    List<Appointment> completedAppointments = List();
+
+    appointments.forEach((a) {
+      if (a.status == 0) {
+        comingAppointments.add(a);
+      } else {
+        completedAppointments.add(a);
+      }
+    });
+
+    if (comingAppointments.length > 0) {
       list.add(getSectionDivider('Coming Appointments'));
-      this._user.appointmentList.forEach((e) {
-        if (e.status == 0) {
-          list.add(
-            getCustomCard(
-              name: e.title,
-              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-              icon: Icons.local_hospital,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AppointmentPage(
-                          refreshState: this.refreshState,
-                          user: this._user,
-                          appointment: e,
-                        ),
-                  ),
-                );
-              },
-            ),
-          );
-        }
+      comingAppointments.forEach((e) {
+        list.add(
+          getCustomCard(
+            name: e.title,
+            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+            icon: Icons.local_hospital,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditAppointmentPage(
+                        appointment: e,
+                      ),
+                ),
+              );
+            },
+          ),
+        );
       });
     }
 
-    if (this._user.containsCompletedAppointments()) {
+    if (completedAppointments.length > 0) {
       list.add(getSectionDivider('Completed Appointments'));
-      this._user.appointmentList.forEach((e) {
-        if (e.status == 1) {
-          list.add(
-            getCustomCard(
-              name: e.title,
-              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-              icon: Icons.local_hospital,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AppointmentPage(
-                          refreshState: this.refreshState,
-                          user: this._user,
-                          appointment: e,
-                        ),
-                  ),
-                );
-              },
-            ),
-          );
-        }
+      completedAppointments.forEach((e) {
+        list.add(
+          getCustomCard(
+            name: e.title,
+            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+            icon: Icons.local_hospital,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditAppointmentPage(
+                        appointment: e,
+                      ),
+                ),
+              );
+            },
+          ),
+        );
       });
     }
 
@@ -375,8 +380,6 @@ class _HomepageState extends State<Homepage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => AppointmentPage(
-                          refreshState: this.refreshState,
-                          user: this._user,
                           appointment: e,
                         ),
                   ),
@@ -392,11 +395,22 @@ class _HomepageState extends State<Homepage> {
   }
 
   // GUI Method: Returns GUI of appointment tab
-  ListView getAppointmentListPage() {
-    return ListView(
-      shrinkWrap: true,
-      children: totalAppoint(),
-    );
+  Container getAppointmentListPage() {
+    return Container(
+        child: FutureBuilder(
+            future: _getAppointments,
+            builder: (_, appointments) {
+              if (appointments.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: Text('Loading...'),
+                );
+              } else if (appointments.connectionState == ConnectionState.done) {
+                return ListView(
+                  shrinkWrap: true,
+                  children: totalAppoint(appointments.data),
+                );
+              }
+            }));
   }
 
   // |---------------------- end Appointment List
@@ -494,8 +508,6 @@ class _HomepageState extends State<Homepage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => AppointmentPage(
-                                          refreshState: this.refreshState,
-                                          user: this._user,
                                           appointment: e,
                                         ),
                                   ),
@@ -719,6 +731,7 @@ class _HomepageState extends State<Homepage> {
     // TODO: Implements loading data from firebase
     _getDoctors = FirebaseUtils.getDoctors();
     _getMedicines = FirebaseUtils.getMedicines();
+    _getAppointments = FirebaseUtils.getAppointments();
 
     this._currentIndex = widget.initialIndex;
 
@@ -865,10 +878,7 @@ class _HomepageState extends State<Homepage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddAppointmentPage(
-                      refreshState: refreshState,
-                      user: this._user,
-                    ),
+                builder: (context) => AddAppointmentPage(),
               ),
             );
           },

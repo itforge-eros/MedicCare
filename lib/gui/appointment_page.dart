@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/user.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
+import 'package:mediccare/gui/edit_appointment_page.dart';
 
 class AppointmentPage extends StatefulWidget {
-  Function _refreshState;
   User _user;
   Appointment _appointment;
 
-  AppointmentPage({Function refreshState, User user, Appointment appointment}) {
-    this._refreshState = refreshState;
-    this._user = user;
+  AppointmentPage({Appointment appointment}) {
     this._appointment = appointment;
   }
 
@@ -44,9 +42,7 @@ class AppointmentPageState extends State<AppointmentPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddAppointmentPage.editMode(
-                        refreshState: this.refreshState,
-                        user: widget._user,
+                  builder: (context) => EditAppointmentPage(
                         appointment: widget._appointment,
                       ),
                 ),
@@ -83,11 +79,14 @@ class AppointmentPageState extends State<AppointmentPage> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: Text(
-                      widget._appointment.dateTime.toString().replaceAll(':00.000', ''),
+                      widget._appointment.dateTime
+                          .toString()
+                          .replaceAll(':00.000', ''),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
-                      style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500, color: Colors.black45),
                     ),
                   ),
                 ],
@@ -119,7 +118,8 @@ class AppointmentPageState extends State<AppointmentPage> {
                           SizedBox(height: 10.0),
                           Text(
                             widget._appointment.doctor.fullName,
-                            style: TextStyle(color: Colors.black45, fontSize: 15),
+                            style:
+                                TextStyle(color: Colors.black45, fontSize: 15),
                           ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(10, 30, 10, 30),
@@ -134,7 +134,8 @@ class AppointmentPageState extends State<AppointmentPage> {
                           ),
                           Text(
                             widget._appointment.doctor.ward,
-                            style: TextStyle(color: Colors.black45, fontSize: 15),
+                            style:
+                                TextStyle(color: Colors.black45, fontSize: 15),
                           )
                         ],
                       ),
@@ -170,7 +171,8 @@ class AppointmentPageState extends State<AppointmentPage> {
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
-                        style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, color: Colors.black45),
                       ),
                     ),
                   ],
@@ -204,7 +206,8 @@ class AppointmentPageState extends State<AppointmentPage> {
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
-                        style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black45),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, color: Colors.black45),
                       ),
                     ),
                   ],
