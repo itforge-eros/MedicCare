@@ -889,8 +889,8 @@ class _HomepageState extends State<Homepage> {
     return ListView(shrinkWrap: true, children: <Widget>[
       getComingAppointmentListWidget(),
       SizedBox(height: 20.0),
-      getRemainingIndoseListWidget(),
-      SizedBox(height: 40.0),
+      // getRemainingIndoseListWidget(),
+      // SizedBox(height: 40.0),
     ]);
   }
 

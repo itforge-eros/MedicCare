@@ -116,25 +116,25 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
   @override
   Widget build(BuildContext context) {
     Future<void> _handlePressButton() async {
-    try {
-      final center = await getUserLocation();
-      Prediction p = await PlacesAutocomplete.show(
-          context: context,
-          strictbounds: center == null ? false : true,
-          apiKey: kGoogleApiKey,
-          onError: onError,
-          mode: Mode.overlay,
-          language: "en",
-          location: center == null
-              ? null
-              : Location(center.latitude, center.longitude),
-          radius: center == null ? null : 10000);
+      try {
+        final center = await getUserLocation();
+        Prediction p = await PlacesAutocomplete.show(
+            context: context,
+            strictbounds: center == null ? false : true,
+            apiKey: kGoogleApiKey,
+            onError: onError,
+            mode: Mode.overlay,
+            language: "en",
+            location: center == null
+                ? null
+                : Location(center.latitude, center.longitude),
+            radius: center == null ? null : 10000);
 
-      savePlace(p.placeId, p.description);
-    } catch (e) {
-      return;
+        savePlace(p.placeId, p.description);
+      } catch (e) {
+        return;
+      }
     }
-  }
 
     return Scaffold(
       appBar: AppBar(
@@ -225,9 +225,9 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
               ),
               RaisedButton(
                 child: Text(_controllerHospitalName.text),
-                  onPressed: () {
-                    _handlePressButton();
-                  },
+                onPressed: () {
+                  _handlePressButton();
+                },
               ),
               TextFormField(
                 controller: _controllerPhone,
