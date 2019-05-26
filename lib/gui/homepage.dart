@@ -454,74 +454,92 @@ class _HomepageState extends State<Homepage> {
           break;
       }
     });
-
-    if (comingAppointments.length > 0) {
-      list.add(getSectionDivider('Coming Appointments'));
-      comingAppointments.forEach((e) {
-        list.add(
-          getCustomCard(
-            name: e.title,
-            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-            icon: Icons.local_hospital,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditAppointmentPage(
-                        appointment: e,
-                      ),
-                ),
-              );
-            },
+    if (appointments.length == 0) {
+      list.add(Center(
+          child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Image.asset('assets/images/note-grey.png', height: 200),
           ),
-        );
-      });
-    }
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30.0),
+            child: Text(
+              'Start adding your appointment now!',
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
+            ),
+          )
+        ],
+      )));
+    } else {
+      if (comingAppointments.length > 0) {
+        list.add(getSectionDivider('Coming Appointments'));
+        comingAppointments.forEach((e) {
+          list.add(
+            getCustomCard(
+              name: e.title,
+              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+              icon: Icons.local_hospital,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditAppointmentPage(
+                          appointment: e,
+                        ),
+                  ),
+                );
+              },
+            ),
+          );
+        });
+      }
 
-    if (completedAppointments.length > 0) {
-      list.add(getSectionDivider('Completed Appointments'));
-      completedAppointments.forEach((e) {
-        list.add(
-          getCustomCard(
-            name: e.title,
-            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-            icon: Icons.local_hospital,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditAppointmentPage(
-                        appointment: e,
-                      ),
-                ),
-              );
-            },
-          ),
-        );
-      });
-    }
+      if (completedAppointments.length > 0) {
+        list.add(getSectionDivider('Completed Appointments'));
+        completedAppointments.forEach((e) {
+          list.add(
+            getCustomCard(
+              name: e.title,
+              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+              icon: Icons.local_hospital,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditAppointmentPage(
+                          appointment: e,
+                        ),
+                  ),
+                );
+              },
+            ),
+          );
+        });
+      }
 
-    if (skipAppointments.length > 0) {
-      list.add(getSectionDivider('Skipped Appointments'));
-      skipAppointments.forEach((e) {
-        list.add(
-          getCustomCard(
-            name: e.title,
-            subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
-            icon: Icons.local_hospital,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AppointmentPage(
-                        appointment: e,
-                      ),
-                ),
-              );
-            },
-          ),
-        );
-      });
+      if (skipAppointments.length > 0) {
+        list.add(getSectionDivider('Skipped Appointments'));
+        skipAppointments.forEach((e) {
+          list.add(
+            getCustomCard(
+              name: e.title,
+              subtitle: ' ' + e.dateTime.toString().replaceAll(':00.000', ''),
+              icon: Icons.local_hospital,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AppointmentPage(
+                          appointment: e,
+                        ),
+                  ),
+                );
+              },
+            ),
+          );
+        });
+      }
     }
 
     return list;
@@ -535,7 +553,7 @@ class _HomepageState extends State<Homepage> {
         builder: (_, appointments) {
           if (appointments.connectionState == ConnectionState.waiting) {
             return Center(
-              child: Text('Loading...'),
+              child: CircularProgressIndicator(),
             );
           } else if (appointments.connectionState == ConnectionState.done) {
             return ListView(
