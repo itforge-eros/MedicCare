@@ -37,11 +37,15 @@ class AddDoctorPage extends StatefulWidget {
 
 class _AddDoctorPageState extends State<AddDoctorPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  static final TextEditingController _controllerPrefix = TextEditingController();
-  static final TextEditingController _controllerFirstName = TextEditingController();
-  static final TextEditingController _controllerLastName = TextEditingController();
+  static final TextEditingController _controllerPrefix =
+      TextEditingController();
+  static final TextEditingController _controllerFirstName =
+      TextEditingController();
+  static final TextEditingController _controllerLastName =
+      TextEditingController();
   static final TextEditingController _controllerWard = TextEditingController();
-  static final TextEditingController _controllerHospital = TextEditingController();
+  static final TextEditingController _controllerHospital =
+      TextEditingController();
   static final TextEditingController _controllerPhone = TextEditingController();
   static final TextEditingController _controllerNotes = TextEditingController();
   File _image;
@@ -53,15 +57,17 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
     });
   }
 
-  Future uploadPic(BuildContext context) async{
-    String filName=basename(_image.path);
-    StorageReference firebaseStorageRef=FirebaseStorage.instance.ref().child(filName);
-    StorageUploadTask uploadTask=firebaseStorageRef.putFile(_image);
-    StorageTaskSnapshot taskSnapshot= await uploadTask.onComplete;
-    setState((){
+  Future uploadPic(BuildContext context) async {
+    String filName = basename(_image.path);
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child(filName);
+    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    setState(() {
       print("profile pic is uploaded");
     });
   }
+
 
   void clearFields() {
     _controllerPrefix.text = '';
@@ -84,13 +90,6 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
       _controllerNotes.text = widget._doctor.notes;
       _image = null; // TODO: Implements image adding and loading
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    this.clearFields();
-    this.loadFields();
   }
 
   @override
@@ -131,8 +130,41 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
         key: this._formKey,
         child: Center(
           child: ListView(
-            padding: EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
+            padding: EdgeInsets.only(
+                left: 30.0, top: 1, right: 30.0, bottom: 15.0),
             children: <Widget>[
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.center,
+                          child: CircleAvatar(
+                            radius: 80,
+                            backgroundColor: Color(0xff476cfb),
+                            child: ClipOval(
+                              child: SizedBox(
+                                width: 150.0,
+                                height: 150.0,
+                                child: (_image!=null)?Image.file(_image,fit:BoxFit.fill):
+                                Image.network("https://image.flaticon.com/icons/png/512/64/64572.png",
+                                fit:BoxFit.fill,
+                                )
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
               FloatingActionButton(
                 onPressed: getImage,
                 tooltip: 'Pick Image',
@@ -203,7 +235,8 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                           hospital: _controllerHospital.text,
                           phone: _controllerPhone.text,
                           notes: _controllerNotes.text,
-                          image: null, // TODO: Implements image adding and loading
+                          image:
+                              null, // TODO: Implements image adding and loading
                         ),
                       );
                     } else {
@@ -214,7 +247,8 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                       widget._doctor.hospital = _controllerHospital.text;
                       widget._doctor.phone = _controllerPhone.text;
                       widget._doctor.notes = _controllerNotes.text;
-                      widget._doctor.image = null; // TODO: Implements image adding and loading
+                      widget._doctor.image =
+                          null; // TODO: Implements image adding and loading
                     }
                     widget._refreshState();
                     Navigator.pop(context);
