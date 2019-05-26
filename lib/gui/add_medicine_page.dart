@@ -125,7 +125,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                           alignment: Alignment.center,
                           child: CircleAvatar(
                             radius: 80,
-                            backgroundColor: Color(0xff476cfb),
+                            backgroundColor: Color(0xffffffff),
                             child: ClipOval(
                               child: SizedBox(
                                 width: 150.0,
@@ -133,8 +133,8 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                                 child: (_currentImage != null)
                                     ? Image.file(_currentImage,
                                         fit: BoxFit.fill)
-                                    : Image.network(
-                                        "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                    : Image.asset(
+                                        "assets/person.png",
                                         fit: BoxFit.fill,
                                       ),
                               ),

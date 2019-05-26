@@ -94,16 +94,18 @@ class MapPageState extends State<MapPage> {
     });
 
     final location = Location(center.latitude, center.longitude);
-    final result = await _places.searchNearbyWithRadius(location, 20000, keyword: "โรงพยาบาล");
+    final result = await _places.searchNearbyWithRadius(location, 20000,
+        keyword: "โรงพยาบาล");
     setState(() {
       this.isLoading = false;
       if (result.status == "OK") {
         result.results.forEach((f) {
           this.places.add(f);
           final markerOptions = MarkerOptions(
-            position: LatLng(f.geometry.location.lat, f.geometry.location.lng),
-            infoWindowText: InfoWindowText("${f.name}", "${f.types?.first}"));
-            mapController.addMarker(markerOptions);
+              position:
+                  LatLng(f.geometry.location.lat, f.geometry.location.lng),
+              infoWindowText: InfoWindowText("${f.name}", "${f.types?.first}"));
+          mapController.addMarker(markerOptions);
         });
       } else {
         this.errorMessage = result.errorMessage;

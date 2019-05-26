@@ -53,6 +53,7 @@ flutter:
   assets:
     - assets/logo_temporary.jpg
     - assets/logo.png
+    - assets/person.png
     - assets/images/medical.png
     - assets/images/note.png
     - assets/images/doctor.png

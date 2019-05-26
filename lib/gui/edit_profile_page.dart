@@ -98,7 +98,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           alignment: Alignment.center,
                           child: CircleAvatar(
                             radius: 80,
-                            backgroundColor: Color(0xff476cfb),
+                            backgroundColor: Color(0xffffffff),
                             child: ClipOval(
                               child: SizedBox(
                                 width: 150.0,
@@ -106,8 +106,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 child: (widget._user.image != null)
                                     ? Image.network(widget._user.image,
                                         fit: BoxFit.fill)
-                                    : Image.network(
-                                        "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                    : Image.asset(
+                                        "assets/person.png",
                                         fit: BoxFit.fill,
                                       ),
                               ),

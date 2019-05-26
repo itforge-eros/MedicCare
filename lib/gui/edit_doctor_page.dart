@@ -149,15 +149,15 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                           alignment: Alignment.center,
                           child: CircleAvatar(
                             radius: 80,
-                            backgroundColor: Color(0xff476cfb),
+                            backgroundColor: Color(0xffffffff),
                             child: ClipOval(
                               child: SizedBox(
                                   width: 150.0,
                                   height: 150.0,
                                   child: (_image != null)
                                       ? Image.network(_image, fit: BoxFit.fill)
-                                      : Image.network(
-                                          "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                      : Image.asset(
+                                          "assets/person.png",
                                           fit: BoxFit.fill,
                                         )),
                             ),
