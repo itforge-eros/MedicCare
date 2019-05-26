@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -31,9 +32,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
   File _image;
 
   Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    String userId = await FirebaseUtils.getUserId();
+
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('$userId/profile');
+    StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+    String imageUrl = await firebaseStorageRef.getDownloadURL();
+
     setState(() {
       _image = image;
+      widget._user.image = imageUrl;
     });
   }
 
@@ -72,6 +84,44 @@ class _EditProfilePageState extends State<EditProfilePage> {
               bottom: 15.0,
             ),
             children: <Widget>[
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.center,
+                          child: CircleAvatar(
+                            radius: 80,
+                            backgroundColor: Color(0xff476cfb),
+                            child: ClipOval(
+                              child: SizedBox(
+                                width: 150.0,
+                                height: 150.0,
+                                child: (widget._user.image != null)
+                                    ? Image.network(widget._user.image,
+                                        fit: BoxFit.fill)
+                                    : Image.network(
+                                        "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                        fit: BoxFit.fill,
+                                      ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                  ],
+                ),
+              ),
               FloatingActionButton(
                 onPressed: getImage,
                 tooltip: 'Change Image',

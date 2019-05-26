@@ -5,6 +5,7 @@
 
 import 'dart:io';
 import 'dart:async';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mediccare/core/doctor.dart';
@@ -50,12 +51,24 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
       TextEditingController();
   static final TextEditingController _controllerPhone = TextEditingController();
   static final TextEditingController _controllerNotes = TextEditingController();
-  File _image;
+  String _image;
 
   Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    String userId = await FirebaseUtils.getUserId();
+
+    StorageReference firebaseStorageRef = FirebaseStorage.instance
+        .ref()
+        .child('$userId/doctor/${widget._doctor.id}');
+    StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+    String imageUrl = await firebaseStorageRef.getDownloadURL();
+
     setState(() {
-      _image = image;
+      _image = imageUrl;
+      widget._doctor.image = imageUrl;
     });
   }
 
@@ -79,7 +92,8 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
       _controllerHospitalId.text = widget._doctor.hospital;
       _controllerPhone.text = widget._doctor.phone;
       _controllerNotes.text = widget._doctor.notes;
-      _image = null; // TODO: Implements image adding and loading
+      _image =
+          widget._doctor.image; // TODO: Implements image adding and loading
     }
   }
 
@@ -184,6 +198,39 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
             padding: EdgeInsets.only(
                 left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
             children: <Widget>[
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.center,
+                          child: CircleAvatar(
+                            radius: 80,
+                            backgroundColor: Color(0xff476cfb),
+                            child: ClipOval(
+                              child: SizedBox(
+                                  width: 150.0,
+                                  height: 150.0,
+                                  child: (_image != null)
+                                      ? Image.network(_image, fit: BoxFit.fill)
+                                      : Image.network(
+                                          "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                          fit: BoxFit.fill,
+                                        )),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
               FloatingActionButton(
                 onPressed: getImage,
                 tooltip: 'Pick Image',
@@ -251,7 +298,6 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                     // TODO: Implements image adding and loading
 
                     FirebaseUtils.updateDoctor(widget._doctor);
-                    widget._doctor.image = null;
                     Navigator.pop(context);
                   }
                 },

@@ -5,6 +5,7 @@
 
 import 'dart:io';
 import 'dart:async';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
@@ -40,11 +41,22 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
   File _currentImage;
 
   Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     setState(() {
       _currentImage = image;
     });
+  }
+
+  Future uploadPic(String medicineId) async {
+    String userId = await FirebaseUtils.getUserId();
+
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('$userId/medicine/$medicineId');
+    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_currentImage);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+    setState(() {});
   }
 
   void clearFields() {
@@ -99,6 +111,42 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
             padding: EdgeInsets.only(
                 left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
             children: <Widget>[
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.center,
+                          child: CircleAvatar(
+                            radius: 80,
+                            backgroundColor: Color(0xff476cfb),
+                            child: ClipOval(
+                              child: SizedBox(
+                                width: 150.0,
+                                height: 150.0,
+                                child: (_currentImage != null)
+                                    ? Image.file(_currentImage,
+                                        fit: BoxFit.fill)
+                                    : Image.network(
+                                        "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                        fit: BoxFit.fill,
+                                      ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
               FloatingActionButton(
                 onPressed: getImage,
                 tooltip: 'Pick Image',
@@ -481,34 +529,34 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
                             'Medicine must be taken at least one day per week.',
                       );
                     } else {
-                      Image image;
+                      void doAddMedicine() async {
+                        Medicine medicine = Medicine(
+                          name: _controllerMedicineName.text,
+                          description: _controllerDescription.text,
+                          type: this._currentMedicineType,
+                          doseAmount: int.parse(_controllerDoseAmount.text),
+                          totalAmount: int.parse(_controllerTotalAmount.text),
+                          medicineSchedule: this._currentMedicineSchedule,
+                          dateAdded: this._currentDateAdded,
+                        );
 
-                      try {
-                        image = Image.file(this._currentImage);
-                      } catch (e) {
-                        image = null;
+                        String medicineId =
+                            await FirebaseUtils.addMedicine(medicine);
+
+                        if (_currentImage != null) {
+                          await uploadPic(medicineId);
+                        }
+
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Homepage(
+                                      initialIndex: 0,
+                                    )),
+                            ModalRoute.withName('LoginPage'));
                       }
 
-                      Medicine medicine = Medicine(
-                        name: _controllerMedicineName.text,
-                        description: _controllerDescription.text,
-                        type: this._currentMedicineType,
-                        image: image,
-                        doseAmount: int.parse(_controllerDoseAmount.text),
-                        totalAmount: int.parse(_controllerTotalAmount.text),
-                        medicineSchedule: this._currentMedicineSchedule,
-                        dateAdded: this._currentDateAdded,
-                      );
-
-                      FirebaseUtils.addMedicine(medicine);
-
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Homepage(
-                                    initialIndex: 0,
-                                  )),
-                          ModalRoute.withName('LoginPage'));
+                      doAddMedicine();
                     }
                   }
                 },

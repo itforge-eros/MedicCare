@@ -5,6 +5,7 @@
 
 import 'dart:io';
 import 'dart:async';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,13 +40,24 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
   String _currentMedicineType = 'capsule';
   DateTime _currentDateAdded;
   MedicineSchedule _currentMedicineSchedule = MedicineSchedule();
-  File _currentImage;
+  String _currentImage;
 
   Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    String userId = await FirebaseUtils.getUserId();
+
+    StorageReference firebaseStorageRef = FirebaseStorage.instance
+        .ref()
+        .child('$userId/medicine/${widget._medicine.id}');
+    StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+    String imageUrl = await firebaseStorageRef.getDownloadURL();
 
     setState(() {
-      _currentImage = image;
+      _currentImage = imageUrl;
+      widget._medicine.image = imageUrl;
     });
   }
 
@@ -139,6 +151,44 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
             padding: EdgeInsets.only(
                 left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
             children: <Widget>[
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.center,
+                          child: CircleAvatar(
+                            radius: 80,
+                            backgroundColor: Color(0xff476cfb),
+                            child: ClipOval(
+                              child: SizedBox(
+                                width: 150.0,
+                                height: 150.0,
+                                child: (widget._medicine.image != null)
+                                    ? Image.network(
+                                        widget._medicine.image,
+                                        fit: BoxFit.fill,
+                                      )
+                                    : Image.network(
+                                        "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                        fit: BoxFit.fill,
+                                      ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
               FloatingActionButton(
                 onPressed: getImage,
                 tooltip: 'Pick Image',
@@ -179,6 +229,7 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
                   }
                 },
               ),
+              SizedBox(height: 10.0),
               DropdownButton(
                 isExpanded: true,
                 value: this._currentMedicineType,
@@ -484,19 +535,10 @@ class _EditMedicinePageState extends State<EditMedicinePage> {
                             'Medicine must be taken at least one day per week.',
                       );
                     } else {
-                      Image image;
-
-                      try {
-                        image = Image.file(this._currentImage);
-                      } catch (e) {
-                        image = null;
-                      }
-
                       widget._medicine.name = _controllerMedicineName.text;
                       widget._medicine.description =
                           _controllerDescription.text;
                       widget._medicine.type = this._currentMedicineType;
-                      widget._medicine.image = image;
                       widget._medicine.medicineSchedule.isBeforeMeal =
                           this._currentMedicineSchedule.isBeforeMeal;
 

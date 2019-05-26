@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/user.dart';
+import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/datetime_picker_formfield.dart';
 import 'package:mediccare/util/firebase_utils.dart';
@@ -40,7 +41,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
     _controllerDescription.text = '';
     _controllerHospital.text = '';
     this._currentDoctor = null;
-    this._currentDateTime = null;
+    this._currentDateTime = DateTime.now();
   }
 
   @override
@@ -84,6 +85,7 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                 maxLines: 4,
                 decoration: InputDecoration(labelText: 'Description'),
               ),
+              SizedBox(height: 20.0),
               FutureBuilder(
                   future: _getDoctors,
                   builder: (_, doctors) {
@@ -188,7 +190,14 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
 
                     FirebaseUtils.addAppointment(appointment);
 
-                    Navigator.pop(context);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Homepage(
+                                initialIndex: 1,
+                              )),
+                      ModalRoute.withName('LoginPage'),
+                    );
                   }
                 },
               ),

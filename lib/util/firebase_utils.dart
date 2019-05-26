@@ -39,6 +39,17 @@ class FirebaseUtils {
       id: firebaseUser.uid,
     );
 
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('${firebaseUser.uid}/profile');
+
+    try {
+      String imageUrl = await firebaseStorageRef.getDownloadURL();
+
+      user.image = imageUrl;
+    } catch (e) {
+      user.image = null;
+    }
+
     return user;
   }
 
@@ -105,9 +116,13 @@ class FirebaseUtils {
           .ref()
           .child('$userId/doctor/${d.documentID}');
 
-      String imageUrl = await firebaseStorageRef.getDownloadURL();
+      try {
+        String imageUrl = await firebaseStorageRef.getDownloadURL();
 
-      doctor.image = imageUrl;
+        doctor.image = imageUrl;
+      } catch (e) {
+        doctor.image = null;
+      }
 
       doctors.add(doctor);
     });
@@ -192,6 +207,11 @@ class FirebaseUtils {
         .collection('doctors')
         .document(doctorId)
         .delete();
+
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('$userId/doctor/${doctor.id}');
+
+    await firebaseStorageRef.delete();
   }
 
   // End Doctor
@@ -311,10 +331,22 @@ class FirebaseUtils {
 
     List<Medicine> medicines = List();
 
-    snapshot.documents.forEach((d) {
+    snapshot.documents.forEach((d) async {
       Medicine medicine = Medicine.fromMap(d.data);
 
       medicine.id = d.documentID;
+
+      StorageReference firebaseStorageRef = FirebaseStorage.instance
+          .ref()
+          .child('$userId/medicine/${d.documentID}');
+
+      try {
+        String imageUrl = await firebaseStorageRef.getDownloadURL();
+
+        medicine.image = imageUrl;
+      } catch (e) {
+        medicine.image = null;
+      }
 
       medicines.add(medicine);
     });
@@ -392,6 +424,11 @@ class FirebaseUtils {
         .collection('medicines')
         .document(medicineId)
         .delete();
+
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('$userId/medicine/${medicine.id}');
+
+    await firebaseStorageRef.delete();
   }
 
   // End Medicine

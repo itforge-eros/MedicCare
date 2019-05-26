@@ -171,14 +171,15 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                             backgroundColor: Color(0xff476cfb),
                             child: ClipOval(
                               child: SizedBox(
-                                  width: 150.0,
-                                  height: 150.0,
-                                  child: (_image != null)
-                                      ? Image.file(_image, fit: BoxFit.fill)
-                                      : Image.network(
-                                          "https://image.flaticon.com/icons/png/512/64/64572.png",
-                                          fit: BoxFit.fill,
-                                        )),
+                                width: 150.0,
+                                height: 150.0,
+                                child: (_image != null)
+                                    ? Image.file(_image, fit: BoxFit.fill)
+                                    : Image.network(
+                                        "https://image.flaticon.com/icons/png/512/64/64572.png",
+                                        fit: BoxFit.fill,
+                                      ),
+                              ),
                             ),
                           ),
                         )
@@ -258,7 +259,9 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                       String doctorId =
                           await FirebaseUtils.addDoctor(newDoctor);
 
-                      await uploadPic(doctorId);
+                      if (_image != null) {
+                        await uploadPic(doctorId);
+                      }
 
                       Navigator.pushAndRemoveUntil(
                           context,

@@ -123,7 +123,9 @@ class DoctorPageState extends State<DoctorPage> {
             children: <Widget>[
               Hero(
                 // TODO: Implements doctor's image
-                tag: widget._doctor.image,
+                tag: (widget._doctor.image != null)
+                    ? widget._doctor.image
+                    : "https://image.flaticon.com/icons/png/512/64/64572.png",
                 child: Container(
                   height: 200.0,
                   width: 200.0,
@@ -131,7 +133,10 @@ class DoctorPageState extends State<DoctorPage> {
                     borderRadius: BorderRadius.circular(100),
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage(widget._doctor.image),
+                      image: (widget._doctor.image != null)
+                          ? NetworkImage(widget._doctor.image)
+                          : NetworkImage(
+                              "https://image.flaticon.com/icons/png/512/64/64572.png"),
                     ),
                   ),
                 ),

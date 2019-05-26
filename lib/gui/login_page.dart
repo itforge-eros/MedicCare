@@ -21,7 +21,8 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   static final TextEditingController _controllerEmail = TextEditingController();
-  static final TextEditingController _controllerPassword = TextEditingController();
+  static final TextEditingController _controllerPassword =
+      TextEditingController();
 
   void signInWithEmail() async {
     FirebaseUser user;
@@ -37,6 +38,21 @@ class _LoginPageState extends State<LoginPage> {
     } finally {
       if (user != null) {
         bool exist = await FirebaseUtils.getUserExist();
+
+        if (!user.isEmailVerified) {
+          Alert.displayAlert(
+            context,
+            title: 'Login failed',
+            content: 'Please verify your account.',
+          );
+          try {
+            await user.sendEmailVerification();
+          } catch (e) {
+            print("An error occured while trying to send email verification");
+            print(e.message);
+          }
+          return;
+        }
         if (exist) {
           Navigator.pushReplacementNamed(context, 'Homepage');
         } else {
@@ -45,12 +61,26 @@ class _LoginPageState extends State<LoginPage> {
         SharedPreferencesUtil.saveLastEmail(_controllerEmail.text);
         this.clearFields();
       } else {
-        Alert.displayAlert(
-          context,
-          title: 'Login failed',
-          content: 'Invalid email address or password.',
-        );
-        this.clearPasswordField();
+        if (!user.isEmailVerified) {
+          Alert.displayAlert(
+            context,
+            title: 'Login failed',
+            content: 'Please verify your account.',
+          );
+          try {
+            await user.sendEmailVerification();
+          } catch (e) {
+            print("An error occured while trying to send email verification");
+            print(e.message);
+          }
+        } else {
+          Alert.displayAlert(
+            context,
+            title: 'Login failed',
+            content: 'Invalid email address or password.',
+          );
+          this.clearPasswordField();
+        }
       }
     }
   }
@@ -65,7 +95,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void trimEmailField() {
-    _LoginPageState._controllerEmail.text = _LoginPageState._controllerEmail.text.trim();
+    _LoginPageState._controllerEmail.text =
+        _LoginPageState._controllerEmail.text.trim();
   }
 
   void loadEmailField() {
