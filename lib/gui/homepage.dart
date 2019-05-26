@@ -270,14 +270,16 @@ class _HomepageState extends State<Homepage> {
   // End map search Area
 
   // |---------------------- Medicine List
+
+  // Search Method: Search medicine by name
   void searchListView(List<Medicine> medicines) {
     searchMed = new Set<Medicine>();
     for (int i = 0; i < medicines.length; i++) {
       var item = medicines[i].name;
       searchMedText = medicineSearch.text;
-      if (searchMedText == '' || searchMedText == null || searchMedText == ' ') {
+      if (searchMedText.trim() == '' || searchMedText == null) {
         searchMed.add(medicines[i]);
-      } else if (item.toLowerCase().contains(searchMedText.toLowerCase())) {
+      } else if (item.toLowerCase().contains(searchMedText.toLowerCase().trim())) {
         searchMed.add(medicines[i]);
       }
     }
@@ -835,15 +837,16 @@ class _HomepageState extends State<Homepage> {
 
   // |----------------------Doctor
 
+  // Search Method: Search doctor by full name
   void searchDoctor(List<Doctor> doctors) {
     searchDoc = new Set<Doctor>();
     for (int i = 0; i < doctors.length; i++) {
-      var item = doctors[i].firstName;
+      var item = doctors[i].fullName;
       searchDocText = doctorSearch.text;
-      if (searchDocText == '' || searchDocText == null || searchDocText == ' ') {
+      if (searchDocText.trim() == '' || searchDocText == null) {
         searchDoc.add(doctors[i]);
         print('searchDocText : ${doctorSearch.text}');
-      } else if (item.toLowerCase().contains(searchDocText.toLowerCase())) {
+      } else if (item.toLowerCase().contains(searchDocText.toLowerCase().trim())) {
         searchDoc.add(doctors[i]);
       }
     }
