@@ -13,6 +13,7 @@ class Doctor {
   String _lastName;
   String _ward;
   String _hospital;
+  String _hospitalId;
   String _phone;
   String _notes;
   String _image;
@@ -24,6 +25,7 @@ class Doctor {
     String lastName,
     String ward,
     String hospital,
+    String hospitalId,
     String phone,
     String notes,
     String image,
@@ -34,6 +36,7 @@ class Doctor {
     this._lastName = lastName;
     this._ward = ward;
     this._hospital = hospital;
+    this._hospitalId = hospitalId;
     this._phone = phone;
     this._notes = notes;
     this._image = image;
@@ -46,6 +49,7 @@ class Doctor {
     this._lastName = map['lastName'];
     this._ward = map['ward'];
     this._hospital = map['hospital'];
+    this._hospitalId = map['hospitalId'];
     this._phone = map['phone'];
     this._notes = map['notes'];
     this._image = map['image']; //TODO: Check Image properties
@@ -69,6 +73,9 @@ class Doctor {
   String get hospital => this._hospital;
   set hospital(String hospital) => this._hospital = hospital;
 
+  String get hospitalId => this._hospitalId;
+  set hospitalId(String hospitalId) => this._hospitalId = hospitalId;
+
   String get phone => this._phone;
   set phone(String phone) => this._phone = phone;
 
@@ -88,6 +95,7 @@ class Doctor {
       'lastName': this._lastName,
       'ward': this._ward,
       'hospital': this._hospital,
+      'hospitalId': this._hospitalId,
       'phone': this._phone,
       'notes': this._notes,
       'image': this._image, //TODO: Check Image properties
