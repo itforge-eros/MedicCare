@@ -158,21 +158,21 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
                                       ],
                                     ),
                                   ),
-                            )) +
-                            [
-                              DropdownMenuItem(
-                                value: null,
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.person_outline,
-                                      color: Colors.grey,
-                                    ),
-                                    Text(' Unspecified'),
-                                  ],
-                                ),
-                              ),
-                            ],
+                            )),
+                            // [
+                            //   DropdownMenuItem(
+                            //     value: null,
+                            //     child: Row(
+                            //       children: <Widget>[
+                            //         Icon(
+                            //           Icons.person_outline,
+                            //           color: Colors.grey,
+                            //         ),
+                            //         Text(' Unspecified'),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ],
                         onChanged: (value) {
                           setState(() {
                             if (value != null) {
