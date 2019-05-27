@@ -3,7 +3,6 @@
 /// Class for medicine addition page GUI
 ///
 
-import 'dart:io';
 import 'dart:async';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
