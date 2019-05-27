@@ -136,7 +136,8 @@ class _HomepageState extends State<Homepage> {
           )
         ],
       ),
-      trailing: trailing ?? Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
+      trailing: trailing ??
+          Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
       onTap: onTap ?? () {},
     );
   }
@@ -241,7 +242,11 @@ class _HomepageState extends State<Homepage> {
         month = 'December';
         break;
     }
-    return dateTime.day.toString() + ' ' + month + ' ' + dateTime.year.toString();
+    return dateTime.day.toString() +
+        ' ' +
+        month +
+        ' ' +
+        dateTime.year.toString();
   }
 
   // Map Search Area
@@ -286,7 +291,9 @@ class _HomepageState extends State<Homepage> {
           onError: onError,
           mode: Mode.overlay,
           language: 'en',
-          location: center == null ? null : Location(center.latitude, center.longitude),
+          location: center == null
+              ? null
+              : Location(center.latitude, center.longitude),
           radius: center == null ? null : 10000);
 
       print(' this is placeID ${p.placeId}');
@@ -307,7 +314,9 @@ class _HomepageState extends State<Homepage> {
       searchMedText = medicineSearch.text;
       if (searchMedText.trim() == '' || searchMedText == null) {
         searchMed.add(medicines[i]);
-      } else if (item.toLowerCase().contains(searchMedText.toLowerCase().trim())) {
+      } else if (item
+          .toLowerCase()
+          .contains(searchMedText.toLowerCase().trim())) {
         searchMed.add(medicines[i]);
       }
     }
@@ -394,7 +403,7 @@ class _HomepageState extends State<Homepage> {
     }
 
     if (emptyMedicine.length > 0) {
-      list.add(getSectionDivider('Depleted Medicines'));
+      list.add(getSectionDivider('Deleted Medicines'));
       emptyMedicine.forEach((e) {
         list.add(
           getCustomCard(
@@ -447,21 +456,21 @@ class _HomepageState extends State<Homepage> {
   // Data Method: Returns a list of appointments
   List<Widget> getAppointmentList(List<Appointment> appointmentList) {
     List<Widget> list = [
-      Padding(
-        padding: const EdgeInsets.all(20),
-        child: TextField(
-          onChanged: (value) {},
-          // controller: ,
-          decoration: InputDecoration(
-            labelText: 'Search',
-            hintText: 'Search',
-            prefixIcon: Icon(Icons.search),
-            // border: OutlineInputBorder(
-            //   borderRadius: BorderRadius.all(Radius.circular(25.0)),
-            // ),
-          ),
-        ),
-      ),
+      // Padding(
+      //   padding: const EdgeInsets.all(20),
+      //   child: TextField(
+      //     onChanged: (value) {},
+      //     // controller: ,
+      //     decoration: InputDecoration(
+      //       labelText: 'Search',
+      //       hintText: 'Search',
+      //       prefixIcon: Icon(Icons.search),
+      //       // border: OutlineInputBorder(
+      //       //   borderRadius: BorderRadius.all(Radius.circular(25.0)),
+      //       // ),
+      //     ),
+      //   ),
+      // ),
     ];
 
     appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
@@ -469,7 +478,23 @@ class _HomepageState extends State<Homepage> {
     List<Appointment> comingAppointmentList = List<Appointment>();
     List<Appointment> completedAppointmentList = List<Appointment>();
     List<Appointment> skipAppointmentList = List<Appointment>();
-
+    if (appointmentList.length == 0) {
+      list.add(Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Image.asset('assets/images/note-grey.png', height: 200),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30.0),
+            child: Text(
+              'Start adding your appointment now!',
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
+            ),
+          )
+        ],
+      ));
+    }
     appointmentList.forEach((a) {
       switch (a.status) {
         case 0:
@@ -496,7 +521,7 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EditAppointmentPage(
+                  builder: (context) => AppointmentPage(
                         appointment: e,
                       ),
                 ),
@@ -519,7 +544,7 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EditAppointmentPage(
+                  builder: (context) => AppointmentPage(
                         appointment: e,
                       ),
                 ),
@@ -720,11 +745,13 @@ class _HomepageState extends State<Homepage> {
   List<Widget> getRemainingIndoseList(List<Medicine> medicineList) {
     List<Widget> list = List<Widget>();
 
-    final List<MedicineOverviewData> medicineOverviewDataList = List<MedicineOverviewData>();
+    final List<MedicineOverviewData> medicineOverviewDataList =
+        List<MedicineOverviewData>();
     List<DateTime> temp = List<DateTime>();
 
     for (int i = 0; i < medicineList.length; i++) {
-      temp = medicineList[i].getMedicineSchedule(UserSettings()); // TODO: Pass user settings here!
+      temp = medicineList[i].getMedicineSchedule(
+          UserSettings()); // TODO: Pass user settings here!
       for (int j = 0; j < temp.length; j++) {
         medicineOverviewDataList.add(MedicineOverviewData(
           medicine: medicineList[i],
@@ -745,8 +772,10 @@ class _HomepageState extends State<Homepage> {
 
       List<DateTime> dateList = List<DateTime>();
       medicineOverviewDataList.forEach((e) {
-        if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
-          dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
+        if (!dateList.contains(
+            DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
+          dateList
+              .add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
         }
       });
 
@@ -767,13 +796,17 @@ class _HomepageState extends State<Homepage> {
         );
 
         medicineOverviewDataList.forEach((f) {
-          if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
+          if (e.year == f.dateTime.year &&
+              e.month == f.dateTime.month &&
+              e.day == f.dateTime.day) {
             list.add(
               getCustomCard(
                 name: f.medicine.name,
                 subtitle: f.getSubtitle(),
                 icon: CustomIcons.medicine,
-                trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
+                trailing: (DateTime.now().compareTo(
+                                f.dateTime.subtract(Duration(hours: 1))) >
+                            0 &&
                         DateTime(
                               f.dateTime.year,
                               f.dateTime.month,
@@ -884,7 +917,9 @@ class _HomepageState extends State<Homepage> {
       searchDocText = doctorSearch.text;
       if (searchDocText.trim() == '' || searchDocText == null) {
         searchDoc.add(doctors[i]);
-      } else if (item.toLowerCase().contains(searchDocText.toLowerCase().trim())) {
+      } else if (item
+          .toLowerCase()
+          .contains(searchDocText.toLowerCase().trim())) {
         searchDoc.add(doctors[i]);
       }
     }
@@ -943,7 +978,8 @@ class _HomepageState extends State<Homepage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30),
               child: Text('Add your personal doctors now!',
-                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w500)),
             )
           ],
         ),
@@ -1000,10 +1036,11 @@ class _HomepageState extends State<Homepage> {
     _getAppointments = FirebaseUtils.getAppointments();
     this._currentIndex = widget.initialIndex;
 
-    var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings =
-        new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
@@ -1011,15 +1048,16 @@ class _HomepageState extends State<Homepage> {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) {
-        Map<String, dynamic> notification = Map<String, dynamic>.from(message['notification']);
+        Map<String, dynamic> notification =
+            Map<String, dynamic>.from(message['notification']);
 
         Future _showNotification() async {
           var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
               'mediccare', 'MedicCare', 'MedicCare App',
               importance: Importance.Max, priority: Priority.High);
           var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-          var platformChannelSpecifics =
-              new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+          var platformChannelSpecifics = new NotificationDetails(
+              androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
           await flutterLocalNotificationsPlugin.show(
             0,
             notification['title'],
