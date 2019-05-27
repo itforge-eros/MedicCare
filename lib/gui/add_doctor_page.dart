@@ -16,7 +16,7 @@ import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
-const kGoogleApiKey = "AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E";
+const kGoogleApiKey = 'AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E';
 
 class AddDoctorPage extends StatefulWidget {
   @override
@@ -93,8 +93,8 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
     final location = LocationManager.Location();
     try {
       currentLocation = await location.getLocation();
-      final lat = currentLocation["latitude"];
-      final lng = currentLocation["longitude"];
+      final lat = currentLocation['latitude'];
+      final lng = currentLocation['longitude'];
       final center = LatLng(lat, lng);
       return center;
     } on Exception {
@@ -121,7 +121,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
             apiKey: kGoogleApiKey,
             onError: onError,
             mode: Mode.overlay,
-            language: "en",
+            language: 'en',
             location: center == null ? null : Location(center.latitude, center.longitude),
             radius: center == null ? null : 10000);
 
@@ -169,7 +169,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                                 child: (_image != null)
                                     ? Image.file(_image, fit: BoxFit.fill)
                                     : Image.asset(
-                                        "assets/person.png",
+                                        'assets/person.png',
                                         fit: BoxFit.fill,
                                       ),
                               ),
@@ -219,8 +219,8 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
               ),
               RaisedButton(
                 child: Text(
-                  _controllerHospitalName.text == ""
-                      ? "Select hospital"
+                  _controllerHospitalName.text == ''
+                      ? 'Select hospital'
                       : _controllerHospitalName.text,
                   style: TextStyle(color: Colors.white),
                 ),
@@ -234,7 +234,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 validator: (value) {
                   if (value.isNotEmpty) {
                     if (value.length != 10 || !isNumeric(value)) {
-                      return "Invalid phone number";
+                      return 'Invalid phone number';
                     }
                   }
                 },

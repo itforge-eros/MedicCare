@@ -242,7 +242,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
             SizedBox(height: 20.0),
             RaisedButton(
               color: Theme.of(context).primaryColor,
-              child: Text('Save'),
+              child: Text('Save', style: TextStyle(color: Colors.white)),
               onPressed: () {
                 if (this._formKey.currentState.validate()) {
                   if (this._currentUserSettings.notificationOn) {

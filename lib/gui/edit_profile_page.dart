@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,11 +9,9 @@ import 'package:mediccare/util/datetime_picker_formfield.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
 class EditProfilePage extends StatefulWidget {
-  User _user;
+  final User _user;
 
-  EditProfilePage({User user}) {
-    this._user = user;
-  }
+  EditProfilePage(this._user);
 
   @override
   State<StatefulWidget> createState() {
@@ -29,6 +25,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _controllerLastName = TextEditingController();
   final TextEditingController _controllerHeight = TextEditingController();
   final TextEditingController _controllerWeight = TextEditingController();
+  DateTime _currentBirthDate;
   File _image;
 
   Future getImage() async {
@@ -36,33 +33,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     String userId = await FirebaseUtils.getUserId();
 
-    StorageReference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('$userId/profile');
-    StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child('$userId/profile');
 
-    String imageUrl = await firebaseStorageRef.getDownloadURL();
+    try {
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
-    setState(() {
-      _image = image;
-      widget._user.image = imageUrl;
-    });
+      String imageUrl = await firebaseStorageRef.getDownloadURL();
+
+      setState(() {
+        _image = image;
+        widget._user.image = imageUrl;
+      });
+    } catch (e) {}
   }
 
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     _controllerFirstName.text = widget._user.firstName;
     _controllerLastName.text = widget._user.lastName;
     _controllerHeight.text = widget._user.height.toString();
     _controllerWeight.text = widget._user.weight.toString();
+    _currentBirthDate = widget._user.birthDate;
+  }
 
-    User userInstance = widget._user;
-
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
@@ -104,8 +101,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 width: 150.0,
                                 height: 150.0,
                                 child: (widget._user.image != null)
-                                    ? Image.network(widget._user.image,
-                                        fit: BoxFit.fill)
+                                    ? Image.network(widget._user.image, fit: BoxFit.fill)
                                     : Image.asset(
                                         "assets/person.png",
                                         fit: BoxFit.fill,
@@ -129,8 +125,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               TextFormField(
                 controller: _controllerFirstName,
-                decoration: InputDecoration(
-                    labelText: 'First Name', prefixIcon: Icon(Icons.person)),
+                decoration:
+                    InputDecoration(labelText: 'First Name', prefixIcon: Icon(Icons.person)),
                 keyboardType: TextInputType.text,
                 validator: (String text) {
                   if (text.isEmpty) {
@@ -140,8 +136,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               TextFormField(
                 controller: _controllerLastName,
-                decoration: InputDecoration(
-                    labelText: 'Last Name', prefixIcon: Icon(Icons.person)),
+                decoration: InputDecoration(labelText: 'Last Name', prefixIcon: Icon(Icons.person)),
                 keyboardType: TextInputType.text,
                 validator: (String text) {
                   if (text.isEmpty) {
@@ -153,7 +148,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               DropdownButton(
                 isExpanded: true,
                 hint: Text('Gender'),
-                value: userInstance.gender,
+                value: widget._user.gender,
                 items: <DropdownMenuItem<String>>[
                   DropdownMenuItem(
                     value: 'male',
@@ -170,13 +165,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ],
                 onChanged: (String value) {
                   setState(() {
-                    userInstance.gender = value;
+                    widget._user.gender = value;
                   });
                 },
               ),
               DateTimePickerFormField(
                 format: DateFormat('yyyy-MM-dd'),
-                initialValue: userInstance.birthDate,
+                initialValue: widget._user.birthDate,
                 inputType: InputType.date,
                 editable: true,
                 decoration: InputDecoration(
@@ -184,12 +179,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   prefixIcon: Icon(Icons.cake),
                 ),
                 onChanged: (DateTime date) {
-                  userInstance.birthDate = date;
+                  try {
+                    _currentBirthDate = date;
+                  } catch (e) {}
                 },
-                validator: (DateTime time) {
-                  if (time == null) {
+                validator: (DateTime date) {
+                  if (date == null) {
                     return 'Please fill birthdate';
-                  } else if (time.compareTo(DateTime.now()) > 0) {
+                  } else if (date.compareTo(DateTime.now()) > 0) {
                     return 'Invalid birthdate';
                   }
                 },
@@ -242,7 +239,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               DropdownButton(
                 isExpanded: true,
                 hint: Text('Blood Group'),
-                value: userInstance.bloodGroup,
+                value: widget._user.bloodGroup,
                 items: <DropdownMenuItem<String>>[
                   DropdownMenuItem(
                     value: 'O+',
@@ -279,26 +276,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ],
                 onChanged: (String value) {
                   setState(() {
-                    userInstance.bloodGroup = value;
+                    widget._user.bloodGroup = value;
                   });
                 },
               ),
               SizedBox(height: 20.0),
               RaisedButton(
                 color: Theme.of(context).primaryColor,
-                child: Text('Save'),
+                child: Text('Save', style: TextStyle(color: Colors.white)),
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                    userInstance.firstName = _controllerFirstName.text;
-                    userInstance.lastName = _controllerLastName.text;
-                    userInstance.height = double.parse(_controllerHeight.text);
-                    userInstance.weight = double.parse(_controllerWeight.text);
+                    widget._user.firstName = _controllerFirstName.text;
+                    widget._user.lastName = _controllerLastName.text;
+                    widget._user.height = double.parse(_controllerHeight.text);
+                    widget._user.weight = double.parse(_controllerWeight.text);
+                    widget._user.birthDate = _currentBirthDate;
 
-                    widget._user = userInstance;
+                    FirebaseUtils.updateUserData(widget._user);
 
-                    FirebaseUtils.updateUserData(userInstance);
-
-                    // Navigator.pop(context);
                     Navigator.of(context).pop(true);
                   }
                 },
