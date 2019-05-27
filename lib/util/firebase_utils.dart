@@ -23,8 +23,7 @@ class FirebaseUtils {
     DocumentSnapshot userProfile =
         await firestore.collection('users').document(firebaseUser.uid).get();
 
-    UserSettings userSetting =
-        UserSettings.fromMap(userProfile['userSettings']);
+    UserSettings userSetting = UserSettings.fromMap(userProfile['userSettings']);
 
     User user = User(
       email: firebaseUser.email,
@@ -99,11 +98,8 @@ class FirebaseUtils {
 
     var firestore = Firestore.instance;
 
-    QuerySnapshot snapshot = await firestore
-        .collection('users')
-        .document(userId)
-        .collection('doctors')
-        .getDocuments();
+    QuerySnapshot snapshot =
+        await firestore.collection('users').document(userId).collection('doctors').getDocuments();
 
     List<Doctor> doctors = List();
 
@@ -113,9 +109,8 @@ class FirebaseUtils {
       doctor.id = d.documentID;
 
       try {
-        StorageReference firebaseStorageRef = FirebaseStorage.instance
-            .ref()
-            .child('$userId/doctor/${d.documentID}');
+        StorageReference firebaseStorageRef =
+            FirebaseStorage.instance.ref().child('$userId/doctor/${d.documentID}');
 
         String imageUrl = await firebaseStorageRef.getDownloadURL();
 
@@ -168,11 +163,8 @@ class FirebaseUtils {
 
     var firestore = Firestore.instance;
 
-    DocumentReference doctorRef = await firestore
-        .collection('users')
-        .document(userId)
-        .collection('doctors')
-        .add(map);
+    DocumentReference doctorRef =
+        await firestore.collection('users').document(userId).collection('doctors').add(map);
 
     String doctorId = doctorRef.documentID;
 
@@ -273,11 +265,8 @@ class FirebaseUtils {
 
     var firestore = Firestore.instance;
 
-    DocumentReference doctorRef = await firestore
-        .collection('users')
-        .document(userId)
-        .collection('appointments')
-        .add(map);
+    DocumentReference doctorRef =
+        await firestore.collection('users').document(userId).collection('appointments').add(map);
 
     String appointmentId = doctorRef.documentID;
 
@@ -327,11 +316,8 @@ class FirebaseUtils {
 
     var firestore = Firestore.instance;
 
-    QuerySnapshot snapshot = await firestore
-        .collection('users')
-        .document(userId)
-        .collection('medicines')
-        .getDocuments();
+    QuerySnapshot snapshot =
+        await firestore.collection('users').document(userId).collection('medicines').getDocuments();
 
     List<Medicine> medicines = List();
 
@@ -341,9 +327,8 @@ class FirebaseUtils {
       medicine.id = d.documentID;
 
       try {
-        StorageReference firebaseStorageRef = FirebaseStorage.instance
-            .ref()
-            .child('$userId/medicine/${d.documentID}');
+        StorageReference firebaseStorageRef =
+            FirebaseStorage.instance.ref().child('$userId/medicine/${d.documentID}');
 
         String imageUrl = await firebaseStorageRef.getDownloadURL();
 
@@ -385,11 +370,8 @@ class FirebaseUtils {
 
     var firestore = Firestore.instance;
 
-    DocumentReference doctorRef = await firestore
-        .collection('users')
-        .document(userId)
-        .collection('medicines')
-        .add(map);
+    DocumentReference doctorRef =
+        await firestore.collection('users').document(userId).collection('medicines').add(map);
 
     String medicineId = doctorRef.documentID;
 
@@ -431,8 +413,9 @@ class FirebaseUtils {
 
     StorageReference firebaseStorageRef =
         FirebaseStorage.instance.ref().child('$userId/medicine/${medicine.id}');
-
-    await firebaseStorageRef.delete();
+    try {
+      await firebaseStorageRef.delete();
+    } catch (e) {}
   }
 
   // End Medicine
