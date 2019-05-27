@@ -37,6 +37,15 @@ class DoctorPageState extends State<DoctorPage> {
     setState(() {});
   }
 
+  String forShort(String text){
+    String result = "";
+    for(int i=0; i< 20;i++){
+      result += text[i];
+    }
+    result+="...";
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     void onError(PlacesAutocompleteResponse response) {
@@ -160,7 +169,7 @@ class DoctorPageState extends State<DoctorPage> {
                     ListTile(
                       leading: Icon(Icons.local_hospital,
                           color: Theme.of(context).primaryColor),
-                      title: Text(widget._doctor.hospital),
+                      title: Text(forShort(widget._doctor.hospital)),
                       trailing: RaisedButton(
                         color: Theme.of(context).primaryColor,
                         child: Text("map", style: TextStyle(color: Colors.white),),

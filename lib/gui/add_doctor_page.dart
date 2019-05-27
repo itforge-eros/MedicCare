@@ -45,6 +45,15 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
     });
   }
 
+  String forShort(String text){
+    String result = "";
+    for(int i=0; i< 20;i++){
+      result += text[i];
+    }
+    result+="...";
+    return result;
+  }
+
   Future uploadPic(String doctorId) async {
     String userId = await FirebaseUtils.getUserId();
 
@@ -221,7 +230,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 child: Text(
                   _controllerHospitalName.text == ''
                       ? 'Select hospital'
-                      : _controllerHospitalName.text,
+                      : forShort(_controllerHospitalName.text),
                   style: TextStyle(color: Colors.white),
                 ),
                 color: Theme.of(context).primaryColor,

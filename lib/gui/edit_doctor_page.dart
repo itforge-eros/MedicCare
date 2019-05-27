@@ -44,6 +44,15 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
   static final TextEditingController _controllerNotes = TextEditingController();
   String _image;
 
+  String forShort(String text){
+    String result = "";
+    for(int i=0; i< 20;i++){
+      result += text[i];
+    }
+    result+="...";
+    return result;
+  }
+
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     String userId = await FirebaseUtils.getUserId();
@@ -263,7 +272,8 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
               RaisedButton(
                 child: Text(_controllerHospitalName.text == ''
                     ? 'Select hospital'
-                    : _controllerHospitalName.text),
+                    : forShort(_controllerHospitalName.text),
+                    style: TextStyle(color: Colors.white),),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   _handlePressButton();
@@ -287,7 +297,7 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
               ),
               SizedBox(height: 20.0),
               RaisedButton(
-                child: Text('Save'),
+                child: Text('Save',style: TextStyle(color: Colors.white),),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
