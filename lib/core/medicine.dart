@@ -56,8 +56,7 @@ class Medicine {
     this._remainingAmount = map['totalAmount'];
     this._skippedTimes = map['skippedTimes'];
 
-    Map<String, dynamic> medicineSchedule =
-        new Map<String, dynamic>.from(map['medicineSchedule']);
+    Map<String, dynamic> medicineSchedule = new Map<String, dynamic>.from(map['medicineSchedule']);
 
     this._medicineSchedule = MedicineSchedule.fromMap(medicineSchedule);
   }
@@ -84,8 +83,7 @@ class Medicine {
   set totalAmount(int totalAmount) => this._totalAmount = totalAmount;
 
   int get remainingAmount => this._remainingAmount;
-  set remainingAmount(int remainingAmount) =>
-      this._remainingAmount = remainingAmount;
+  set remainingAmount(int remainingAmount) => this._remainingAmount = remainingAmount;
 
   int get skippedTimes => this._skippedTimes;
 
@@ -139,7 +137,7 @@ class Medicine {
   }
 
   // Data Method: Get medicine schedule of a single medicine
-  List<DateTime> getMedicineSchedule(UserSettings userSettings) {
+  List<DateTime> getMedicineSchedule(UserSettings userSettings, {Duration range}) {
     DateTime firstDay;
     Duration firstTime;
     final List<Duration> oneDayTime = List<Duration>();
@@ -147,15 +145,16 @@ class Medicine {
     final List<DateTime> medicineSchedule = List<DateTime>();
     int offset = 0;
 
+    if (range == null) {
+      range = Duration(days: 3);
+    }
+
     // Logic: Calculate `firstDay`
-    firstDay = DateTime(
-        this._dateAdded.year, this._dateAdded.month, this._dateAdded.day);
+    firstDay = DateTime(this._dateAdded.year, this._dateAdded.month, this._dateAdded.day);
     bool _availableFirstDay = false;
 
     for (int i = 0; i < 4; i++) {
-      if (Duration(
-                  hours: this._dateAdded.hour,
-                  minutes: this._dateAdded.minute) <
+      if (Duration(hours: this._dateAdded.hour, minutes: this._dateAdded.minute) <
               userSettings.userTime[i] &&
           this._medicineSchedule.time[i]) {
         _availableFirstDay = true;
@@ -175,8 +174,7 @@ class Medicine {
     // Logic: Calculate `firstTime`
     for (int i = 0; i < 4; i++) {
       if (this._dateAdded.day != firstDay.day) {
-        firstTime =
-            userSettings.userTime[this._medicineSchedule.time.indexOf(true)];
+        firstTime = userSettings.userTime[this._medicineSchedule.time.indexOf(true)];
         break;
       }
 
@@ -216,11 +214,8 @@ class Medicine {
     }
 
     if ((oneDayTime[0] - oneDayTime[oneDayTime.length - 1]).isNegative ||
-        (oneDayTime[0] - oneDayTime[oneDayTime.length - 1]) ==
-            Duration(seconds: 0)) {
-      durations.add(oneDayTime[0] -
-          oneDayTime[oneDayTime.length - 1] +
-          Duration(days: 1));
+        (oneDayTime[0] - oneDayTime[oneDayTime.length - 1]) == Duration(seconds: 0)) {
+      durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1] + Duration(days: 1));
     } else {
       durations.add(oneDayTime[0] - oneDayTime[oneDayTime.length - 1]);
     }
@@ -236,27 +231,33 @@ class Medicine {
 
     // Logic: Calculate `medicineSchedule`
     firstDay = firstDay.add(firstTime);
-    for (int i = 0;
-        i < (this._totalAmount / this._doseAmount).ceil() + this._skippedTimes;
-        i++) {
+    for (int i = 0; i < (this._totalAmount / this._doseAmount).ceil() + this._skippedTimes; i++) {
       medicineSchedule.add(firstDay);
       firstDay = firstDay.add(durations[(i + offset) % durations.length]);
 
       while (!this._medicineSchedule.day[firstDay.weekday - 1]) {
         firstDay = firstDay.add(Duration(days: 1));
       }
+
+
     }
 
     // Logic: Remove taken and skipped medicine
     for (int i = 0;
-        i <
-            (this._totalAmount - this._remainingAmount) / this._doseAmount +
-                this._skippedTimes;
+        i < (this._totalAmount - this._remainingAmount) / this._doseAmount + this._skippedTimes;
         i++) {
       medicineSchedule.removeAt(0);
     }
 
-    return medicineSchedule;
+    List<DateTime> finalMedicineSchedule = List<DateTime>();
+
+    medicineSchedule.forEach((e) {
+      if (e.compareTo(this._dateAdded.add(range)) < 0) {
+       finalMedicineSchedule.add(e);
+      }
+    });
+
+    return finalMedicineSchedule;
   }
 
   Map<String, dynamic> toMap() {
