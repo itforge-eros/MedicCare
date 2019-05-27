@@ -16,7 +16,7 @@ import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
-const kGoogleApiKey = "AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E";
+const kGoogleApiKey = 'AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E';
 
 class EditDoctorPage extends StatefulWidget {
   Doctor _doctor;
@@ -113,8 +113,8 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
     final location = LocationManager.Location();
     try {
       currentLocation = await location.getLocation();
-      final lat = currentLocation["latitude"];
-      final lng = currentLocation["longitude"];
+      final lat = currentLocation['latitude'];
+      final lng = currentLocation['longitude'];
       final center = LatLng(lat, lng);
       return center;
     } on Exception {
@@ -141,7 +141,7 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
             apiKey: kGoogleApiKey,
             onError: onError,
             mode: Mode.overlay,
-            language: "en",
+            language: 'en',
             location: center == null ? null : Location(center.latitude, center.longitude),
             radius: center == null ? null : 10000);
 
@@ -213,7 +213,7 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                                   child: (_image != null)
                                       ? Image.network(_image, fit: BoxFit.fill)
                                       : Image.asset(
-                                          "assets/person.png",
+                                          'assets/person.png',
                                           fit: BoxFit.fill,
                                         )),
                             ),
@@ -261,8 +261,8 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                 decoration: InputDecoration(hintText: 'Ward'),
               ),
               RaisedButton(
-                child: Text(_controllerHospitalName.text == ""
-                    ? "Select hospital"
+                child: Text(_controllerHospitalName.text == ''
+                    ? 'Select hospital'
                     : _controllerHospitalName.text),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
@@ -274,7 +274,7 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                 validator: (value) {
                   if (value.isNotEmpty) {
                     if (value.length != 10 || !isNumeric(value)) {
-                      return "Invalid phone number";
+                      return 'Invalid phone number';
                     }
                   }
                 },
