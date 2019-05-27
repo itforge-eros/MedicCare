@@ -256,11 +256,15 @@ class _ProfilePageState extends State<ProfilePage> {
                           elevation: 4.0,
                           splashColor: Colors.redAccent,
                           onPressed: () {
-                            _auth.signOut();
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              'LoginPage',
-                              (Route<dynamic> route) => false,
-                            );
+                            void doLogout() async {
+                              await _auth.signOut();
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                'LoginPage',
+                                (Route<dynamic> route) => false,
+                              );
+                            }
+
+                            doLogout();
                           },
                         ),
                       ],
