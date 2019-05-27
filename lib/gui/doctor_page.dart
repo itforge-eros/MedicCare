@@ -185,7 +185,9 @@ class DoctorPageState extends State<DoctorPage> {
                       leading: Icon(CustomIcons.medical_kit,
                           color: Theme.of(context).primaryColor),
                       title: Text(
-                        widget._doctor.ward,
+                        widget._doctor.ward != ""
+                        ? widget._doctor.ward
+                        : "-",
                         style:
                             TextStyle(fontSize: 18.0, color: Colors.grey[800]),
                       ),
@@ -197,7 +199,10 @@ class DoctorPageState extends State<DoctorPage> {
                       leading: Icon(Icons.phone,
                           color: Theme.of(context).primaryColor),
                       title: Text(
-                        widget._doctor.phone,
+                        widget._doctor.phone != ""
+                        ? widget._doctor.phone
+                        : "-"
+                        ,
                         style:
                             TextStyle(fontSize: 18.0, color: Colors.grey[800]),
                       ),
