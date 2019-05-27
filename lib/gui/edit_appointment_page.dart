@@ -128,82 +128,82 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
                 maxLines: 4,
                 decoration: InputDecoration(labelText: 'Description'),
               ),
-              FutureBuilder(
-                  future: _getDoctors,
-                  builder: (_, doctors) {
-                    if (doctors.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: Text('Loading...'),
-                      );
-                    } else if (doctors.connectionState ==
-                        ConnectionState.done) {
-                      return DropdownButton(
-                        isExpanded: true,
-                        value: this._currentDoctor,
-                        items: List<DropdownMenuItem>.from(doctors.data.map(
-                              (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.person,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        Text(' ' +
-                                            e.prefix +
-                                            ' ' +
-                                            e.firstName +
-                                            ' ' +
-                                            e.lastName),
-                                      ],
-                                    ),
-                                  ),
-                            )),
-                            // [
-                            //   DropdownMenuItem(
-                            //     value: null,
-                            //     child: Row(
-                            //       children: <Widget>[
-                            //         Icon(
-                            //           Icons.person_outline,
-                            //           color: Colors.grey,
-                            //         ),
-                            //         Text(' Unspecified'),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ],
-                        onChanged: (value) {
-                          setState(() {
-                            if (value != null) {
-                              this._currentDoctor = value;
-                              _controllerHospital.text = value.hospital;
-                            } else {
-                              this._currentDoctor = value;
-                              _controllerHospital.text = "";
-                            }
-                          });
-                        },
-                      );
-                    }
-                  }),
-              TextFormField(
-                controller: _controllerHospital,
-                decoration: (this._currentDoctor == null)
-                    ? InputDecoration(
-                        labelText: 'Hospital',
-                      )
-                    : InputDecoration(
-                        labelText: 'Hospital',
-                        helperText:
-                            'Leave blank to use default hospital of the selected doctor.',
-                      ),
-                validator: (text) {
-                  if (this._currentDoctor == null && text.trim().isEmpty) {
-                    return 'Please fill hospital';
-                  }
-                },
-              ),
+              // FutureBuilder(
+              //     future: _getDoctors,
+              //     builder: (_, doctors) {
+              //       if (doctors.connectionState == ConnectionState.waiting) {
+              //         return Center(
+              //           child: Text('Loading...'),
+              //         );
+              //       } else if (doctors.connectionState ==
+              //           ConnectionState.done) {
+              //         return DropdownButton(
+              //           isExpanded: true,
+              //           value: this._currentDoctor,
+              //           items: List<DropdownMenuItem>.from(doctors.data.map(
+              //                 (e) => DropdownMenuItem(
+              //                       value: e,
+              //                       child: Row(
+              //                         children: <Widget>[
+              //                           Icon(
+              //                             Icons.person,
+              //                             color: Theme.of(context).primaryColor,
+              //                           ),
+              //                           Text(' ' +
+              //                               e.prefix +
+              //                               ' ' +
+              //                               e.firstName +
+              //                               ' ' +
+              //                               e.lastName),
+              //                         ],
+              //                       ),
+              //                     ),
+              //               )),
+              //               // [
+              //               //   DropdownMenuItem(
+              //               //     value: null,
+              //               //     child: Row(
+              //               //       children: <Widget>[
+              //               //         Icon(
+              //               //           Icons.person_outline,
+              //               //           color: Colors.grey,
+              //               //         ),
+              //               //         Text(' Unspecified'),
+              //               //       ],
+              //               //     ),
+              //               //   ),
+              //               // ],
+              //           onChanged: (value) {
+              //             setState(() {
+              //               if (value != null) {
+              //                 this._currentDoctor = value;
+              //                 _controllerHospital.text = value.hospital;
+              //               } else {
+              //                 this._currentDoctor = value;
+              //                 _controllerHospital.text = "";
+              //               }
+              //             });
+              //           },
+              //         );
+              //       }
+              //     }),
+              // TextFormField(
+              //   controller: _controllerHospital,
+              //   decoration: (this._currentDoctor == null)
+              //       ? InputDecoration(
+              //           labelText: 'Hospital',
+              //         )
+              //       : InputDecoration(
+              //           labelText: 'Hospital',
+              //           helperText:
+              //               'Leave blank to use default hospital of the selected doctor.',
+              //         ),
+              //   validator: (text) {
+              //     if (this._currentDoctor == null && text.trim().isEmpty) {
+              //       return 'Please fill hospital';
+              //     }
+              //   },
+              // ),
               DateTimePickerFormField(
                 initialValue: DateTime(DateTime.now().year,
                     DateTime.now().month, DateTime.now().day + 1, 10),
