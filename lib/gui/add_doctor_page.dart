@@ -233,7 +233,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 controller: _controllerPhone,
                 validator: (value) {
                   if (value.isNotEmpty) {
-                    if (value.length != 10 || !isNumeric(value)) {
+                    if (value.length < 9 ||value.length > 10 || !isNumeric(value)) {
                       return 'Invalid phone number';
                     }
                   }
