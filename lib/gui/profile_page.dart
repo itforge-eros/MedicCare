@@ -144,17 +144,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       userInstance.firstName,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: Colors.blueGrey,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold),
+                          color: Colors.blueGrey, fontSize: 30, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       userInstance.lastName,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: Colors.blueGrey,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold),
+                          color: Colors.blueGrey, fontSize: 25, fontWeight: FontWeight.bold),
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(vertical: 10),
@@ -186,8 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           titleText(title: 'Date of Birth'),
-                          contextText(
-                              context: userInstance.getFormattedBirthDate())
+                          contextText(context: userInstance.getFormattedBirthDate())
                         ],
                       ),
                     ),
@@ -197,8 +192,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           titleText(title: 'Height'),
-                          contextText(
-                              context: userInstance.height.toString() + ' cm'),
+                          contextText(context: userInstance.height.toString() + ' cm'),
                         ],
                       ),
                     ),
@@ -208,8 +202,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           titleText(title: 'Weight'),
-                          contextText(
-                              context: userInstance.weight.toString() + ' kg'),
+                          contextText(context: userInstance.weight.toString() + ' kg'),
                         ],
                       ),
                     ),
@@ -238,9 +231,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EditProfilePage(
-                                      user: userInstance,
-                                    ),
+                                builder: (context) => EditProfilePage(userInstance),
                               ),
                             );
                           },
@@ -248,19 +239,21 @@ class _ProfilePageState extends State<ProfilePage> {
                         RaisedButton(
                           child: Text(
                             'Logout',
-                            style: TextStyle(
-                                color: Color.fromRGBO(216, 32, 32, 1),
-                                fontSize: 15),
+                            style: TextStyle(color: Color.fromRGBO(216, 32, 32, 1), fontSize: 15),
                           ),
                           color: Colors.white,
                           elevation: 4.0,
                           splashColor: Colors.redAccent,
                           onPressed: () {
-                            _auth.signOut();
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              'LoginPage',
-                              (Route<dynamic> route) => false,
-                            );
+                            void doLogout() async {
+                              await _auth.signOut();
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                'LoginPage',
+                                (Route<dynamic> route) => false,
+                              );
+                            }
+
+                            doLogout();
                           },
                         ),
                       ],
