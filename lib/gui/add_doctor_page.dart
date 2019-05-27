@@ -3,24 +3,18 @@
 /// Class for medicine addition page GUI
 ///
 
+import 'dart:async';
 import 'dart:io';
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart';
-import 'package:mediccare/core/doctor.dart';
-import 'package:mediccare/core/user.dart';
-import 'package:mediccare/gui/homepage.dart';
-import 'package:mediccare/util/alert.dart';
-import 'package:mediccare/util/firebase_utils.dart';
-
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart' as LocationManager;
-import 'location.dart';
-import 'dart:async';
-import 'package:google_maps_webservice/places.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/places.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart' as LocationManager;
+import 'package:mediccare/core/doctor.dart';
+import 'package:mediccare/gui/homepage.dart';
+import 'package:mediccare/util/firebase_utils.dart';
 
 const kGoogleApiKey = "AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E";
 
@@ -34,17 +28,12 @@ class AddDoctorPage extends StatefulWidget {
 class _AddDoctorPageState extends State<AddDoctorPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
-  static final TextEditingController _controllerPrefix =
-      TextEditingController();
-  static final TextEditingController _controllerFirstName =
-      TextEditingController();
-  static final TextEditingController _controllerLastName =
-      TextEditingController();
+  static final TextEditingController _controllerPrefix = TextEditingController();
+  static final TextEditingController _controllerFirstName = TextEditingController();
+  static final TextEditingController _controllerLastName = TextEditingController();
   static final TextEditingController _controllerWard = TextEditingController();
-  static final TextEditingController _controllerHospitalId =
-      TextEditingController();
-  static final TextEditingController _controllerHospitalName =
-      TextEditingController();
+  static final TextEditingController _controllerHospitalId = TextEditingController();
+  static final TextEditingController _controllerHospitalName = TextEditingController();
   static final TextEditingController _controllerPhone = TextEditingController();
   static final TextEditingController _controllerNotes = TextEditingController();
   File _image;
@@ -59,13 +48,14 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
   Future uploadPic(String doctorId) async {
     String userId = await FirebaseUtils.getUserId();
 
-    StorageReference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('$userId/doctor/$doctorId');
-    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    setState(() {
-      print("profile pic is uploaded");
-    });
+    StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(
+          '$userId/doctor/$doctorId',
+        );
+
+    try {
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    } catch (e) {}
   }
 
   void clearFields() {
@@ -80,7 +70,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
   }
 
   bool isNumeric(String s) {
-    if(s == null) {
+    if (s == null) {
       return false;
     }
     return double.parse(s, (e) => null) != null;
@@ -132,9 +122,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
             onError: onError,
             mode: Mode.overlay,
             language: "en",
-            location: center == null
-                ? null
-                : Location(center.latitude, center.longitude),
+            location: center == null ? null : Location(center.latitude, center.longitude),
             radius: center == null ? null : 10000);
 
         savePlace(p.placeId, p.description);
@@ -157,8 +145,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
         key: this._formKey,
         child: Center(
           child: ListView(
-            padding:
-                EdgeInsets.only(left: 30.0, top: 1, right: 30.0, bottom: 15.0),
+            padding: EdgeInsets.only(left: 30.0, top: 1, right: 30.0, bottom: 15.0),
             children: <Widget>[
               Container(
                 child: Column(
@@ -231,7 +218,12 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 decoration: InputDecoration(hintText: 'Ward'),
               ),
               RaisedButton(
-                child: Text(_controllerHospitalName.text=="" ? "กรุณาเลือกโรงพยาบาล" : _controllerHospitalName.text),
+                child: Text(
+                  _controllerHospitalName.text == ""
+                      ? "Select hospital"
+                      : _controllerHospitalName.text,
+                  style: TextStyle(color: Colors.white),
+                ),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   _handlePressButton();
@@ -239,10 +231,10 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
               ),
               TextFormField(
                 controller: _controllerPhone,
-                validator: (value){
-                  if(value.isNotEmpty){
-                    if(value.length != 10 || !isNumeric(value)){
-                      return "Please Enter Phonenumber Correctly";
+                validator: (value) {
+                  if (value.isNotEmpty) {
+                    if (value.length != 10 || !isNumeric(value)) {
+                      return "Invalid phone number";
                     }
                   }
                 },
@@ -255,7 +247,10 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
               ),
               SizedBox(height: 20.0),
               RaisedButton(
-                child: Text('Save'),
+                child: Text(
+                  'Save',
+                  style: TextStyle(color: Colors.white),
+                ),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
@@ -271,8 +266,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                         notes: _controllerNotes.text,
                         image: null,
                       );
-                      String doctorId =
-                          await FirebaseUtils.addDoctor(newDoctor);
+                      String doctorId = await FirebaseUtils.addDoctor(newDoctor);
 
                       if (_image != null) {
                         await uploadPic(doctorId);

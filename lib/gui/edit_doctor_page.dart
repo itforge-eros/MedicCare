@@ -3,22 +3,18 @@
 /// Class for medicine addition page GUI
 ///
 
-import 'dart:io';
 import 'dart:async';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/places.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart' as LocationManager;
 import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/gui/homepage.dart';
 import 'package:mediccare/util/alert.dart';
 import 'package:mediccare/util/firebase_utils.dart';
-
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart' as LocationManager;
-import 'location.dart';
-import 'dart:async';
-import 'package:google_maps_webservice/places.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 
 const kGoogleApiKey = "AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E";
 
@@ -38,38 +34,33 @@ class EditDoctorPage extends StatefulWidget {
 class _EditDoctorPageState extends State<EditDoctorPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
-  static final TextEditingController _controllerPrefix =
-      TextEditingController();
-  static final TextEditingController _controllerFirstName =
-      TextEditingController();
-  static final TextEditingController _controllerLastName =
-      TextEditingController();
+  static final TextEditingController _controllerPrefix = TextEditingController();
+  static final TextEditingController _controllerFirstName = TextEditingController();
+  static final TextEditingController _controllerLastName = TextEditingController();
   static final TextEditingController _controllerWard = TextEditingController();
-  static final TextEditingController _controllerHospitalId =
-      TextEditingController();
-  static final TextEditingController _controllerHospitalName =
-      TextEditingController();
+  static final TextEditingController _controllerHospitalId = TextEditingController();
+  static final TextEditingController _controllerHospitalName = TextEditingController();
   static final TextEditingController _controllerPhone = TextEditingController();
   static final TextEditingController _controllerNotes = TextEditingController();
   String _image;
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
     String userId = await FirebaseUtils.getUserId();
+    StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(
+          '$userId/doctor/${widget._doctor.id}',
+        );
 
-    StorageReference firebaseStorageRef = FirebaseStorage.instance
-        .ref()
-        .child('$userId/doctor/${widget._doctor.id}');
-    StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    try {
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      String imageUrl = await firebaseStorageRef.getDownloadURL();
 
-    String imageUrl = await firebaseStorageRef.getDownloadURL();
-
-    setState(() {
-      _image = imageUrl;
-      widget._doctor.image = imageUrl;
-    });
+      setState(() {
+        _image = imageUrl;
+        widget._doctor.image = imageUrl;
+      });
+    } catch (e) {}
   }
 
   void clearFields() {
@@ -89,22 +80,20 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
       _controllerFirstName.text = widget._doctor.firstName;
       _controllerLastName.text = widget._doctor.lastName;
       _controllerWard.text = widget._doctor.ward;
-       _controllerHospitalName.text = widget._doctor.hospital;
+      _controllerHospitalName.text = widget._doctor.hospital;
       _controllerHospitalId.text = widget._doctor.hospitalId;
       _controllerPhone.text = widget._doctor.phone;
       _controllerNotes.text = widget._doctor.notes;
-      _image =
-          widget._doctor.image; // TODO: Implements image adding and loading
+      _image = widget._doctor.image; // TODO: Implements image adding and loading
     }
   }
 
   bool isNumeric(String s) {
-    if(s == null) {
+    if (s == null) {
       return false;
     }
     return double.parse(s, (e) => null) != null;
   }
-
 
   @override
   void initState() {
@@ -144,26 +133,23 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
   @override
   Widget build(BuildContext context) {
     Future<void> _handlePressButton() async {
-    try {
-      final center = await getUserLocation();
-      Prediction p = await PlacesAutocomplete.show(
-          context: context,
-          strictbounds: center == null ? false : true,
-          apiKey: kGoogleApiKey,
-          onError: onError,
-          mode: Mode.overlay,
-          language: "en",
-          location: center == null
-              ? null
-              : Location(center.latitude, center.longitude),
-          radius: center == null ? null : 10000);
+      try {
+        final center = await getUserLocation();
+        Prediction p = await PlacesAutocomplete.show(
+            context: context,
+            strictbounds: center == null ? false : true,
+            apiKey: kGoogleApiKey,
+            onError: onError,
+            mode: Mode.overlay,
+            language: "en",
+            location: center == null ? null : Location(center.latitude, center.longitude),
+            radius: center == null ? null : 10000);
 
-      savePlace(p.placeId, p.description);
-    } catch (e) {
-      return;
+        savePlace(p.placeId, p.description);
+      } catch (e) {
+        return;
+      }
     }
-  }
-
 
     return Scaffold(
       appBar: AppBar(
@@ -182,8 +168,7 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
               Alert.displayConfirmDelete(
                 context,
                 title: 'Delete Doctor?',
-                content:
-                    'Deleting this doctor will permanently remove it from your doctor list.',
+                content: 'Deleting this doctor will permanently remove it from your doctor list.',
                 onPressedConfirm: () {
                   FirebaseUtils.deleteDoctor(widget._doctor);
 
@@ -204,8 +189,7 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
         key: this._formKey,
         child: Center(
           child: ListView(
-            padding: EdgeInsets.only(
-                left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
+            padding: EdgeInsets.only(left: 30.0, top: 15.0, right: 30.0, bottom: 15.0),
             children: <Widget>[
               Container(
                 child: Column(
@@ -277,18 +261,20 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                 decoration: InputDecoration(hintText: 'Ward'),
               ),
               RaisedButton(
-                child: Text(_controllerHospitalName.text=="" ? "กรุณาเลือกโรงพยาบาล" : _controllerHospitalName.text),
+                child: Text(_controllerHospitalName.text == ""
+                    ? "Select hospital"
+                    : _controllerHospitalName.text),
                 color: Theme.of(context).primaryColor,
-                  onPressed: () {
-                    _handlePressButton();
-                  },
+                onPressed: () {
+                  _handlePressButton();
+                },
               ),
               TextFormField(
                 controller: _controllerPhone,
-                validator: (value){
-                  if(value.isNotEmpty){
-                    if(value.length != 10 || !isNumeric(value)){
-                      return "Please Enter Phonenumber Correctly";
+                validator: (value) {
+                  if (value.isNotEmpty) {
+                    if (value.length != 10 || !isNumeric(value)) {
+                      return "Invalid phone number";
                     }
                   }
                 },

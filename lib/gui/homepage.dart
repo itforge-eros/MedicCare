@@ -1,17 +1,22 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
-
 ///
 /// `homepage.dart`
 /// Class for homepage GUI
 ///
-import 'package:intl/intl.dart';
+
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/places.dart';
+import 'package:intl/intl.dart';
+import 'package:location/location.dart' as LocationManager;
 import 'package:mediccare/core/appointment.dart';
 import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/medicine_overview_data.dart';
-import 'package:mediccare/core/medicine_schedule.dart';
-import 'package:mediccare/core/user.dart';
 import 'package:mediccare/core/user_setting.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
 import 'package:mediccare/gui/edit_appointment_page.dart';
@@ -22,27 +27,16 @@ import 'package:mediccare/gui/profile_page.dart';
 import 'package:mediccare/gui/add_appointment_page.dart';
 import 'package:mediccare/gui/medicine_page.dart';
 import 'package:mediccare/gui/add_doctor_page.dart';
+import 'package:mediccare/gui/location.dart';
 import 'package:mediccare/util/custom_icons.dart';
 import 'package:mediccare/util/firebase_utils.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart' as LocationManager;
-import 'location.dart';
-import 'dart:async';
-import 'package:google_maps_webservice/places.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
-
-const kGoogleApiKey = "AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E";
+const kGoogleApiKey = 'AIzaSyA2B775mUfKZPORyzvlUjxlyyalfx0Qd_E';
 
 class Homepage extends StatefulWidget {
   int initialIndex;
 
   Homepage({Key key, this.initialIndex = 2}) : super(key: key);
-
-  // Homepage({int initialIndex}) {
-  //   _initialIndex = initialIndex;
-  // }
 
   @override
   State<StatefulWidget> createState() {
@@ -78,7 +72,7 @@ class _HomepageState extends State<Homepage> {
       if (medicineSearch.text.isEmpty) {
         setState(() {
           isMedSearch = true;
-          searchMedText = "";
+          searchMedText = '';
         });
       } else {
         setState(() {
@@ -92,7 +86,7 @@ class _HomepageState extends State<Homepage> {
       if (doctorSearch.text.isEmpty) {
         setState(() {
           isDocSearch = true;
-          searchDocText = "";
+          searchDocText = '';
         });
       } else {
         setState(() {
@@ -131,7 +125,7 @@ class _HomepageState extends State<Homepage> {
             fit: FlexFit.loose,
             child: Text(
               subtitle,
-              // "asdfghjklqwertyuiopzxcvbnm,asdfghjk",
+              // 'asdfghjklqwertyuiopzxcvbnm,asdfghjk',
               style: TextStyle(
                 color: Colors.black54,
               ),
@@ -142,8 +136,7 @@ class _HomepageState extends State<Homepage> {
           )
         ],
       ),
-      trailing: trailing ??
-          Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
+      trailing: trailing ?? Icon(Icons.keyboard_arrow_right, color: Colors.blue[300], size: 30.0),
       onTap: onTap ?? () {},
     );
   }
@@ -248,11 +241,7 @@ class _HomepageState extends State<Homepage> {
         month = 'December';
         break;
     }
-    return dateTime.day.toString() +
-        ' ' +
-        month +
-        ' ' +
-        dateTime.year.toString();
+    return dateTime.day.toString() + ' ' + month + ' ' + dateTime.year.toString();
   }
 
   // Map Search Area
@@ -268,8 +257,8 @@ class _HomepageState extends State<Homepage> {
     final location = LocationManager.Location();
     try {
       currentLocation = await location.getLocation();
-      final lat = currentLocation["latitude"];
-      final lng = currentLocation["longitude"];
+      final lat = currentLocation['latitude'];
+      final lng = currentLocation['longitude'];
       final center = LatLng(lat, lng);
       return center;
     } on Exception {
@@ -296,13 +285,11 @@ class _HomepageState extends State<Homepage> {
           apiKey: kGoogleApiKey,
           onError: onError,
           mode: Mode.overlay,
-          language: "en",
-          location: center == null
-              ? null
-              : Location(center.latitude, center.longitude),
+          language: 'en',
+          location: center == null ? null : Location(center.latitude, center.longitude),
           radius: center == null ? null : 10000);
 
-      print(" this is placeID ${p.placeId}");
+      print(' this is placeID ${p.placeId}');
       showDetailPlace(p.placeId);
     } catch (e) {
       return;
@@ -320,9 +307,7 @@ class _HomepageState extends State<Homepage> {
       searchMedText = medicineSearch.text;
       if (searchMedText.trim() == '' || searchMedText == null) {
         searchMed.add(medicines[i]);
-      } else if (item
-          .toLowerCase()
-          .contains(searchMedText.toLowerCase().trim())) {
+      } else if (item.toLowerCase().contains(searchMedText.toLowerCase().trim())) {
         searchMed.add(medicines[i]);
       }
     }
@@ -735,8 +720,7 @@ class _HomepageState extends State<Homepage> {
   List<Widget> getRemainingIndoseList(List<Medicine> medicineList) {
     List<Widget> list = List<Widget>();
 
-    final List<MedicineOverviewData> medicineOverviewDataList =
-        List<MedicineOverviewData>();
+    final List<MedicineOverviewData> medicineOverviewDataList = List<MedicineOverviewData>();
     List<DateTime> temp = List<DateTime>();
 
     for (int i = 0; i < medicineList.length; i++) {
@@ -761,10 +745,8 @@ class _HomepageState extends State<Homepage> {
 
       List<DateTime> dateList = List<DateTime>();
       medicineOverviewDataList.forEach((e) {
-        if (!dateList.contains(
-            DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
-          dateList
-              .add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
+        if (!dateList.contains(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))) {
+          dateList.add(DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day));
         }
       });
 
@@ -785,17 +767,13 @@ class _HomepageState extends State<Homepage> {
         );
 
         medicineOverviewDataList.forEach((f) {
-          if (e.year == f.dateTime.year &&
-              e.month == f.dateTime.month &&
-              e.day == f.dateTime.day) {
+          if (e.year == f.dateTime.year && e.month == f.dateTime.month && e.day == f.dateTime.day) {
             list.add(
               getCustomCard(
                 name: f.medicine.name,
                 subtitle: f.getSubtitle(),
                 icon: CustomIcons.medicine,
-                trailing: (DateTime.now().compareTo(
-                                f.dateTime.subtract(Duration(hours: 1))) >
-                            0 &&
+                trailing: (DateTime.now().compareTo(f.dateTime.subtract(Duration(hours: 1))) > 0 &&
                         DateTime(
                               f.dateTime.year,
                               f.dateTime.month,
@@ -889,8 +867,8 @@ class _HomepageState extends State<Homepage> {
     return ListView(shrinkWrap: true, children: <Widget>[
       getComingAppointmentListWidget(),
       SizedBox(height: 20.0),
-      // getRemainingIndoseListWidget(),
-      // SizedBox(height: 40.0),
+      getRemainingIndoseListWidget(),
+      SizedBox(height: 40.0),
     ]);
   }
 
@@ -906,9 +884,7 @@ class _HomepageState extends State<Homepage> {
       searchDocText = doctorSearch.text;
       if (searchDocText.trim() == '' || searchDocText == null) {
         searchDoc.add(doctors[i]);
-      } else if (item
-          .toLowerCase()
-          .contains(searchDocText.toLowerCase().trim())) {
+      } else if (item.toLowerCase().contains(searchDocText.toLowerCase().trim())) {
         searchDoc.add(doctors[i]);
       }
     }
@@ -966,9 +942,8 @@ class _HomepageState extends State<Homepage> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 30),
-              child: Text("Add your personal doctors now!",
-                  style: TextStyle(
-                      color: Colors.grey, fontWeight: FontWeight.w500)),
+              child: Text('Add your personal doctors now!',
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
             )
           ],
         ),
@@ -1010,8 +985,8 @@ class _HomepageState extends State<Homepage> {
       context: context,
       builder: (_) {
         return new AlertDialog(
-          title: Text("MedicCare"),
-          content: Text("Payload : $payload"),
+          title: Text('MedicCare'),
+          content: Text('Payload : $payload'),
         );
       },
     );
@@ -1025,11 +1000,10 @@ class _HomepageState extends State<Homepage> {
     _getAppointments = FirebaseUtils.getAppointments();
     this._currentIndex = widget.initialIndex;
 
-    var initializationSettingsAndroid =
-        new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings = new InitializationSettings(
-        initializationSettingsAndroid, initializationSettingsIOS);
+    var initializationSettings =
+        new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
@@ -1037,16 +1011,15 @@ class _HomepageState extends State<Homepage> {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) {
-        Map<String, dynamic> notification =
-            Map<String, dynamic>.from(message['notification']);
+        Map<String, dynamic> notification = Map<String, dynamic>.from(message['notification']);
 
         Future _showNotification() async {
           var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
               'mediccare', 'MedicCare', 'MedicCare App',
               importance: Importance.Max, priority: Priority.High);
           var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-          var platformChannelSpecifics = new NotificationDetails(
-              androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+          var platformChannelSpecifics =
+              new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
           await flutterLocalNotificationsPlugin.show(
             0,
             notification['title'],
