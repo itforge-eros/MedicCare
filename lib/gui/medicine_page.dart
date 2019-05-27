@@ -177,6 +177,40 @@ class _MedicinePageState extends State<MedicinePage> {
             ),
           ),
           Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.center,
+                          child: CircleAvatar(
+                            radius: 80,
+                            backgroundColor: Color(0xffffffff),
+                            child: ClipOval(
+                              child: SizedBox(
+                                width: 150.0,
+                                height: 150.0,
+                                child: (widget._medicine.image != null)
+                                    ? Image.network(widget._medicine.image, fit: BoxFit.fill)
+                                    : Image.asset(
+                                        "assets/medicine.png",
+                                        fit: BoxFit.fill,
+                                      ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+          Container(
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: Column(
               children: <Widget>[
