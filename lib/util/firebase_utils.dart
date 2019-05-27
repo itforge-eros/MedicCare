@@ -206,8 +206,9 @@ class FirebaseUtils {
 
     StorageReference firebaseStorageRef =
         FirebaseStorage.instance.ref().child('$userId/doctor/${doctor.id}');
-
-    await firebaseStorageRef.delete();
+    try {
+      await firebaseStorageRef.delete();
+    } catch (e) {}
   }
 
   // End Doctor
@@ -299,12 +300,14 @@ class FirebaseUtils {
 
     var firestore = Firestore.instance;
 
-    firestore
-        .collection('users')
-        .document(userId)
-        .collection('appointments')
-        .document(appointmentId)
-        .delete();
+    try {
+      firestore
+          .collection('users')
+          .document(userId)
+          .collection('appointments')
+          .document(appointmentId)
+          .delete();
+    } catch (e) {}
   }
 
   // End Appointment
