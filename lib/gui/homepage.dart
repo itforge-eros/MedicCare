@@ -735,19 +735,13 @@ class _HomepageState extends State<Homepage> {
     List<DateTime> temp = List<DateTime>();
 
     for (int i = 0; i < medicineList.length; i++) {
-      void doAddSchedule() async {
-        User user = await FirebaseUtils.getUser();
-
-        temp = medicineList[i].getMedicineSchedule(user.userSettings);
-        for (int j = 0; j < temp.length; j++) {
-          medicineOverviewDataList.add(MedicineOverviewData(
-            medicine: medicineList[i],
-            dateTime: temp[j],
-          ));
-        }
+      temp = medicineList[i].getMedicineSchedule(UserSettings());
+      for (int j = 0; j < temp.length; j++) {
+        medicineOverviewDataList.add(MedicineOverviewData(
+          medicine: medicineList[i],
+          dateTime: temp[j],
+        ));
       }
-
-      doAddSchedule();
     }
 
     medicineOverviewDataList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
