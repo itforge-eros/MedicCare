@@ -404,7 +404,7 @@ class _HomepageState extends State<Homepage> {
     }
 
     if (emptyMedicine.length > 0) {
-      list.add(getSectionDivider('Depleted Medicines'));
+      list.add(getSectionDivider('Deleted Medicines'));
       emptyMedicine.forEach((e) {
         list.add(
           getCustomCard(
@@ -457,21 +457,21 @@ class _HomepageState extends State<Homepage> {
   // Data Method: Returns a list of appointments
   List<Widget> getAppointmentList(List<Appointment> appointmentList) {
     List<Widget> list = [
-      Padding(
-        padding: const EdgeInsets.all(20),
-        child: TextField(
-          onChanged: (value) {},
-          // controller: ,
-          decoration: InputDecoration(
-            labelText: 'Search',
-            hintText: 'Search',
-            prefixIcon: Icon(Icons.search),
-            // border: OutlineInputBorder(
-            //   borderRadius: BorderRadius.all(Radius.circular(25.0)),
-            // ),
-          ),
-        ),
-      ),
+      // Padding(
+      //   padding: const EdgeInsets.all(20),
+      //   child: TextField(
+      //     onChanged: (value) {},
+      //     // controller: ,
+      //     decoration: InputDecoration(
+      //       labelText: 'Search',
+      //       hintText: 'Search',
+      //       prefixIcon: Icon(Icons.search),
+      //       // border: OutlineInputBorder(
+      //       //   borderRadius: BorderRadius.all(Radius.circular(25.0)),
+      //       // ),
+      //     ),
+      //   ),
+      // ),
     ];
 
     appointmentList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
@@ -479,7 +479,23 @@ class _HomepageState extends State<Homepage> {
     List<Appointment> comingAppointmentList = List<Appointment>();
     List<Appointment> completedAppointmentList = List<Appointment>();
     List<Appointment> skipAppointmentList = List<Appointment>();
-
+    if (appointmentList.length == 0) {
+      list.add(Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Image.asset('assets/images/note-grey.png', height: 200),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30.0),
+            child: Text(
+              'Start adding your appointment now!',
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500),
+            ),
+          )
+        ],
+      ));
+    }
     appointmentList.forEach((a) {
       switch (a.status) {
         case 0:
@@ -506,7 +522,7 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EditAppointmentPage(
+                  builder: (context) => AppointmentPage(
                         appointment: e,
                       ),
                 ),
@@ -529,7 +545,7 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EditAppointmentPage(
+                  builder: (context) => AppointmentPage(
                         appointment: e,
                       ),
                 ),
