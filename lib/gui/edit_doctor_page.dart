@@ -46,20 +46,21 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
     String userId = await FirebaseUtils.getUserId();
+    StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(
+          '$userId/doctor/${widget._doctor.id}',
+        );
 
-    StorageReference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('$userId/doctor/${widget._doctor.id}');
-    StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    try {
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      String imageUrl = await firebaseStorageRef.getDownloadURL();
 
-    String imageUrl = await firebaseStorageRef.getDownloadURL();
-
-    setState(() {
-      _image = imageUrl;
-      widget._doctor.image = imageUrl;
-    });
+      setState(() {
+        _image = imageUrl;
+        widget._doctor.image = imageUrl;
+      });
+    } catch (e) {}
   }
 
   void clearFields() {
@@ -261,7 +262,7 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
               ),
               RaisedButton(
                 child: Text(_controllerHospitalName.text == ""
-                    ? "กรุณาเลือกโรงพยาบาล"
+                    ? "Select hospital"
                     : _controllerHospitalName.text),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
@@ -273,7 +274,7 @@ class _EditDoctorPageState extends State<EditDoctorPage> {
                 validator: (value) {
                   if (value.isNotEmpty) {
                     if (value.length != 10 || !isNumeric(value)) {
-                      return "Please Enter Phonenumber Correctly";
+                      return "Invalid phone number";
                     }
                   }
                 },

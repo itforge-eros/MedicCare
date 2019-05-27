@@ -48,13 +48,14 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
   Future uploadPic(String doctorId) async {
     String userId = await FirebaseUtils.getUserId();
 
-    StorageReference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('$userId/doctor/$doctorId');
-    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    setState(() {
-      print("profile pic is uploaded");
-    });
+    StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(
+          '$userId/doctor/$doctorId',
+        );
+
+    try {
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    } catch (e) {}
   }
 
   void clearFields() {
@@ -217,9 +218,12 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 decoration: InputDecoration(hintText: 'Ward'),
               ),
               RaisedButton(
-                child: Text(_controllerHospitalName.text == ""
-                    ? "กรุณาเลือกโรงพยาบาล"
-                    : _controllerHospitalName.text),
+                child: Text(
+                  _controllerHospitalName.text == ""
+                      ? "Select hospital"
+                      : _controllerHospitalName.text,
+                  style: TextStyle(color: Colors.white),
+                ),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   _handlePressButton();
@@ -230,7 +234,7 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
                 validator: (value) {
                   if (value.isNotEmpty) {
                     if (value.length != 10 || !isNumeric(value)) {
-                      return "Please Enter Phonenumber Correctly";
+                      return "Invalid phone number";
                     }
                   }
                 },
@@ -243,7 +247,10 @@ class _AddDoctorPageState extends State<AddDoctorPage> {
               ),
               SizedBox(height: 20.0),
               RaisedButton(
-                child: Text('Save'),
+                child: Text(
+                  'Save',
+                  style: TextStyle(color: Colors.white),
+                ),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   if (this._formKey.currentState.validate()) {
