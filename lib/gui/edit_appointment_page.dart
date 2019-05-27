@@ -232,21 +232,29 @@ class _EditAppointmentPageState extends State<EditAppointmentPage> {
                 color: Theme.of(context).primaryColor,
                 child: Text('Save'),
                 onPressed: () {
-                  if (this._formKey.currentState.validate()) {
-                    widget._appointment.title = _controllerTitle.text;
-                    widget._appointment.description =
-                        _controllerDescription.text;
-                    if (this._currentDoctor != null) {
-                      widget._appointment.doctor = this._currentDoctor.id;
-                    } else {
-                      widget._appointment.doctor = null;
+                  if (this._currentDoctor != null) {
+                    if (this._formKey.currentState.validate()) {
+                      widget._appointment.title = _controllerTitle.text;
+                      widget._appointment.description =
+                          _controllerDescription.text;
+                      if (this._currentDoctor != null) {
+                        widget._appointment.doctor = this._currentDoctor.id;
+                      } else {
+                        widget._appointment.doctor = null;
+                      }
+                      widget._appointment.hospital = _controllerHospital.text;
+                      widget._appointment.dateTime = this._currentDateTime;
+
+                      FirebaseUtils.updateAppointment(widget._appointment);
+
+                      Navigator.pop(context);
                     }
-                    widget._appointment.hospital = _controllerHospital.text;
-                    widget._appointment.dateTime = this._currentDateTime;
-
-                    FirebaseUtils.updateAppointment(widget._appointment);
-
-                    Navigator.pop(context);
+                  } else {
+                    Alert.displayAlert(
+                      context,
+                      title: 'Edit failed',
+                      content: 'Doctor cannot be unspecify.',
+                    );
                   }
                 },
               ),

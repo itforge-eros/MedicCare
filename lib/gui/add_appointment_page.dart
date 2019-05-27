@@ -174,24 +174,32 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
                 color: Theme.of(context).primaryColor,
                 child: Text('Save'),
                 onPressed: () {
-                  if (this._formKey.currentState.validate()) {
-                    Appointment appointment = Appointment(
-                      title: _controllerTitle.text,
-                      description: _controllerDescription.text,
-                      doctor: this._currentDoctor.id,
-                      hospital: _controllerHospital.text,
-                      dateTime: this._currentDateTime,
-                    );
+                  if (this._currentDoctor != null) {
+                    if (this._formKey.currentState.validate()) {
+                      Appointment appointment = Appointment(
+                        title: _controllerTitle.text,
+                        description: _controllerDescription.text,
+                        doctor: this._currentDoctor.id,
+                        hospital: _controllerHospital.text,
+                        dateTime: this._currentDateTime,
+                      );
 
-                    FirebaseUtils.addAppointment(appointment);
+                      FirebaseUtils.addAppointment(appointment);
 
-                    Navigator.pushAndRemoveUntil(
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Homepage(
+                                  initialIndex: 1,
+                                )),
+                        ModalRoute.withName('LoginPage'),
+                      );
+                    }
+                  } else {
+                    Alert.displayAlert(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => Homepage(
-                                initialIndex: 1,
-                              )),
-                      ModalRoute.withName('LoginPage'),
+                      title: 'Add failed',
+                      content: 'Doctor cannot be unspecify.',
                     );
                   }
                 },
