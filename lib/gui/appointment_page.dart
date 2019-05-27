@@ -140,18 +140,6 @@ class AppointmentPageState extends State<AppointmentPage> {
                                       style: TextStyle(
                                           color: Colors.black45, fontSize: 15),
                                     ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 30, 10, 30),
-                                      child: Text(
-                                        // TODO: Implements doctor's image
-                                        'Picture',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 50,
-                                        ),
-                                      ),
-                                    ),
                                     Text(
                                       doctor.data.ward,
                                       style: TextStyle(
