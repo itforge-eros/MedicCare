@@ -18,16 +18,16 @@ import 'package:mediccare/core/doctor.dart';
 import 'package:mediccare/core/medicine.dart';
 import 'package:mediccare/core/medicine_overview_data.dart';
 import 'package:mediccare/core/user_setting.dart';
+import 'package:mediccare/gui/add_appointment_page.dart';
+import 'package:mediccare/gui/add_doctor_page.dart';
 import 'package:mediccare/gui/add_medicine_page.dart';
-import 'package:mediccare/gui/edit_appointment_page.dart';
-import 'package:mediccare/gui/map_page.dart';
 import 'package:mediccare/gui/appointment_page.dart';
 import 'package:mediccare/gui/doctor_page.dart';
-import 'package:mediccare/gui/profile_page.dart';
-import 'package:mediccare/gui/add_appointment_page.dart';
+import 'package:mediccare/gui/edit_appointment_page.dart';
+import 'package:mediccare/gui/map_page.dart';
 import 'package:mediccare/gui/medicine_page.dart';
-import 'package:mediccare/gui/add_doctor_page.dart';
 import 'package:mediccare/gui/location.dart';
+import 'package:mediccare/gui/profile_page.dart';
 import 'package:mediccare/util/custom_icons.dart';
 import 'package:mediccare/util/firebase_utils.dart';
 
@@ -724,7 +724,7 @@ class _HomepageState extends State<Homepage> {
     List<DateTime> temp = List<DateTime>();
 
     for (int i = 0; i < medicineList.length; i++) {
-      temp = medicineList[i].getMedicineSchedule(UserSettings());
+      temp = medicineList[i].getMedicineSchedule(UserSettings()); // TODO: Pass user settings here!
       for (int j = 0; j < temp.length; j++) {
         medicineOverviewDataList.add(MedicineOverviewData(
           medicine: medicineList[i],
