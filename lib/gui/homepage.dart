@@ -866,6 +866,24 @@ class _HomepageState extends State<Homepage> {
         });
       });
     }
+    if (list.length == 0) {
+      list.add(Center(
+          child: Column(
+        children: <Widget>[
+          Image.asset(
+            'assets/medicine.png',
+            height: 200,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              "That's no Overview yet, Starting adding yours now!",
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w800),
+            ),
+          )
+        ],
+      )));
+    }
 
     return list;
   }

@@ -65,6 +65,7 @@ flutter:
     - assets/images/doctor-grey.png
     - assets/images/medical-grey.png
     - assets/images/note-grey.png
+    - assets/medicine.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
